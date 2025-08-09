@@ -1,0 +1,6 @@
+{
+  "name": "panelcore",
+  "version": "0.0.1",
+  "description": "JieAdminPanel基础核心",
+  "dependency": ["jiefoundation"]
+}

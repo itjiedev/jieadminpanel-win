@@ -1,0 +1,12 @@
+{
+    "huaweicloud": {
+        "id": "huaweicloud",
+        "site-name": "华为云镜像",
+        "url-prefix": "https://mirrors.huaweicloud.com/python/"
+    },
+    "python": {
+        "id": "python",
+        "site-name": "Python官方",
+        "url-prefix": "https://www.python.org/ftp/python/"
+    }
+}

@@ -1,0 +1,7 @@
+{
+  "id": "envs_python_installer",
+  "name": "Pythonp安装包安装环境管理",
+  "version": "0.0.1",
+  "description": "使用独立安装包安装的python环境管理",
+  "dependency": ["apps.sharedkit", "apps.envs_python"]
+}

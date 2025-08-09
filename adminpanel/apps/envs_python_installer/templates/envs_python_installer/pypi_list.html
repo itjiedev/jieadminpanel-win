@@ -1,0 +1,34 @@
+{% extends 'envs_python/layout_envs_python.html' %}
+
+{% block pagecontent %}
+    {{ block.super }}
+<div class="card">
+    <div class="card-body">
+        <table class="table table-hover table-striped">
+            <thead>
+            <tr>
+                <th></th>
+                <th>源名称</th>
+                <th>地址</th>
+                <th>默认</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for name, source in pypi_list.items %}
+            <tr{% if source.is_default %} class="table-success"{% endif %}>
+                <td>
+{% if source.is_default %}<li class="fa fa-star text-danger"></li>
+{% else %}
+<a href="{% url 'envs_python_installer:pypi_default' name %}" class="btn btn-outline-info btn-xs">设为默认</a>
+{% endif %}
+                </td>
+                <td>{{ source.title }}</td>
+                <td>{{ source.url }}</td>
+                <td>{% if source.is_default %}是{% else %}否{% endif %}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

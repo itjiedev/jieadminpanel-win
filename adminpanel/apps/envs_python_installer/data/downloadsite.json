@@ -1,0 +1,17 @@
+[
+    {
+        "id": "huaweicloud",
+        "site-name": "华为云镜像",
+        "url-prefix": "https://mirrors.huaweicloud.com/python"
+    },
+    {
+        "id": "aliyun",
+        "site-name": "阿里云镜像",
+        "url-prefix": "https://mirrors.aliyun.com/python-release/windows"
+    },
+    {
+        "id": "pypi",
+        "site-name": "Python官方",
+        "url-prefix": "https://www.python.org/ftp/python/"
+    }
+]

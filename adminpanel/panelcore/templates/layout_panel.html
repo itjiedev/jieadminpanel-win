@@ -1,0 +1,58 @@
+{% extends 'layout_content.html' %}
+{% load panelcore_tags %}
+{% load static %}
+
+{% block css_files %}
+    <link rel="stylesheet" href="{% static 'layui/css/layui.css' %}">
+    {% block panel_css_files %}{% endblock %}
+{% endblock %}
+
+{% block js_files %}
+<script src="{% static 'layui/layui.js' %}"></script>
+{% block panel_js_files %}{% endblock %}
+{% endblock %}
+
+{% block user-panel %}
+    <div class="image p-1 pt-2"><img src="{% static 'img/server-small.png' %}" /></div>
+    <div class="info">
+        <a class="d-block">{% get_server_name %}<br/>{% get_server_ip %}</a>
+    </div>
+{% endblock %}
+{##}
+{#{% block sidebar %}#}
+{#<li class="nav-item">#}
+{#    <a href="" class="nav-link{% if parent_menu == 'home' %} active{% endif %}">#}
+{#      <i class="nav-icon fas fa-tachometer-alt"></i>#}
+{#      <p>概览</p>#}
+{#    </a>#}
+{#</li>#}
+{##}
+{#<li class="nav-item">#}
+{#    <a href="" class="nav-link">#}
+{#      <i class="nav-icon fas fa-cubes"></i>#}
+{#      <p>项目部署</p>#}
+{#    </a>#}
+{#</li>#}
+{##}
+{#<li class="nav-item">#}
+{#    <a href="" class="nav-link">#}
+{#      <i class="nav-icon fas fa-code"></i>#}
+{#      <p>运行环境</p>#}
+{#    </a>#}
+{#</li>#}
+{##}
+{#<li class="nav-item">#}
+{#    <a href="" class="nav-link">#}
+{#      <i class="nav-icon fas fa-server"></i>#}
+{#      <p>服务器</p>#}
+{#    </a>#}
+{#</li>#}
+{##}
+{#<li class="nav-item">#}
+{#    <a href="" class="nav-link">#}
+{#      <i class="nav-icon fas fa-database"></i>#}
+{#      <p>数据库</p>#}
+{#    </a>#}
+{#</li>#}
+{##}
+{#{% endblock %}#}

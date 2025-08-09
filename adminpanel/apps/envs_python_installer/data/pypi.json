@@ -1,0 +1,30 @@
+{
+  "tsinghua": {
+    "title": "清华大学PyPi镜像",
+    "url": "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+  },
+  "aliyun": {
+    "title": "阿里云PyPi镜像",
+    "url": "https://mirrors.aliyun.com/pypi/simple/"
+  },
+  "huaweicloud": {
+    "title": "华为云PyPi镜像",
+    "url": "https://mirrors.huaweicloud.com/repository/pypi/simple"
+  },
+  "tencent": {
+    "title": "腾讯云PyPi镜像",
+    "url": "https://mirrors.cloud.tencent.com/pypi/simple/"
+  },
+  "doubanio": {
+    "title": "豆瓣PyPi镜像",
+    "url": "https://pypi.doubanio.com/simple/"
+  },
+  "ustc": {
+    "title": "中国科学技术大学PyPi镜像",
+    "url": "https://mirrors.ustc.edu.cn/pypi/simple/"
+  },
+  "pypi": {
+    "title": "默认官方",
+    "url": "https://pypi.org/simple"
+  }
+}

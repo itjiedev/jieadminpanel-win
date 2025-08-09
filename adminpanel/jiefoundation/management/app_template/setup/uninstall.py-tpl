@@ -1,0 +1,17 @@
+import os, shutil,json
+from pathlib import Path
+
+app_name = '{{app_name}}'
+start_url = f"{app_name}:"
+
+panel_root = Path(__file__).resolve().parent.parent.parent.parent
+project_root = panel_root.parent
+project_config_dir = panel_root / 'config'
+
+app_list_json = project_config_dir / 'app_list.json'
+with open(app_list_json, 'r', encoding='utf-8') as f:
+    app_list = json.load(f)
+
+if f'apps.{app_name}' not in app_list:
+    print(f'{app_name} 没有安装~')
+    exit()

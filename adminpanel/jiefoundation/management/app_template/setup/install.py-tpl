@@ -1,0 +1,14 @@
+import os, shutil
+from pathlib import Path
+
+app_name = '{{app_name}}'
+start_url = f"{app_name}:"
+
+project_dir = Path(__file__).resolve().parent.parent.parent.parent
+current_dir = os.path.dirname(__file__)
+project_root = panel_root.parent
+project_data_dir = project_root / 'data'
+project_config_dir = panel_root / 'config'
+
+version_json_path = Path(__file__).resolve().parent.parent / 'version.json'
+app_list_path = config_dir / 'app_list.json'

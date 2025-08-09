@@ -1,0 +1,68 @@
+{% extends 'envs_python/layout_envs_python.html' %}
+
+{% block js_code %}
+<script>
+layui.use(function(){
+  var $ = layui.$;
+  var layer = layui.layer;
+  var util = layui.util;
+
+  util.on('lay-on', {
+    'iframe_select_folder': function(){
+      layer.open({
+        title:"选择文件/文件夹",
+        type: 2,
+        area: ['800px', '600px'],
+        content: '{% url 'sharedkit:picker_file_dir' 'dir' %}',
+        fixed: false, // 不固定
+        maxmin: true,
+        shade: 0.5,
+        shadeClose: false,
+        btn: ['选中', '取消'],
+        btnAlign: 'c',
+        yes: function(index, layero){
+          var iframeWin =  window[layero.find('iframe')[0]['name']];
+          var elemMark = iframeWin.$('#picker_path'); // 获得 iframe 中某个输入框元素
+          var value = elemMark.val();
+          if($.trim(value) === '') return elemMark.focus();
+          $('#id_import_dir').val(value);
+          layer.closeAll();
+        }
+      });
+    },
+  })
+});
+</script>
+{% endblock %}
+
+{% block pagecontent %}
+{{ block.super }}
+{% include 'include_messages.html' %}
+
+<div class="card-body">
+导入程序仅检查是否存在Python解释器，并不能完全确定所选的 Python 环境是否正常，请自行检查。
+</div>
+<div class="card">
+<form method="post" class="layui-form" >
+    {% csrf_token %}
+    <div class="card-body">
+        <div class="form-group row mb-0">
+            <label class="col-sm-2 col-form-label">{{ form.import_dir.label }}</label>
+            <div class="col-sm-10">
+                <div class="input-group">
+                  {{ form.import_dir }}
+                  <div class="input-group-append">
+<span class="input-group-text hand-cursor" lay-on="iframe_select_folder"><i class="fas fa-folder-open"></i></span>
+                  </div>
+                </div>
+                {% if form.import_dir.errors %}{{ form.import_dir.errors }}{% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <button type="submit" lay-submit class="btn btn-primary">导入</button>
+        <a href="{% url 'envs_python_runtime:python_list' %}" class="btn btn-default float-right">取消</a>
+    </div>
+</form>
+</div>
+{% endblock %}

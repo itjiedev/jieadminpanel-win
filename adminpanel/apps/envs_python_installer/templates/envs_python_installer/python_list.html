@@ -1,0 +1,101 @@
+{% extends 'envs_python/layout_envs_python.html' %}
+
+{% block js_code %}
+<script>
+layui.use(function(){
+  var layer = layui.layer;
+  var util = layui.util;
+
+  // 事件绑定
+  util.on('lay-on', {
+    'layer_uninstall': function(obj){
+
+      var loadIndex = layer.msg('卸载中...', {
+        icon: 16,
+        shade: 0.01
+      });
+
+      var url = this.getAttribute('href');
+
+      fetch(url)
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(data) {
+          layer.close(loadIndex);
+          if (data.status === "success") {
+            layer.msg('卸载成功', { icon: 1 });
+            location.reload();
+          } else {
+            layer.msg('卸载失败: ' + data.message, { icon: 2 });
+          }
+        })
+        .catch(function(error) {
+          layer.close(loadIndex);
+          layer.msg('请求失败，请重试', { icon: 5 });
+          console.error('Error:', error);
+        });
+      return false;
+    }
+  });
+});
+
+</script>
+{% endblock %}
+
+{% block pagecontent %}
+{{ block.super }}
+{% include 'include_messages.html' %}
+<div class="card">
+    <div class="card-header p-2">
+        <div class="card-title">
+             <a href="{% url 'envs_python_installer:python_install' %}" class="btn bg-success">
+              <i class="fas fa-plus"></i> 安装
+            </a>
+        </div>
+        <div class="card-tools pr-2">
+<a href="JavaScript:location.reload();" class="btn btn-outline-info"><i class="fas fa-sync"></i> 刷新列表</a>
+<a href="{% url 'envs_python_installer:reset_default_python' %}" class="btn btn-outline-info"><i class="far fa-window-restore"></i> 重置默认</a>
+<a href="{% url 'envs_python:pypi_list' %}" class="btn btn-outline-info"><i class="fas fa-cog"></i> 全局PyPi源</a>
+<a href="{% url 'envs_python_installer:clear_cache' %}" class="btn btn-outline-info"><i class="fas fa-trash"></i> 清理下载缓存</a>
+        </div>
+    </div>
+    <div class="card-body p-2">
+<table class="table table-hover table-striped">
+    <thead>
+    <tr>
+        <th>版本</th>
+        <th>py</th>
+        <th>环境变量</th>
+        <th>解释器路径</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for version, python in pythons.items %}
+    <tr>
+        <td>{{ python.version }}</td>
+        <td>{% if python.is_py_default %}默认{% else %}-{% endif %}</td>
+        <td>{% if python.path == default_python.path %}默认{% else %}-{% endif %}</td>
+        <td>{{ python.path }}python.exe</td>
+        <td>
+{% if python.version_major == 3 and python.version_minor >= 5 %}
+ <a href="{% url 'envs_python_installer:set_py_default_python' version %}"
+    class="btn btn-outline-info btn-xs{% if python.is_py_default %} disabled{% endif %}">py默认</a>
+<a href="{% url 'envs_python_installer:set_env_default_python' version %}"
+   class="btn btn-outline-info btn-xs{% if python.path == default_python.path %} disabled{% endif %}">环境变量默认</a>
+<a href="{% url 'envs_python_installer:package_list' version %}" class="btn btn-outline-info btn-xs">包管理</a>
+<a href="{% url 'envs_python_installer:python_uninstall' version %}" class="btn btn-outline-info btn-xs">卸载</a>
+
+    {% else %}
+    不支持
+{% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+    </div>
+</div>
+
+{% endblock %}

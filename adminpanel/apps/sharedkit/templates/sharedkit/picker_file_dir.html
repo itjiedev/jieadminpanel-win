@@ -1,0 +1,275 @@
+{% extends 'sharedkit/layout_page.html' %}
+{% load static %}
+{% load foundation_tags %}
+
+{% block css_code %}
+<style>
+    .open_dir.active {
+        border: 1px solid #000;
+        background-color: #cce8ff;
+    }
+    .info-box{
+        background-color: transparent;
+    }
+</style>
+{% endblock %}
+
+{% block js_code %}
+<script>
+layui.use(['form', 'laydate', 'util'], function(){
+  var form = layui.form;
+  var layer = layui.layer;
+  var laydate = layui.laydate;
+  var util = layui.util;
+
+    form.verify({
+        folderName: function (value, item) {
+            var pattern = /^[a-zA-Z0-9\-_]+$/;
+            if (!pattern.test(value)) {
+                return '只能输入英文、数字、中划线（-）和下划线（_）';
+            }
+        }
+    });
+
+function parseXHRError(xhr) {
+    let message = '未知错误';
+
+    try {
+        const response = JSON.parse(xhr.responseText);
+        if (response && response.message) {
+            message = response.message;
+        } else if (xhr.statusText) {
+            message = xhr.statusText;
+        }
+    } catch (e) {
+        if (xhr.statusText) {
+            message = xhr.statusText;
+        }
+        console.error('无法解析错误响应:', xhr.responseText);
+    }
+
+    return message;
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+
+  form.on('submit(form_create_dir)', function(data){
+      var field = data.field;
+      var newFolderName = field.new_folder_name;
+
+        $.ajax({
+            url: '{% url 'sharedkit:picker_dir_create' %}',
+            type: 'POST',
+            data: {
+                folder_name: newFolderName,
+                currentPath: "{% replace_str path '\\' '/' %}",
+            },
+            headers: {
+                'X-CSRFToken': csrftoken
+            },
+            success: function (response) {
+                layer.alert('创建成功', {
+                    title:false,
+                    icon: 1,
+                    shadeClose: false,
+                });
+                setTimeout(function () {
+                    $('#form_create_dir').hide();
+                    location.reload();
+                }, 3000);
+            },
+            error: function (xhr, status, error) {
+                let errorMsg = '创建失败: ';
+                const message = parseXHRError(xhr);
+                layer.alert(errorMsg + message, {
+                    title:false,
+                    icon: 2,
+                    shadeClose: false,
+                });
+            }
+        });
+
+    return false;
+  });
+
+    let clickTimer = null;
+
+    $('#form_create_dir').hide();
+    $('#btn_create_dir').on('click', function (e) {
+        $('#form_create_dir').show();
+    })
+    $('#btn_cancel_create_dir').on('click', function (e) {
+        $('#form_create_dir').hide();
+    })
+    $('.open_dir').on('click', function (e) {
+        e.preventDefault();
+        var $element = $(this);
+        var currentPath = $(this).data('current-path');
+        var currentType = $(this).data('current-type');
+
+        $('.open_dir').removeClass('active');
+        $('.info-box').removeClass('bg_none');
+        $element.addClass('active');
+
+        if (currentType === "dir") {
+            if (clickTimer === null) {
+                clickTimer = setTimeout(function () {
+                    $('#select_path').text(currentPath);
+                    $('#picker_path').val(currentPath);
+                    clickTimer = null;
+                }, 300);
+            } else {
+                clearTimeout(clickTimer);
+                clickTimer = null;
+                window.location.href = $element.attr('href');
+            }
+        }
+        if (currentType === "file") {
+            $('#select_path').text(currentPath);
+            $('#picker_path').val(currentPath);
+        }
+    });
+
+    $('#btn_open_explorer').on('click', function (e) {
+        e.preventDefault();
+
+        var currentPath = "{% replace_str path '\\' '/' %}"; // 获取当前路径值
+
+        $.ajax({
+            url: '{% url 'sharedkit:open_explorer' %}',
+            type: 'GET',
+            data: {
+                path: currentPath
+            },
+            success: function (response) {
+                layer.alert('已经打开资源管理器，请检查弹出的位置~', {
+                    title:false,
+                    icon: 1,
+                    shadeClose: false,
+                });
+            },
+            error: function (xhr, status, error) {
+                var message =parseXHRError(xhr)
+                layer.msg('请求失败: ' + message, {
+                    title:false,
+                    icon: 2,
+                    shadeClose: false,
+                });
+            }
+        });
+    });
+
+
+});
+</script>
+{% endblock %}
+
+{% block pagecontent %}
+<input type="hidden" name="picker_path" class="form-control" id="picker_path" value="{{ path }}">
+    <div class="card text-sm">
+        <div class="card-header">
+            <div class="card-title text-sm">
+{% if path %}
+<a href="javascript:void(0);" title="新建文件夹" id="btn_create_dir"><i class="fas fa-plus mr-3"></i></a>
+<a href="javascript:location.reload();" title="刷新" id="btn_refresh"><i class="fas fa-sync mr-3"></i></a>
+<a href="javascript:void(0);" title="在资源管理中打开" id="btn_open_explorer"><i class="fas fa-folder-open mr-3"></i></a>
+{% endif %}
+   <a href="?path=" title="磁盘分区"><i class="fa fa-desktop"></i></a> >
+{% for path in path_breadcrumb %}
+<a href="?path={{ path.path }}">{{ path.name }}</a> >
+{% endfor %}
+            </div>
+        </div>
+    <div class="card-header" id="form_create_dir">
+        <form class="layui-form" action="">{% csrf_token %}
+        <div class="row">
+            <div class="col-8">
+                <input type="text" name="new_folder_name" class="form-control" lay-verify="required|folderName" placeholder="新文件夹名">
+            </div>
+            <div class="col-4">
+                <button type="submit" class="btn btn-primary" id="btn_submit_create_dir" lay-submit lay-filter="form_create_dir">创建</button>
+                <button type="button" class="btn btn-default" id="btn_cancel_create_dir">取消</button>
+            </div>
+            <span>请输入英文、数字、中划线（-）和下划线（_）</span>
+        </div>
+        </form>
+    </div>
+            <div class="card-body">
+        <div class="row card-text">
+{% if path == '' %}
+    {% for disk in disk_partitions %}
+    <div class="col-md-4 col-sm-6 col-12 mb-2">
+        <a href="?path={{ disk.device }}" data-current-path="{{ disk.device }}" data-current-type="dir" class="btn btn-block p-0 open_dir mb-0">
+            <div class="info-box p-0 m-0" style="box-shadow:none;">
+              <span class="info-box-icon"><img src="{% static 'img/win-disk.png' %}" alt="分区"/></span>
+              <div class="info-box-content">
+                <span class="info-box-text" style="text-align: left;font-size:0.8em">
+                    {{ disk.volume_name }} ( {{ disk.drive_letter }}: )
+                </span>
+                <div class="progress" style="height: 1rem;">
+                  <div class="progress-bar{% if disk.percent_used > 95 %} bg-danger{% else %} bg-primary{% endif %}"
+                       style="width: {{ disk.percent_used }}%"></div>
+                </div>
+                <span class="progress-description" style="text-align: left;font-size:0.8em">
+                  {{ disk.free|filesizeformat }}可用，共{{ disk.total|filesizeformat }}
+                </span>
+              </div>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+{% else %}
+ {% if dirs or files %}
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>名称</th>
+                <th>修改日期</th>
+                <th>类型</th>
+                <th>大小</th>
+            </tr>
+        </thead>
+        <tbody>
+{% for dir in dirs %}
+<tr class="open_dir" data-current-type="dir" href="?path={{ dir.path }}" data-current-path="{{ dir.path }}" style="cursor: pointer;">
+    <td><a><li class="fa fa-folder text-warning"></li> {{ dir.name }}</a></td>
+    <td>{{ dir.mtime }}</td>
+    <td>文件夹</td>
+    <td>-</td>
+</tr>
+{% endfor %}
+{% if picker_type == 'file' %}
+    {% for file in files %}
+    <tr style="cursor: pointer;" data-current-path="{{ file.path }}" data-current-type="file" class="open_dir" >
+        <td>{{ file.name }}</td>
+        <td>{{ file.mtime }}</td>
+        <td>文件</td>
+        <td>{{ file.size|filesizeformat }}</td>
+    </tr>
+    {% endfor %}
+{% endif %}
+        </tbody>
+    </table>
+{% else %}
+    <p class="text-muted">当前目录为空</p>
+{% endif %}
+{% endif %}
+        </div>
+            </div>
+    </div>
+
+{% endblock %}

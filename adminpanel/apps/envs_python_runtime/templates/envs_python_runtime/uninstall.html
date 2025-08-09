@@ -1,0 +1,47 @@
+{% extends 'envs_python/layout_envs_python.html' %}
+{% load static %}
+
+{% block panel_css_files %}
+<link rel="stylesheet" href="{% static 'plugins/icheck-bootstrap/icheck-bootstrap.min.css' %}">
+{% endblock %}
+
+{% block js_code %}
+<script>
+$(document).ready(function() {
+    $('#id_accept').on('change', function() {
+        if ($(this).is(':checked')) {
+            $('button[type="submit"]').prop('disabled', false);
+        } else {
+            $('button[type="submit"]').prop('disabled', true);
+        }
+    });
+    if (!$('#id_accept').is(':checked')) {
+        $('button[type="submit"]').prop('disabled', true);
+    }
+});
+</script>
+{% endblock %}
+
+{% block pagecontent %}
+    {{ block.super }}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title">确定卸载 <span class="text-danger">Python {{ version }} </span>吗？</h5>
+    </div>
+<form method="post">{% csrf_token %}
+    <div class="card-body">
+        <p class="mb-4">卸载后，Python {{ version }} 将无法使用，同时删除安装目录，包括所有已安装包都将被删除。</p>
+        {% for field in form %}
+        <div class="form-group">
+            <div class="icheck-danger d-inline">{{ field }}<label for="{{ field.id_for_label  }}">{{ field.label  }}</label>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="card-footer">
+        <button type="submit" class="btn btn-danger" disabled>确认</button>
+        <a href="{% url 'envs_python_runtime:python_list' %}" class="btn btn-default float-right">取消</a>
+    </div>
+</form>
+</div>
+{% endblock %}

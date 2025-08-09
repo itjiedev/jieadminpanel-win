@@ -1,0 +1,14 @@
+{% extends 'layout_panel.html' %}
+
+{% block pagecontent %}
+<div class="card">
+<div class="card-body">
+    <dl class="row">
+        {% for key, value in system_info.items %}
+        <dt class="col-sm-2">{{ key }}：</dt>
+        <dd class="col-sm-10">{{ value|safe }}</dd>
+        {% endfor %}
+    </dl>
+</div>
+</div>
+{% endblock %}

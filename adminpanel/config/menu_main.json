@@ -1,0 +1,33 @@
+{
+    "systeminfo": {
+        "id": "systeminfo",
+        "title": "\u7cfb\u7edf\u4fe1\u606f",
+        "icon": "fab fa-windows",
+        "url": "home",
+        "rules": []
+    },
+    "project": {
+        "id": "project",
+        "title": "\u9879\u76ee\u7ba1\u7406",
+        "icon": "fas fa-project-diagram",
+        "url": "",
+        "rules": [],
+        "children": {}
+    },
+    "runtime_envs": {
+        "id": "runtime_envs",
+        "title": "\u8fd0\u884c\u73af\u5883",
+        "icon": "fas fa-code",
+        "url": "",
+        "rules": [],
+        "children": {}
+    },
+    "database": {
+        "id": "database",
+        "title": "\u6570\u636e\u5e93",
+        "icon": "fas fa-database",
+        "url": "",
+        "rules": [],
+        "children": {}
+    }
+}

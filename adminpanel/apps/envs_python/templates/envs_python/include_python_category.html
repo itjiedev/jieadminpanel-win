@@ -1,0 +1,12 @@
+<div class="row mb-2">
+{% for category, python_category in category_list.items %}
+<dov class="col-sm-4 col-md-2">
+<a href="{% if python_category.url %}{% url python_category.url %}{% endif %}"
+   class="btn btn-block {% if current_category == category %}btn-info{% else %}btn-outline-info{% endif %}">
+{{ python_category.title }}
+</a>
+</dov>
+{% endfor %}
+</div>
+
+

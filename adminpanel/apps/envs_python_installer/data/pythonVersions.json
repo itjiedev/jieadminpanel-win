@@ -1,0 +1,101 @@
+{
+  "3.13.6": {
+    "id": "python-3.13-64",
+    "sort-version": "3.13.6",
+    "tag": "3.13-64",
+    "display-name": "Python 3.13.6",
+    "installer-file-name": "python-3.13.6-amd64.exe",
+    "md5sum": "adf553e6af2ba72bfb335f87ff15a564",
+    "version_major": 3,
+    "version_minor": 13,
+    "version_patch": 6
+  },
+  "3.12.10": {
+    "id": "python-3.12-64",
+    "sort-version": "3.12.10",
+    "tag": "3.12-64",
+    "display-name": "Python 3.12.10",
+    "installer-file-name": "python-3.12.10-amd64.exe",
+    "md5sum": "5eddb0b6f12c852725de071ae681dde4",
+    "version_major": 3,
+    "version_minor": 12,
+    "version_patch": 10
+  },
+  "3.11.9": {
+    "id": "python-3.11-64",
+    "sort-version": "3.11.9",
+    "tag": "3.11-64",
+    "display-name": "Python 3.11.9",
+    "installer-file-name": "python-3.11.9-amd64.exe",
+    "md5sum": "e8dcd502e34932eebcaf1be056d5cbcd",
+    "version_major": 3,
+    "version_minor": 11,
+    "version_patch": 9
+  },
+  "3.10.11": {
+    "id": "python-3.10-64",
+    "sort-version": "3.10.11",
+    "tag": "3.10-64",
+    "display-name": "Python 3.10.11",
+    "installer-file-name": "python-3.10.11-amd64.exe",
+    "md5sum": "a55e9c1e6421c84a4bd8b4be41492f51",
+    "version_major": 3,
+    "version_minor": 10,
+    "version_patch": 11
+  },
+  "3.9.13": {
+    "id": "python-3.9-64",
+    "sort-version": "3.9.13",
+    "tag": "3.9-64",
+    "display-name": "Python 3.9.13",
+    "installer-file-name": "python-3.9.13-amd64.exe",
+    "md5sum": "e7062b85c3624af82079794729618eca",
+    "version_major": 3,
+    "version_minor": 9,
+    "version_patch": 13
+  },
+  "3.8.10": {
+    "id": "python-3.8-64",
+    "sort-version": "3.8.10",
+    "tag": "3.8-64",
+    "display-name": "Python 3.8.10",
+    "installer-file-name": "python-3.8.10-amd64.exe",
+    "md5sum": "62cf1a12a5276b0259e8761d4cf4fe42",
+    "version_major": 3,
+    "version_minor": 8,
+    "version_patch": 10
+  },
+  "3.7.9": {
+    "id": "python-3.7-64",
+    "sort-version": "3.7.9",
+    "tag": "3.7-64",
+    "display-name": "Python 3.7.9",
+    "installer-file-name": "python-3.7.9-amd64.exe",
+    "md5sum": "7083fed513c3c9a4ea655211df9ade27",
+    "version_major": 3,
+    "version_minor": 7,
+    "version_patch": 9
+  },
+  "3.6.8": {
+    "id": "python-3.6-64",
+    "sort-version": "3.6.8",
+    "tag": "3.6-64",
+    "display-name": "Python 3.6.8",
+    "installer-file-name": "python-3.6.8-amd64.exe",
+    "md5sum": "72f37686b7ab240ef70fdb931bdf3cb5",
+    "version_major": 3,
+    "version_minor": 6,
+    "version_patch": 8
+  },
+  "3.5.4": {
+    "id": "python-3.5-64",
+    "sort-version": "3.5.4",
+    "tag": "3.5-64",
+    "display-name": "Python 3.5.4",
+    "installer-file-name": "python-3.5.4-amd64.exe",
+    "md5sum": "4276742a4a75a8d07260f13fe956eec4",
+    "version_major": 3,
+    "version_minor": 5,
+    "version_patch": 4
+  }
+}

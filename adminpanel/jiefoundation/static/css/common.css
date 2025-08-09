@@ -1,0 +1,28 @@
+.dropdown-item:hover{
+    background-color: #e6e6e6;
+    color: #000000;
+}
+.hand-cursor{
+    cursor: pointer;
+}
+.list_activate{
+    border: 1px solid #000;
+    background-color: #cce8ff;
+}
+.message-box-warning{
+    background-color: #FFFFCC;
+    border:1px solid #ffc107;
+    border-left: 5px solid #ffc107;
+    position: relative;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border-radius: .25rem;
+    font-size:1rem;
+    font-weight: bold;
+}
+.message-box-warning p{
+    margin-bottom: 0;
+}
+.errorlist{
+    color: red;
+}

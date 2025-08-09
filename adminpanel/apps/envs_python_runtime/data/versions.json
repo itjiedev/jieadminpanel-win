@@ -1,0 +1,690 @@
+{
+    "Python-3.13.6": {
+        "sort_version": "3.13.6",
+        "tag": "3.13-64",
+        "display_name": "Python-3.13.6",
+        "url": "https://www.python.org/ftp/python/3.13.6/python-3.13.6-amd64.zip",
+        "file_name": "python-3.13.6-amd64.zip",
+        "sha256": "880028c10d68b87a809e3b3acfc38ef889e891bbe0353ba8772300d33f385f66"
+    },
+    "Python-3.13.5": {
+        "sort_version": "3.13.5",
+        "tag": "3.13-64",
+        "display_name": "Python-3.13.5",
+        "url": "https://www.python.org/ftp/python/3.13.5/python-3.13.5-amd64.zip",
+        "file_name": "python-3.13.5-amd64.zip",
+        "sha256": "092624102fa2e2bcf51c41662a69dfd03571bca0c168c8f349441e385d615509"
+    },
+    "Python-3.13.4": {
+        "sort_version": "3.13.4",
+        "tag": "3.13-64",
+        "display_name": "Python-3.13.4",
+        "url": "https://www.python.org/ftp/python/3.13.4/python-3.13.4-amd64.zip",
+        "file_name": "python-3.13.4-amd64.zip",
+        "sha256": "6ff7cffcc5c55a14f48ce5865b08abeef1c2afc5b34abb84186709deb1e3306e"
+    },
+    "Python-3.13.3": {
+        "sort_version": "3.13.3",
+        "tag": "3.13-64",
+        "display_name": "Python-3.13.3",
+        "url": "https://www.python.org/ftp/python/3.13.3/python-3.13.3-amd64.zip",
+        "file_name": "python-3.13.3-amd64.zip",
+        "sha256": "46ae5118b8638ad248d1d30f2263056ea6c198f507f559f5bd781584659cfc1e"
+    },
+    "Python-3.13.2": {
+        "sort_version": "3.13.2",
+        "tag": "3.13-64",
+        "display_name": "Python-3.13.2",
+        "url": "https://www.python.org/ftp/python/3.13.2/python-3.13.2-amd64.zip",
+        "file_name": "python-3.13.2-amd64.zip",
+        "sha256": "c2c6eccb91d9e7e4ffdec334bdee7507522e8eb14700bfcfb40c176c8a036282"
+    },
+    "Python-3.13.1": {
+        "sort_version": "3.13.1",
+        "tag": "3.13-64",
+        "display_name": "Python-3.13.1",
+        "url": "https://www.python.org/ftp/python/3.13.1/python-3.13.1-amd64.zip",
+        "file_name": "python-3.13.1-amd64.zip",
+        "sha256": "9877d0d24f7978407bde1b50ab1023b0f5c67ff6c9816b834e5258db1a636249"
+    },
+    "Python-3.13.0": {
+        "sort_version": "3.13.0",
+        "tag": "3.13-64",
+        "display_name": "Python-3.13.0",
+        "url": "https://www.python.org/ftp/python/3.13.0/python-3.13.0-amd64.zip",
+        "file_name": "python-3.13.0-amd64.zip",
+        "sha256": "8e2f217eddbadf9a33d79bf862d6173bb55146b443c2f6e24af9aeea19b4b9f8"
+    },
+    "Python-3.12.10": {
+        "sort_version": "3.12.10",
+        "tag": "3.12-64",
+        "display_name": "Python-3.12.10",
+        "url": "https://www.python.org/ftp/python/3.12.10/python-3.12.10-amd64.zip",
+        "file_name": "python-3.12.10-amd64.zip",
+        "sha256": "8649692de846c56a7189d6dae5c322ab20deb1b5908b6f39426b62a36f39415d"
+    },
+    "Python-3.12.9": {
+        "sort_version": "3.12.9",
+        "tag": "3.12-64",
+        "display_name": "Python-3.12.9",
+        "url": "https://www.python.org/ftp/python/3.12.9/python-3.12.9-amd64.zip",
+        "file_name": "python-3.12.9-amd64.zip",
+        "sha256": "98a39a6574de37c1d142901c5b923b41081648407f4645ea54098cbacbdbbed3"
+    },
+    "Python-3.12.8": {
+        "sort_version": "3.12.8",
+        "tag": "3.12-64",
+        "display_name": "Python-3.12.8",
+        "url": "https://www.python.org/ftp/python/3.12.8/python-3.12.8-amd64.zip",
+        "file_name": "python-3.12.8-amd64.zip",
+        "sha256": "c4cbd48b45c6d5cd4777cacff5642efe9c2700b108e0d4dd13461c7e5ad34f51"
+    },
+    "Python-3.12.7": {
+        "sort_version": "3.12.7",
+        "tag": "3.12-64",
+        "display_name": "Python-3.12.7",
+        "url": "https://www.python.org/ftp/python/3.12.7/python-3.12.7-amd64.zip",
+        "file_name": "python-3.12.7-amd64.zip",
+        "sha256": "8eba1124f9889bacee2a8ff16ebcc117f7aee2d3e7652d512f1697ac844d07d6"
+    },
+    "Python-3.12.6": {
+        "sort_version": "3.12.6",
+        "tag": "3.12-64",
+        "display_name": "Python-3.12.6",
+        "url": "https://www.python.org/ftp/python/3.12.6/python-3.12.6-amd64.zip",
+        "file_name": "python-3.12.6-amd64.zip",
+        "sha256": "5793151e8f70bf175d0f6348ddde0dbe34d7cf9e54c1ae7b241394461e6d26e1"
+    },
+    "Python-3.12.4": {
+        "sort_version": "3.12.4",
+        "tag": "3.12-64",
+        "display_name": "Python-3.12.4",
+        "url": "https://www.python.org/ftp/python/3.12.4/python-3.12.4-amd64.zip",
+        "file_name": "python-3.12.4-amd64.zip",
+        "sha256": "35b4ac3bc273c85c1d8023cf8a29935e896189f532ab497573c6da7fb12310ea"
+    },
+    "Python-3.12.3": {
+        "sort_version": "3.12.3",
+        "tag": "3.12-64",
+        "display_name": "Python-3.12.3",
+        "url": "https://www.python.org/ftp/python/3.12.3/python-3.12.3-amd64.zip",
+        "file_name": "python-3.12.3-amd64.zip",
+        "sha256": "eee87cd50d2150ca1d3cdbfeaf69e2b55b0f3907f54ac8d1b10f75315a8d6085"
+    },
+    "Python-3.12.2": {
+        "sort_version": "3.12.2",
+        "tag": "3.12-64",
+        "display_name": "Python-3.12.2",
+        "url": "https://www.python.org/ftp/python/3.12.2/python-3.12.2-amd64.zip",
+        "file_name": "python-3.12.2-amd64.zip",
+        "sha256": "a4511b3f536bac93dcbea08cb3fea8d79584fc8dfdd9801c988352b0ad653b52"
+    },
+    "Python-3.12.1": {
+        "sort_version": "3.12.1",
+        "tag": "3.12-64",
+        "display_name": "Python-3.12.1",
+        "url": "https://www.python.org/ftp/python/3.12.1/python-3.12.1-amd64.zip",
+        "file_name": "python-3.12.1-amd64.zip",
+        "sha256": "59962c41414b4fa59aec4b8d52235964f9cc4894b77005432b95945a7cd84a46"
+    },
+    "Python-3.12.0": {
+        "sort_version": "3.12.0",
+        "tag": "3.12-64",
+        "display_name": "Python-3.12.0",
+        "url": "https://www.python.org/ftp/python/3.12.0/python-3.12.0-amd64.zip",
+        "file_name": "python-3.12.0-amd64.zip",
+        "sha256": "792e792b4ccc5fd1b16fcf186595cf030750541524860b07ba86bb9a9bdb3607"
+    },
+    "Python-3.11.9": {
+        "sort_version": "3.11.9",
+        "tag": "3.11-64",
+        "display_name": "Python-3.11.9",
+        "url": "https://www.python.org/ftp/python/3.11.9/python-3.11.9-amd64.zip",
+        "file_name": "python-3.11.9-amd64.zip",
+        "sha256": "4ba90a4ab8990891033d37ff04d2047fdae8948d0d2729a68d3a6a17c585b681"
+    },
+    "Python-3.11.8": {
+        "sort_version": "3.11.8",
+        "tag": "3.11-64",
+        "display_name": "Python-3.11.8",
+        "url": "https://www.python.org/ftp/python/3.11.8/python-3.11.8-amd64.zip",
+        "file_name": "python-3.11.8-amd64.zip",
+        "sha256": "ff9e9d62ec1e82cfa2fef0d987fc1d034ddb181fca501d01e184205ecee40b7d"
+    },
+    "Python-3.11.7": {
+        "sort_version": "3.11.7",
+        "tag": "3.11-64",
+        "display_name": "Python-3.11.7",
+        "url": "https://www.python.org/ftp/python/3.11.7/python-3.11.7-amd64.zip",
+        "file_name": "python-3.11.7-amd64.zip",
+        "sha256": "01cabb84b57df6612065e6446e96dc95e452957e696b188d12f04ffad863e075"
+    },
+    "Python-3.11.6": {
+        "sort_version": "3.11.6",
+        "tag": "3.11-64",
+        "display_name": "Python-3.11.6",
+        "url": "https://www.python.org/ftp/python/3.11.6/python-3.11.6-amd64.zip",
+        "file_name": "python-3.11.6-amd64.zip",
+        "sha256": "b8ebb32df612e477ee83adf541f2128eb180fa0f743dec34d46d5fee50936013"
+    },
+    "Python-3.11.5": {
+        "sort_version": "3.11.5",
+        "tag": "3.11-64",
+        "display_name": "Python-3.11.5",
+        "url": "https://www.python.org/ftp/python/3.11.5/python-3.11.5-amd64.zip",
+        "file_name": "python-3.11.5-amd64.zip",
+        "sha256": "fd28f0f0f11bfef5fe01d9d3e688cbf4a9189e0b0cfc41490afef66e74227c2b"
+    },
+    "Python-3.11.4": {
+        "sort_version": "3.11.4",
+        "tag": "3.11-64",
+        "display_name": "Python-3.11.4",
+        "url": "https://www.python.org/ftp/python/3.11.4/python-3.11.4-amd64.zip",
+        "file_name": "python-3.11.4-amd64.zip",
+        "sha256": "08d52d4f0c9b1e7a2fb2128256373da8ef3ebb74540a1eefae0cc6391caa61d5"
+    },
+    "Python-3.11.3": {
+        "sort_version": "3.11.3",
+        "tag": "3.11-64",
+        "display_name": "Python-3.11.3",
+        "url": "https://www.python.org/ftp/python/3.11.3/python-3.11.3-amd64.zip",
+        "file_name": "python-3.11.3-amd64.zip",
+        "sha256": "61ecb5ea9da753b5f3173c511e42d6a48852e4b4d52bc901176a2e36f3b2cdab"
+    },
+    "Python-3.11.2": {
+        "sort_version": "3.11.2",
+        "tag": "3.11-64",
+        "display_name": "Python-3.11.2",
+        "url": "https://www.python.org/ftp/python/3.11.2/python-3.11.2-amd64.zip",
+        "file_name": "python-3.11.2-amd64.zip",
+        "sha256": "00bb170712b45425a659ab99e041a18b53c8dc5afdbf33a047cd6fde96c8ba2e"
+    },
+    "Python-3.11.1": {
+        "sort_version": "3.11.1",
+        "tag": "3.11-64",
+        "display_name": "Python-3.11.1",
+        "url": "https://www.python.org/ftp/python/3.11.1/python-3.11.1-amd64.zip",
+        "file_name": "python-3.11.1-amd64.zip",
+        "sha256": "0767fd52a6560d30ec1e6ee05201b45ae00242817cd85b5b597db079648e5d7e"
+    },
+    "Python-3.11.0": {
+        "sort_version": "3.11.0",
+        "tag": "3.11-64",
+        "display_name": "Python-3.11.0",
+        "url": "https://www.python.org/ftp/python/3.11.0/python-3.11.0-amd64.zip",
+        "file_name": "python-3.11.0-amd64.zip",
+        "sha256": "11a906a2f36cacaee938c048968d99aa68ec0db592693b5a0fe3b161bb280ec5"
+    },
+    "Python-3.10.11": {
+        "sort_version": "3.10.11",
+        "tag": "3.10-64",
+        "display_name": "Python-3.10.11",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.10.11/python.3.10.11.nupkg",
+        "file_name": "python.3.10.11.nupkg",
+        "sha256": ""
+    },
+    "Python-3.10.10": {
+        "sort_version": "3.10.10",
+        "tag": "3.10-64",
+        "display_name": "Python-3.10.10",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.10.10/python.3.10.10.nupkg",
+        "file_name": "python.3.10.10.nupkg",
+        "sha256": ""
+    },
+    "Python-3.10.9": {
+        "sort_version": "3.10.9",
+        "tag": "3.10-64",
+        "display_name": "Python-3.10.9",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.10.9/python.3.10.9.nupkg",
+        "file_name": "python.3.10.9.nupkg",
+        "sha256": ""
+    },
+    "Python-3.10.8": {
+        "sort_version": "3.10.8",
+        "tag": "3.10-64",
+        "display_name": "Python-3.10.8",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.10.8/python.3.10.8.nupkg",
+        "file_name": "python.3.10.8.nupkg",
+        "sha256": ""
+    },
+    "Python-3.10.7": {
+        "sort_version": "3.10.7",
+        "tag": "3.10-64",
+        "display_name": "Python-3.10.7",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.10.7/python.3.10.7.nupkg",
+        "file_name": "python.3.10.7.nupkg",
+        "sha256": ""
+    },
+    "Python-3.10.6": {
+        "sort_version": "3.10.6",
+        "tag": "3.10-64",
+        "display_name": "Python-3.10.6",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.10.6/python.3.10.6.nupkg",
+        "file_name": "python.3.10.6.nupkg",
+        "sha256": ""
+    },
+    "Python-3.10.5": {
+        "sort_version": "3.10.5",
+        "tag": "3.10-64",
+        "display_name": "Python-3.10.5",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.10.5/python.3.10.5.nupkg",
+        "file_name": "python.3.10.5.nupkg",
+        "sha256": ""
+    },
+    "Python-3.10.4": {
+        "sort_version": "3.10.4",
+        "tag": "3.10-64",
+        "display_name": "Python-3.10.4",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.10.4/python.3.10.4.nupkg",
+        "file_name": "python.3.10.4.nupkg",
+        "sha256": ""
+    },
+    "Python-3.10.3": {
+        "sort_version": "3.10.3",
+        "tag": "3.10-64",
+        "display_name": "Python-3.10.3",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.10.3/python.3.10.3.nupkg",
+        "file_name": "python.3.10.3.nupkg",
+        "sha256": ""
+    },
+    "Python-3.10.2": {
+        "sort_version": "3.10.2",
+        "tag": "3.10-64",
+        "display_name": "Python-3.10.2",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.10.2/python.3.10.2.nupkg",
+        "file_name": "python.3.10.2.nupkg",
+        "sha256": ""
+    },
+    "Python-3.10.1": {
+        "sort_version": "3.10.1",
+        "tag": "3.10-64",
+        "display_name": "Python-3.10.1",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.10.1/python.3.10.1.nupkg",
+        "file_name": "python.3.10.1.nupkg",
+        "sha256": ""
+    },
+    "Python-3.10.0": {
+        "sort_version": "3.10.0",
+        "tag": "3.10-64",
+        "display_name": "Python-3.10.0",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.10.0/python.3.10.0.nupkg",
+        "file_name": "python.3.10.0.nupkg",
+        "sha256": ""
+    },
+    "Python-3.9.13": {
+        "sort_version": "3.9.13",
+        "tag": "3.9-64",
+        "display_name": "Python-3.9.13",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.9.13/python.3.9.13.nupkg",
+        "file_name": "python.3.9.13.nupkg",
+        "sha256": ""
+    },
+    "Python-3.9.12": {
+        "sort_version": "3.9.12",
+        "tag": "3.9-64",
+        "display_name": "Python-3.9.12",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.9.12/python.3.9.12.nupkg",
+        "file_name": "python.3.9.12.nupkg",
+        "sha256": ""
+    },
+    "Python-3.9.11": {
+        "sort_version": "3.9.11",
+        "tag": "3.9-64",
+        "display_name": "Python-3.9.11",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.9.11.1/python.3.9.11.1.nupkg",
+        "file_name": "python.3.9.11.1.nupkg",
+        "sha256": ""
+    },
+    "Python-3.9.10": {
+        "sort_version": "3.9.10",
+        "tag": "3.9-64",
+        "display_name": "Python-3.9.10",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.9.10/python.3.9.10.nupkg",
+        "file_name": "python.3.9.10.nupkg",
+        "sha256": ""
+    },
+    "Python-3.9.9": {
+        "sort_version": "3.9.9",
+        "tag": "3.9-64",
+        "display_name": "Python-3.9.9",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.9.9/python.3.9.9.nupkg",
+        "file_name": "python.3.9.9.nupkg",
+        "sha256": ""
+    },
+    "Python-3.9.8": {
+        "sort_version": "3.9.8",
+        "tag": "3.9-64",
+        "display_name": "Python-3.9.8",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.9.8/python.3.9.8.nupkg",
+        "file_name": "python.3.9.8.nupkg",
+        "sha256": ""
+    },
+    "Python-3.9.7": {
+        "sort_version": "3.9.7",
+        "tag": "3.9-64",
+        "display_name": "Python-3.9.7",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.9.7/python.3.9.7.nupkg",
+        "file_name": "python.3.9.7.nupkg",
+        "sha256": ""
+    },
+    "Python-3.9.6": {
+        "sort_version": "3.9.6",
+        "tag": "3.9-64",
+        "display_name": "Python-3.9.6",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.9.6/python.3.9.6.nupkg",
+        "file_name": "python.3.9.6.nupkg",
+        "sha256": ""
+    },
+    "Python-3.9.5": {
+        "sort_version": "3.9.5",
+        "tag": "3.9-64",
+        "display_name": "Python-3.9.5",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.9.5/python.3.9.5.nupkg",
+        "file_name": "python.3.9.5.nupkg",
+        "sha256": ""
+    },
+    "Python-3.9.4": {
+        "sort_version": "3.9.4",
+        "tag": "3.9-64",
+        "display_name": "Python-3.9.4",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.9.4/python.3.9.4.nupkg",
+        "file_name": "python.3.9.4.nupkg",
+        "sha256": ""
+    },
+    "Python-3.9.3": {
+        "sort_version": "3.9.3",
+        "tag": "3.9-64",
+        "display_name": "Python-3.9.3",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.9.3/python.3.9.3.nupkg",
+        "file_name": "python.3.9.3.nupkg",
+        "sha256": ""
+    },
+    "Python-3.9.2": {
+        "sort_version": "3.9.2",
+        "tag": "3.9-64",
+        "display_name": "Python-3.9.2",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.9.2/python.3.9.2.nupkg",
+        "file_name": "python.3.9.2.nupkg",
+        "sha256": ""
+    },
+    "Python-3.9.1": {
+        "sort_version": "3.9.1",
+        "tag": "3.9-64",
+        "display_name": "Python-3.9.1",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.9.1/python.3.9.1.nupkg",
+        "file_name": "python.3.9.1.nupkg",
+        "sha256": ""
+    },
+    "Python-3.9.0": {
+        "sort_version": "3.9.0",
+        "tag": "3.9-64",
+        "display_name": "Python-3.9.0",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.9.0/python.3.9.0.nupkg",
+        "file_name": "python.3.9.0.nupkg",
+        "sha256": ""
+    },
+    "Python-3.8.10": {
+        "sort_version": "3.8.10",
+        "tag": "3.8-64",
+        "display_name": "Python-3.8.10",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.8.10/python.3.8.10.nupkg",
+        "file_name": "python.3.8.10.nupkg",
+        "sha256": ""
+    },
+    "Python-3.8.9": {
+        "sort_version": "3.8.9",
+        "tag": "3.8-64",
+        "display_name": "Python-3.8.9",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.8.9/python.3.8.9.nupkg",
+        "file_name": "python.3.8.9.nupkg",
+        "sha256": ""
+    },
+    "Python-3.8.8": {
+        "sort_version": "3.8.8",
+        "tag": "3.8-64",
+        "display_name": "Python-3.8.8",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.8.8/python.3.8.8.nupkg",
+        "file_name": "python.3.8.8.nupkg",
+        "sha256": ""
+    },
+    "Python-3.8.7": {
+        "sort_version": "3.8.7",
+        "tag": "3.8-64",
+        "display_name": "Python-3.8.7",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.8.7/python.3.8.7.nupkg",
+        "file_name": "python.3.8.7.nupkg",
+        "sha256": ""
+    },
+    "Python-3.8.6": {
+        "sort_version": "3.8.6",
+        "tag": "3.8-64",
+        "display_name": "Python-3.8.6",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.8.6/python.3.8.6.nupkg",
+        "file_name": "python.3.8.6.nupkg",
+        "sha256": ""
+    },
+    "Python-3.8.5": {
+        "sort_version": "3.8.5",
+        "tag": "3.8-64",
+        "display_name": "Python-3.8.5",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.8.5/python.3.8.5.nupkg",
+        "file_name": "python.3.8.5.nupkg",
+        "sha256": ""
+    },
+    "Python-3.8.4": {
+        "sort_version": "3.8.4",
+        "tag": "3.8-64",
+        "display_name": "Python-3.8.4",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.8.4/python.3.8.4.nupkg",
+        "file_name": "python.3.8.4.nupkg",
+        "sha256": ""
+    },
+    "Python-3.8.3": {
+        "sort_version": "3.8.3",
+        "tag": "3.8-64",
+        "display_name": "Python-3.8.3",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.8.3/python.3.8.3.nupkg",
+        "file_name": "python.3.8.3.nupkg",
+        "sha256": ""
+    },
+    "Python-3.8.2": {
+        "sort_version": "3.8.2",
+        "tag": "3.8-64",
+        "display_name": "Python-3.8.2",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.8.2/python.3.8.2.nupkg",
+        "file_name": "python.3.8.2.nupkg",
+        "sha256": ""
+    },
+    "Python-3.8.1": {
+        "sort_version": "3.8.1",
+        "tag": "3.8-64",
+        "display_name": "Python-3.8.1",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.8.1/python.3.8.1.nupkg",
+        "file_name": "python.3.8.1.nupkg",
+        "sha256": ""
+    },
+    "Python-3.8.0": {
+        "sort_version": "3.8.0",
+        "tag": "3.8-64",
+        "display_name": "Python-3.8.0",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.8.0/python.3.8.0.nupkg",
+        "file_name": "python.3.8.0.nupkg",
+        "sha256": ""
+    },
+    "Python-3.7.9": {
+        "sort_version": "3.7.9",
+        "tag": "3.7-64",
+        "display_name": "Python-3.7.9",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.7.9/python.3.7.9.nupkg",
+        "file_name": "python.3.7.9.nupkg",
+        "sha256": ""
+    },
+    "Python-3.7.8": {
+        "sort_version": "3.7.8",
+        "tag": "3.7-64",
+        "display_name": "Python-3.7.8",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.7.8/python.3.7.8.nupkg",
+        "file_name": "python.3.7.8.nupkg",
+        "sha256": ""
+    },
+    "Python-3.7.7": {
+        "sort_version": "3.7.7",
+        "tag": "3.7-64",
+        "display_name": "Python-3.7.7",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.7.7/python.3.7.7.nupkg",
+        "file_name": "python.3.7.7.nupkg",
+        "sha256": ""
+    },
+    "Python-3.7.6": {
+        "sort_version": "3.7.6",
+        "tag": "3.7-64",
+        "display_name": "Python-3.7.6",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.7.6/python.3.7.6.nupkg",
+        "file_name": "python.3.7.6.nupkg",
+        "sha256": ""
+    },
+    "Python-3.7.5": {
+        "sort_version": "3.7.5",
+        "tag": "3.7-64",
+        "display_name": "Python-3.7.5",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.7.5/python.3.7.5.nupkg",
+        "file_name": "python.3.7.5.nupkg",
+        "sha256": ""
+    },
+    "Python-3.7.4": {
+        "sort_version": "3.7.4",
+        "tag": "3.7-64",
+        "display_name": "Python-3.7.4",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.7.4/python.3.7.4.nupkg",
+        "file_name": "python.3.7.4.nupkg",
+        "sha256": ""
+    },
+    "Python-3.7.3": {
+        "sort_version": "3.7.3",
+        "tag": "3.7-64",
+        "display_name": "Python-3.7.3",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.7.3/python.3.7.3.nupkg",
+        "file_name": "python.3.7.3.nupkg",
+        "sha256": ""
+    },
+    "Python-3.7.2": {
+        "sort_version": "3.7.2",
+        "tag": "3.7-64",
+        "display_name": "Python-3.7.2",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.7.2/python.3.7.2.nupkg",
+        "file_name": "python.3.7.2.nupkg",
+        "sha256": ""
+    },
+    "Python-3.7.1": {
+        "sort_version": "3.7.1",
+        "tag": "3.7-64",
+        "display_name": "Python-3.7.1",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.7.1/python.3.7.1.nupkg",
+        "file_name": "python.3.7.1.nupkg",
+        "sha256": ""
+    },
+    "Python-3.7.0": {
+        "sort_version": "3.7.0",
+        "tag": "3.7-64",
+        "display_name": "Python-3.7.0",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.7.0/python.3.7.0.nupkg",
+        "file_name": "python.3.7.0.nupkg",
+        "sha256": ""
+    },
+    "Python-3.6.8": {
+        "sort_version": "3.6.8",
+        "tag": "3.6-64",
+        "display_name": "Python-3.6.8",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.6.8/python.3.6.8.nupkg",
+        "file_name": "python.3.6.8.nupkg",
+        "sha256": ""
+    },
+    "Python-3.6.7": {
+        "sort_version": "3.6.7",
+        "tag": "3.6-64",
+        "display_name": "Python-3.6.7",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.6.7/python.3.6.7.nupkg",
+        "file_name": "python.3.6.7.nupkg",
+        "sha256": ""
+    },
+    "Python-3.6.6": {
+        "sort_version": "3.6.6",
+        "tag": "3.6-64",
+        "display_name": "Python-3.6.6",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.6.6/python.3.6.6.nupkg",
+        "file_name": "python.3.6.6.nupkg",
+        "sha256": ""
+    },
+    "Python-3.6.5": {
+        "sort_version": "3.6.5",
+        "tag": "3.6-64",
+        "display_name": "Python-3.6.5",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.6.5/python.3.6.5.nupkg",
+        "file_name": "python.3.6.5.nupkg",
+        "sha256": ""
+    },
+    "Python-3.6.4": {
+        "sort_version": "3.6.4",
+        "tag": "3.6-64",
+        "display_name": "Python-3.6.4",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.6.4/python.3.6.4.nupkg",
+        "file_name": "python.3.6.4.nupkg",
+        "sha256": ""
+    },
+    "Python-3.6.3": {
+        "sort_version": "3.6.3",
+        "tag": "3.6-64",
+        "display_name": "Python-3.6.3",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.6.3/python.3.6.3.nupkg",
+        "file_name": "python.3.6.3.nupkg",
+        "sha256": ""
+    },
+    "Python-3.6.2": {
+        "sort_version": "3.6.2",
+        "tag": "3.6-64",
+        "display_name": "Python-3.6.2",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.6.2/python.3.6.2.nupkg",
+        "file_name": "python.3.6.2.nupkg",
+        "sha256": ""
+    },
+    "Python-3.6.1": {
+        "sort_version": "3.6.1",
+        "tag": "3.6-64",
+        "display_name": "Python-3.6.1",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.6.1/python.3.6.1.nupkg",
+        "file_name": "python.3.6.1.nupkg",
+        "sha256": ""
+    },
+    "Python-3.6.0": {
+        "sort_version": "3.6.0",
+        "tag": "3.6-64",
+        "display_name": "Python-3.6.0",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.6.0/python.3.6.0.nupkg",
+        "file_name": "python.3.6.0.nupkg",
+        "sha256": ""
+    },
+    "Python-3.5.4": {
+        "sort_version": "3.5.4",
+        "tag": "3.5-64",
+        "display_name": "Python-3.5.4",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.5.4/python.3.5.4.nupkg",
+        "file_name": "python.3.5.4.nupkg",
+        "sha256": ""
+    },
+    "Python-3.5.3": {
+        "sort_version": "3.5.3",
+        "tag": "3.5-64",
+        "display_name": "Python-3.5.3",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.5.3/python.3.5.3.nupkg",
+        "file_name": "python.3.5.3.nupkg",
+        "sha256": ""
+    },
+    "Python-3.5.2": {
+        "sort_version": "3.5.2",
+        "tag": "3.5-64",
+        "display_name": "Python-3.5.2",
+        "url": "https://api.nuget.org/v3-flatcontainer/python/3.5.2.2/python.3.5.2.2.nupkg",
+        "file_name": "python.3.5.2.2.nupkg",
+        "sha256": ""
+    }
+}
