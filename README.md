@@ -26,3 +26,8 @@ Github主页： https://github.com/itjiedev
 ![当前windows系统详情](Screenshot/systeminfo.jpg)
 ![以Runtime压缩包方式安装python列表](Screenshot/runtime_list.jpg)
 ![以installer安装包方式安装python环境](Screenshot/installer_install.jpg)
+
+#### 捐赠说明
+本系统功能将功能您的建议和我本人的使用体验进行不断BUG修复和功能迭代。如果感觉对您有所帮助，感谢您进行捐赠激励
+![支付宝帐号捐赠](Screenshot/zhifubao.jpg)
+![微信帐号捐赠](Screenshot/weixin.jpg)
