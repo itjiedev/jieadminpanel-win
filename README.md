@@ -20,8 +20,7 @@ Github主页： https://github.com/itjiedev
 特别提醒：建议在发行版中下载提供的zip压缩包或自解压包，勿直接使用平台的zip下载功能，易造成bat文件运行失败。
 
 #### 授权说明
-1. 仅用于个人学习交流，禁止未经援权用于任何方式的商业获利行为或用于生产环境。
-2. 请勿用于商业用途，因使用造成的损失，不承担任何责任。  
+仅用于个人学习交流，请勿用于商业用途，因使用造成的损失，不承担任何责任。  
 
 ![当前windows系统详情](Screenshot/systeminfo.jpg)
 ![以Runtime压缩包方式安装python列表](Screenshot/runtime_list.jpg)
@@ -30,5 +29,4 @@ Github主页： https://github.com/itjiedev
 #### 捐赠说明
 本系统功能将功能您的建议和我本人的使用体验进行不断BUG修复和功能迭代。如果感觉对您有所帮助，感谢您进行捐赠激励
 
-![支付宝帐号捐赠](Screenshot/zhifubao.jpg)   
-![微信帐号捐赠](Screenshot/weixin.jpg)
+![支付宝帐号捐赠](Screenshot/zhifubao.jpg)     ![微信帐号捐赠](Screenshot/weixin.jpg)
