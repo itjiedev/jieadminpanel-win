@@ -14,7 +14,7 @@
         <div class="card-tools pr-2">
 <a href="{% url 'envs_python_runtime:default_reset' %}"
    class="btn btn-outline-info"><i class="far fa-window-restore"></i> 重置默认</a>
-<a href="{% url 'envs_python:pypi_list' %}" class="btn btn-outline-info"><i class="fas fa-cog"></i> 全局PyPi源</a>
+{#<a href="{% url 'envs_python:pypi_list' %}" class="btn btn-outline-info"><i class="fas fa-cog"></i> 全局PyPi源</a>#}
 <a href="{% url 'envs_python_runtime:config' %}" class="btn btn-outline-info"><i class="fas fa-cog"></i>  配置安装</a>
 <a href="{% url 'envs_python_runtime:clearcache' %}" class="btn btn-outline-info">
     <i class="fas fa-trash"></i> 清理下载缓存
@@ -27,9 +27,9 @@
                 <tr>
                     <th>名称</th>
                     <th>版本</th>
+                    <th>默认</th>
                     <th>来源类型</th>
                     <th>解释器路径</th>
-                    <th>默认</th>
                     <th></th>
                 </tr>
             </thead>
@@ -38,11 +38,11 @@
                 <tr{% if version.folder == default_env_python.path %} class="table-success"{% endif %}>
                     <td>{{ name }}-64</td>
                     <td>{{ version.version_major }}.{{ version.version_minor }}.{{ version.version_patch }}</td>
-                    <td>{{ version.create_type_title }}</td>
-                    <td>{{ version.folder }}python.exe</td>
                     <td>
 {% if version.folder == default_env_python.path %}默认{% else %}-{% endif %}
                     </td>
+                    <td>{{ version.create_type_title }}</td>
+                    <td>{{ version.folder }}python.exe</td>
                     <td>
 <a href="{% url 'envs_python_runtime:default_set' name %}"
    class="btn btn-outline-info btn-xs{% if version.folder == default_env_python.path %} disabled{% endif %}">设为默认</a>

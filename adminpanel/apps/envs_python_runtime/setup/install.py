@@ -13,6 +13,12 @@ project_config_dir = panel_root / 'config'
 app_list_path = project_config_dir / 'app_list.json'
 version_json_path = Path(__file__).resolve().parent.parent / 'version.json'
 
+#------------------------------------------------------------------------
+(project_data_dir / app_name).mkdir(exist_ok=True)
+print(project_data_dir / app_name)
+(Path(__file__).resolve().parent.parent / 'cache').mkdir(exist_ok=True)
+
+#------------------------------------------------------------------------
 with open(app_list_path, 'r', encoding='utf-8') as f:
     main_list = json.load(f)
 with open(version_json_path, 'r', encoding='utf-8') as f:
@@ -29,9 +35,6 @@ if check_dependency:
     print(f'缺失依赖应用，请先安装 { dependency_str }')
     input('安装中止...')
     exit()
-#------------------------------------------------------------------------
-(project_data_dir / app_name).mkdir(exist_ok=True)
-(Path(__file__).resolve().parent.parent / 'cache').mkdir(exist_ok=True)
 #------------------------------------------------------------------------
 with open(app_list_path, 'r', encoding='utf-8') as f:
     app_list = json.load(f)

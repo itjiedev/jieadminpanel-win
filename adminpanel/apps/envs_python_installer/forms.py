@@ -84,6 +84,6 @@ class PackageInstallForm(FormBase):
         required=False,
         widget=forms.Select(
             attrs={'class': 'form-control'},
-            choices=(('latest', '自动适配最新版本'),)
+            choices=(('latest', '自动适配版本'),)
         ),
     )

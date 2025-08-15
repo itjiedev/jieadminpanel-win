@@ -1,7 +1,7 @@
 {
   "id": "envs_python_runtime",
   "name": "Python runtime 管理",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Python以runtime包方式安装环境管理",
   "dependency": ["apps.sharedkit", "apps.envs_python"]
 }

@@ -13,12 +13,10 @@ urlpatterns = [
     path('install/form/', views.PythonInstallView.as_view(), name='python_install'),
     path('install/download/', views.PythonDownloadView.as_view(), name='python_download'),
     path('install/run/', views.RunPythonInstallView.as_view(), name='python_run_install'),
-    # path('pypi/list/', views.PypiListView.as_view(), name='pypi_list'),
-    # path('pypi/default/<str:name>/', views.PypiDefaultView.as_view(), name='pypi_default'),
     path('package/list/<str:version>/', views.PackageListView.as_view(), name='package_list'),
     path('package/install/<str:version>/', views.PackageInstallView.as_view(), name='package_install'),
-    path('package/search/<str:version>/', views.PackageSearchView.as_view(), name='package_search'),
     path('package/uninstall/<str:version>/', views.PackageUninstallView.as_view(), name='package_uninstall'),
-    path('clearcache/', views.ClearCacheView.as_view(), name='clear_cache')
+    path('clearcache/', views.ClearCacheView.as_view(), name='clear_cache'),
+    path('package/upgrade/<str:version>/<str:package>/', views.PackageUpgradeView.as_view(), name='package_upgrade')
 
 ]

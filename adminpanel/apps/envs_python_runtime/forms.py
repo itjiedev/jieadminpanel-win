@@ -58,19 +58,3 @@ class ImportForm(FormBase):
         )
     )
 
-class PackageInstallForm(FormBase):
-    """
-    Python包安装表单
-    """
-    package_name = forms.CharField(
-        label="包名",
-        widget=forms.TextInput(attrs={'class': 'form-control', 'lay-verify': 'required', 'lay-reqtext':'请输入包名~'})
-    )
-    package_version = forms.CharField(
-        label="版本",
-        required=False,
-        widget=forms.Select(
-            attrs={'class': 'form-control'},
-            choices=(('latest', '自动适配最新版本'),)
-        ),
-    )

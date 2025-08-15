@@ -48,7 +48,7 @@ layui.use(['jquery', 'layer'], function() {
         $(this).find('i').removeClass('fa-search').addClass('fa-spinner fa-spin');
 
         $.ajax({
-            url: '{% url "envs_python_runtime:package_search" version %}',
+            url: '{% url "envs_python:package_search" version %}',
             type: 'GET',
             data: {
                 'package_name': packageName,

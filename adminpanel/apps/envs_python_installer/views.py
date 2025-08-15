@@ -14,18 +14,18 @@ from django.utils.safestring import mark_safe
 
 from jiefoundation.utils import (
     run_command, get_file_md5, WindowsAPI, set_reg_user_env,
-    get_reg_system_env, get_reg_user_env, ensure_path_separator
+    get_reg_user_env, ensure_path_separator
 )
 from jiefoundation.jiebase import JsonView
-from apps.envs_python.helper import get_pypi_list, get_default_pypi, get_default_env_python, parse_pip_list
+from apps.envs_python.helper import get_default_env_python
 from apps.envs_python.views import EnvsPythonMixin
 
 from .config import (
-    installed_file_path, python_version_file_path, py_installed, py_path,python_download_path,
-    python_cache_dir,py_ini_path, pypi_file, project_python_path, app_base_path
+    installed_file_path, python_download_path,
+    python_cache_dir,py_ini_path
 )
 from .helper import get_python_versions, get_installed_python, python_list_paths
-from .forms import PythonInstallForm, PythonUninstallForm, PackageInstallForm
+from .forms import PythonInstallForm, PythonUninstallForm
 
 app_name = 'envs_python_installer'
 
@@ -297,8 +297,13 @@ class ResetDefaultView(RedirectView):
         return super().get(request, *args, **kwargs)
 
 
-class PackageListView(PythonInstallerMixin, TemplateView):
-    template_name = f'{app_name}/package_list.html'
+from apps.envs_python.views import PackageListMixin
+class PackageListView(PythonInstallerMixin, PackageListMixin):
+    app_namespace = app_name
+
+    def get_python_path(self):
+        version = self.kwargs.get('version')
+        return ensure_path_separator(get_installed_python(version)['path']) + 'python.exe'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -315,26 +320,16 @@ class PackageListView(PythonInstallerMixin, TemplateView):
                 'active': True
             }
         ]
-        version = self.kwargs.get('version')
-        context['packages'] = {}
-        python_version_info = {}
-        with open(installed_file_path, 'r', encoding='utf-8') as f:
-            python_version = json.load(f)
-            python_version_info = python_version[version]
-        current_pip = python_version_info['path'].replace('python.exe','') + r'Scripts\pip.exe'
-        cmd = [current_pip, "list"]
-        result = run_command(cmd)
-        if result['returncode']==0:
-            context['packages'] = parse_pip_list(result['stdout'])
         return context
 
 
-class PackageInstallView(PythonInstallerMixin, FormView):
-    template_name = f'{app_name}/package_install.html'
-    form_class = PackageInstallForm
+from apps.envs_python.views import PackageInstallMixin
+class PackageInstallView(PythonInstallerMixin, PackageInstallMixin):
+    app_namespace = app_name
 
-    def get_success_url(self):
-        return reverse_lazy(f'{app_name}:package_list', kwargs={'version': self.kwargs.get('version')})
+    def get_python_path(self):
+        version = self.kwargs.get('version')
+        return ensure_path_separator(get_installed_python(version)['path']) + 'python.exe'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -359,65 +354,20 @@ class PackageInstallView(PythonInstallerMixin, FormView):
         context['version'] = self.kwargs.get('version')
         return context
 
-    def form_valid(self, form):
+
+from apps.envs_python.views import PackageUninstallMixin
+class PackageUninstallView(PackageUninstallMixin):
+    app_namespace = app_name
+
+    def get_python_path(self):
         version = self.kwargs.get('version')
-        package_name = form.cleaned_data.get('package_name')
-        package_version = form.cleaned_data.get('package_version')
-        installed_info = get_installed_python(version)
-        install_python_path = ensure_path_separator(installed_info['path']) + 'python.exe'
-
-        cmd = [str(install_python_path), "-m", 'pip', 'install']
-        if package_version == 'latest':
-            cmd.append(package_name)
-        else:
-            cmd.append(f"{package_name}=={package_version}")
-        result = run_command(cmd)
-        if result['returncode'] == 0:
-            return super().form_valid(form)
-        else:
-            err_msg  = result['stderr']
-            if '[notice] A new release of pip is available' in err_msg:
-                err_msg = err_msg.split('[notice] A new release of pip is available')[0].replace('\n', '</br>')
-            error_message = f"{result['stdout']}</br>{err_msg}"
-            form.add_error(None, mark_safe(error_message))
-            return self.form_invalid(form)
+        return ensure_path_separator(get_installed_python(version)['path']) + 'python.exe'
 
 
-class PackageSearchView(JsonView):
-    def get(self, request, *args, **kwargs):
-        python_version = self.kwargs.get('version')
-        package_name = request.GET.get('package_name')
-        if package_name:
-            cmd = [str(project_python_path), "-m", 'pip', 'index', 'versions', package_name]
-            print(' '.join(cmd))
-            result = run_command(cmd)
-            if result['returncode']==0:
-                context = {'status': 'success'}
-                version_option_html = '<option value="latest">自动适配最新版本</option>'
-                version_str = ''
-                for line in result['stdout'].split('\n'):
-                    if line.startswith('Available versions'):
-                        version_str = line.split(':')[1].strip()
-                        break
-                for version in version_str.split(','):
-                    version_option_html += f'<option value="{version}">{version}</option>'
-                context['message'] = version_option_html
-                return self.render_to_json_response(context)
-            else:
-                return self.render_to_json_error(message=f"没有找到 {package_name} 名称的包! </br>错误信息为：{result['stderr']}")
-        return self.render_to_json_error(message="参数错误")
+from apps.envs_python.views import PackageUpgradeMixin
+class PackageUpgradeView(PackageUpgradeMixin):
+    app_namespace = app_name
 
-
-class PackageUninstallView(RedirectView):
-    def get_redirect_url(self, *args, **kwargs):
-        return reverse_lazy(f'{app_name}:package_list', kwargs={'version': self.kwargs.get('version')})
-
-    def get(self, request, *args, **kwargs):
+    def get_python_path(self):
         version = self.kwargs.get('version')
-        package = request.GET.get('package')
-        if package:
-            installed_info = get_installed_python(version)
-            cmd = [ensure_path_separator(str(installed_info['path'])) + 'python.exe', "-m", 'pip', 'uninstall', package, '-y']
-            result = run_command(cmd)
-        return super().get(request, *args, **kwargs)
-
+        return ensure_path_separator(get_installed_python(version)['path']) + 'python.exe'
