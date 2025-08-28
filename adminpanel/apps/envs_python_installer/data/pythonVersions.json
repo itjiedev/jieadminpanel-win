@@ -1,14 +1,14 @@
 {
-  "3.13.6": {
+  "3.13.7": {
     "id": "python-3.13-64",
-    "sort-version": "3.13.6",
+    "sort-version": "3.13.7",
     "tag": "3.13-64",
-    "display-name": "Python 3.13.6",
-    "installer-file-name": "python-3.13.6-amd64.exe",
-    "md5sum": "adf553e6af2ba72bfb335f87ff15a564",
+    "display-name": "Python 3.13.7",
+    "installer-file-name": "python-3.13.7-amd64.exe",
+    "md5sum": "1da92e43c79f3d1539dd23a3c14bf3f0",
     "version_major": 3,
     "version_minor": 13,
-    "version_patch": 6
+    "version_patch": 7
   },
   "3.12.10": {
     "id": "python-3.12-64",
