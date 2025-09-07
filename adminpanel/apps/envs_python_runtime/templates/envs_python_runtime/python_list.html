@@ -1,5 +1,82 @@
 {% extends 'envs_python/layout_envs_python.html' %}
 
+{% block js_code %}
+<script>$(document).ready(function() {
+    // 复制完整路径功能
+    $('.copy-full-path-btn').on('click', function() {
+        var fullPath = $(this).data('full-path');
+        copyToClipboard(fullPath);
+    });
+});
+
+// 使用Clipboard API复制文本
+function copyToClipboard(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+        // 使用现代Clipboard API
+        navigator.clipboard.writeText(text).then(function() {
+            showMessage('路径已复制到剪贴板', 'success');
+        }, function(err) {
+            console.error('复制失败:', err);
+            showMessage('复制失败', 'error');
+        });
+    } else {
+        fallbackCopyTextToClipboard(text);
+    }
+}
+
+function fallbackCopyTextToClipboard(text) {
+    var textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-999999px";
+    textArea.style.top = "-999999px";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    try {
+        var successful = document.execCommand('copy');
+        if (successful) {
+            showMessage('路径已复制到剪贴板', 'success');
+        } else {
+            showMessage('复制失败', 'error');
+        }
+    } catch (err) {
+        showMessage('复制失败', 'error');
+        console.error('复制失败:', err);
+    }
+
+    document.body.removeChild(textArea);
+}
+
+// 显示消息提示
+function showMessage(message, type) {
+    // 检查是否已存在消息容器，如果不存在则创建
+    if ($('#copy-alert').length === 0) {
+        $('body').append('<div id="copy-alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>');
+    }
+
+    var alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+    var alertHtml = `        <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+            ${message}            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    `;
+
+    var $alert = $(alertHtml);
+    $('#copy-alert').append($alert);
+
+    // 3秒后自动移除
+    setTimeout(function() {
+        $alert.fadeOut(function() {
+            $(this).remove();
+        });
+    }, 3000);
+}
+</script>
+{% endblock %}
+
 {% block pagecontent %}
 {{ block.super }}
 {% include 'include_messages.html' %}
@@ -14,7 +91,6 @@
         <div class="card-tools pr-2">
 <a href="{% url 'envs_python_runtime:default_reset' %}"
    class="btn btn-outline-info"><i class="far fa-window-restore"></i> 重置默认</a>
-{#<a href="{% url 'envs_python:pypi_list' %}" class="btn btn-outline-info"><i class="fas fa-cog"></i> 全局PyPi源</a>#}
 <a href="{% url 'envs_python_runtime:config' %}" class="btn btn-outline-info"><i class="fas fa-cog"></i>  配置安装</a>
 <a href="{% url 'envs_python_runtime:clearcache' %}" class="btn btn-outline-info">
     <i class="fas fa-trash"></i> 清理下载缓存
@@ -28,26 +104,41 @@
                     <th>名称</th>
                     <th>版本</th>
                     <th>默认</th>
-                    <th>来源类型</th>
                     <th>解释器路径</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
-{% for name, version in python_list.items %}
+{% for uuid, version in python_list.items %}
                 <tr{% if version.folder == default_env_python.path %} class="table-success"{% endif %}>
-                    <td>{{ name }}-64</td>
+                    <td>{{ is_path }}
+{% if not version.is_path %}<i class="fas fa-exclamation text-danger" title="路径异常"></i>{% endif %}
+ {% if version.name %}{{ version.name|default_if_none:"-" }}{% else %}{{ version.version }}{% endif %}
+                    </td>
                     <td>{{ version.version_major }}.{{ version.version_minor }}.{{ version.version_patch }}</td>
                     <td>
 {% if version.folder == default_env_python.path %}默认{% else %}-{% endif %}
                     </td>
-                    <td>{{ version.create_type_title }}</td>
-                    <td>{{ version.folder }}python.exe</td>
                     <td>
-<a href="{% url 'envs_python_runtime:default_set' name %}"
-   class="btn btn-outline-info btn-xs{% if version.folder == default_env_python.path %} disabled{% endif %}">设为默认</a>
-<a href="{% url 'envs_python_runtime:package_list' name %}" class="btn btn-outline-info btn-xs">包管理</a>
-<a href="{% url 'envs_python_runtime:uninstall' name %}" class="btn btn-outline-info btn-xs">卸载</a>
+<button class="btn btn-outline-secondary btn-xs copy-full-path-btn" data-full-path="{{ version.folder }}python.exe" title="复制完整路径">
+    <i class="far fa-copy"></i>
+</button>
+<a href="{% url 'envs_python_runtime:open_terminal' %}?path={{ version.folder }}" class="btn btn-outline-secondary btn-xs" title="打开终端命令行">
+    <i class="fa fa-terminal fa-xs"></i>
+</a>
+{{ version.folder }}python.exe
+                    </td>
+                    <td>
+{% if version.is_path %}
+<a href="{% url 'envs_python_runtime:default_set' uuid %}"
+   class="btn btn-outline-info btn-xs{% if version.folder == default_env_python.path %} disabled{% endif %}">默认</a>
+<a href="{% url 'envs_python_runtime:package_list' uuid %}" class="btn btn-outline-info btn-xs{% if not version.is_path %} disabled{% endif %}">包管理</a>
+<a href="{% url 'envs_python_runtime:name_edit' uuid %}" class="btn btn-outline-info btn-xs">名称</a>
+<a href="{% url 'envs_python_runtime:uninstall' uuid %}" class="btn btn-outline-info btn-xs">卸载</a>
+{% endif %}
+<a href="{% url 'envs_python_runtime:delete' %}?uuid={{ uuid }}" class="btn btn-outline-info btn-xs"
+   onclick="return confirm('仅删除配置信息，实际环境您还可以使得导入功能重新导入。\r\n确定要删除吗？');">删除</a>
+
                      </td>
                 </tr>
 {% endfor %}

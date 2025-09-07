@@ -1,0 +1,129 @@
+{% extends 'envs_python/layout_envs_python.html' %}
+
+{% block js_code %}
+<script>
+layui.use(['jquery', 'layer'], function() {
+    var $ = layui.jquery;
+    var layer = layui.layer;
+
+    function parseXHRError(xhr) {
+    let message = '未知错误';
+
+    try {
+        const response = JSON.parse(xhr.responseText);
+        if (response && response.message) {
+            message = response.message;
+        } else if (xhr.statusText) {
+            message = xhr.statusText;
+        }
+    } catch (e) {
+        if (xhr.statusText) {
+            message = xhr.statusText;
+        }
+        console.error('无法解析错误响应:', xhr.responseText);
+    }
+
+    return message;
+}
+    $('#btn_submit').on('click', function() {
+        var packageName = $('#id_package_name').val();
+        if (!packageName) {
+            layer.alert('请输入包名', {title: false, icon: 2, shade: 0.6});
+            return;
+        }
+        $('#form_package').submit();
+    })
+
+    $('#btn_search_package').on('click', function() {
+        var packageName = $('#id_package_name').val();
+
+        if (!packageName) {
+            layer.msg('请输入包名', {icon: 2});
+            return;
+        }
+        var loading = layer.load(1, {shade: 0.6});
+
+        $('#non_field_error').hide();
+        $(this).prop('disabled', true);
+        $(this).find('i').removeClass('fa-search').addClass('fa-spinner fa-spin');
+
+        $.ajax({
+            url: '{% url "envs_python_runtime:package_search" version %}',
+            type: 'GET',
+            data: {
+                'package_name': packageName,
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.status == 'success') {
+                    $('#id_package_version').html(response.message);
+                    layer.close(loading);
+                    $('#btn_search_package').prop('disabled', false);
+                    $('#btn_search_package').find('i').removeClass('fa-spinner fa-spin').addClass('fa-search');
+                    $('#btn_submit').prop('disabled', false);
+                }
+            },
+            error: function(xhr, status, error) {
+                 const message = parseXHRError(xhr);
+                 layer.alert(message, {
+                    title:false,
+                    icon: 2,
+                    shadeClose: false,
+                });
+                layer.close(loading);
+                $('#btn_search_package').prop('disabled', false);
+                $('#btn_search_package').find('i').removeClass('fa-spinner fa-spin').addClass('fa-search');
+            },
+        });
+    });
+});
+</script>
+{% endblock %}
+
+{% block pagecontent %}
+    {{ block.super }}
+{% include 'include_messages.html' %}
+<div class="card">
+<div class="card-header">
+  <h3 class="card-title">安装 <span class="text-danger"> Python {{ version }} </span>包</h3>
+</div>
+<form id="form_package" method="post" class="form-horizontal">{% csrf_token %}
+    <div class="card-body">
+        <div class="form-group row">
+            <label for="{{ form.package_name.for_label }}" class="col-sm-1 col-form-label">{{ form.package_name.label }}</label>
+            <div class="col-sm-4">
+                <div class="input-group">
+                    {{ form.package_name }}
+                    <div class="input-group-append">
+                    <button type="button" class="input-group-text" id="btn_search_package" name="search_package" lay-on="search_package"><i class="fas fa-search"></i></button>
+                  </div>
+                    {{ form.package_name_error }}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="{{ form.package_version.for_label }}" class="col-sm-1 col-form-label">
+                {{ form.package_version.label }}
+            </label>
+            <div class="col-sm-4">{{ form.package_version }}</div>
+        </div>
+
+    </div>
+    <div class="card-footer">
+        <button type="button" id="btn_submit" class="btn btn-primary">安装</button>
+        <a href="{% url 'envs_python_runtime:package_list' version %}" class="btn btn-default float-right">取消</a>
+    </div>
+</form>
+</div>
+{% if form.non_field_errors %}
+<div class="card" id="non_field_error">
+<div class="card-body bg-dark">
+    <p>安装失败，详细安装失败信息如下：</p>
+    <hr/>
+    <div>{{ form.non_field_errors|safe }}</div>
+</div>
+</div>
+{% endif %}
+
+
+{% endblock %}

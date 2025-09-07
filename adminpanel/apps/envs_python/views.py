@@ -1,4 +1,5 @@
 import json
+import os.path
 from  django.conf import settings
 from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView, RedirectView
@@ -55,12 +56,17 @@ class SetPypiDefaultView(RedirectView):
 class PythonRunMixin:
     python_path = None
     app_namespace = None
+    env_info = None
 
     def get_python_path(self):
-        return self.python_path
+        if os.path.exists(self.python_path): return self.python_path
+        return None
 
     def get_app_namespace(self):
         return self.app_namespace
+
+    def get_env_info(self):
+        return self.env_info
 
 
 class PackageListMixin(PythonRunMixin, TemplateView):
@@ -68,8 +74,12 @@ class PackageListMixin(PythonRunMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['app_namespace'] = self.get_app_namespace()
-        context['packages'] = get_package_list(self.get_python_path())
+        try:
+            context['app_namespace'] = self.get_app_namespace()
+            context['packages'] = get_package_list(self.get_python_path())
+            context['env_info'] = self.get_env_info()
+        except Exception as e:
+            messages.warning(self.request, f"显示包列表失败! </br>错误信息为：{e}")
         return context
 
 
@@ -83,6 +93,8 @@ class PackageInstallMixin(PythonRunMixin, FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['app_namespace'] = self.get_app_namespace()
+        context['env_info'] = self.get_env_info()
+        context['is_path'] = os.path.exists(self.get_python_path())
         return context
 
     def form_valid(self, form):
@@ -160,3 +172,23 @@ class PackageUpgradeMixin(PythonRunMixin, RedirectView):
             else:
                 messages.warning(self.request, f"升级失败！错误信息为：{result['stderr']}")
         return super().get(request, *args, **kwargs)
+
+
+from .forms import PackagePipExportForm
+class PackagePipExportView(PythonRunMixin, FormView):
+    form_class = PackagePipExportForm
+    template_name = 'envs_python/package_export.html'
+
+    def get_success_url(self):
+        return reverse_lazy(f'{self.get_app_namespace()}:package_list', kwargs={'version': self.kwargs.get('version')})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['app_namespace'] = self.get_app_namespace()
+        context['env_info'] = self.get_env_info()
+        return context
+
+    def form_valid(self, form):
+        save_path = form.cleaned_data.get('save_path')
+        python_path = self.get_python_path()
+        cmd = [python_path, "-m", 'pip', 'freeze ', '>', f'{save_path}requirements.txt']

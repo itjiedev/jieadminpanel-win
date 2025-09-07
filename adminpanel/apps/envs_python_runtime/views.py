@@ -1,16 +1,17 @@
 import json,os
 import shutil
 from pathlib import Path
+import uuid
 
 from django.contrib import messages
-from django.views.generic.edit import FormView
+from django.views.generic.edit import FormView, DeleteView
 from django.views.generic.base import TemplateView, RedirectView
 from django.urls import reverse_lazy
 
 from jiefoundation.jiebase import JsonView
 from jiefoundation.utils import (
     check_sha256, download_file_with_retry,get_reg_user_env,run_command,
-    set_reg_user_env, ensure_path_separator
+    set_reg_user_env, ensure_path_separator, remove_trailing_separator
 )
 
 from apps.envs_python.views import EnvsPythonMixin
@@ -19,7 +20,7 @@ from .config import cache_dir, user_installed_json,app_data_dir, create_type
 from .helper import (
     update_version_info, get_versions, get_installed, get_user_config,get_downloadsite, user_config_json
 )
-from .forms import InstallConfigForm, UninstallForm, ImportForm
+from .forms import InstallConfigForm, UninstallForm, ImportForm, PythonForm
 
 
 app_name = 'envs_python_runtime'
@@ -108,7 +109,7 @@ class VersionsListView(PythonRuntimeMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['page_title'] = '可安装版本列表'
-        context['installed'] = list(get_installed().keys())
+        context['installed'] = [item['version'] for item in get_installed().values()]
         context['versions'] = get_versions()
         context['default_env_python'] = get_default_env_python()
         context['breadcrumb'] = [
@@ -160,8 +161,9 @@ class DownloadView(JsonView):
     """
     下载安装压缩包
     """
-    def get(self, request, *args, **kwargs):
-        version = request.GET.get('version')
+    def post(self, request, *args, **kwargs):
+        name = request.POST.get('name')
+        version = request.POST.get('version')
         version_info = get_versions(version)
         user_config = get_user_config()
         install_file_path = cache_dir / version_info['file_name']
@@ -183,16 +185,69 @@ class DownloadView(JsonView):
         return self.render_to_json_success('下载成功')
 
 
+class PythonInstallView(PythonRuntimeMixin, FormView):
+    """
+    Python安装表单
+    """
+    form_class = PythonForm
+    template_name = f'{app_name}/python_install.html'
+    success_url = reverse_lazy(f'{app_name}:python_list')
+
+    def get_initial(self):
+        initial = super().get_initial()
+        version = self.kwargs.get('version')
+        initial['version'] = self.kwargs.get('version')
+        install_config = get_user_config()
+        import string
+        import random
+        folder_name = version
+        if os.path.exists(os.path.join(install_config['install_folder'], folder_name)):
+            chars = string.ascii_lowercase + string.digits
+            random_suffix = ''.join(random.choices(chars, k=3))
+            folder_name = f"{version}_{random_suffix}"
+
+        initial['folder'] = os.path.join(install_config['install_folder'], folder_name)
+        return initial.copy()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = '安装Python'
+        context['versions'] = get_versions()
+        context['default_env_python'] = get_default_env_python()
+        context['breadcrumb'] = [
+            {
+                'title': 'Runtime环境管理',
+                'href': reverse_lazy(f'{app_name}:config_check'),
+                'active': False
+            },
+            {
+                'title': 'Python版本列表',
+                'href': reverse_lazy(f'{app_name}:versions_list'),
+                'active': False
+            },
+            {
+                'title': '安装Python',
+                'href': reverse_lazy(f'{app_name}:python_install'),
+                'active': True
+            }
+        ]
+        return context
+
+
 class InstallView(JsonView):
     """
     安装python
     """
-    def get(self, request, *args, **kwargs):
-        version = request.GET.get('version')
+    def post(self, request, *args, **kwargs):
+        name = request.POST.get('name').strip()
+        version = request.POST.get('version')
+        folder = request.POST.get('folder')
+        if not name:  name = version
+
         version_info = get_versions(version)
         install_file_path = cache_dir / version_info['file_name']
         user_config = get_user_config()
-        install_folder = Path(user_config['install_folder'])
+        install_folder = Path(folder)
         sha256 = version_info['sha256']
 
         if not install_file_path.exists():
@@ -201,54 +256,113 @@ class InstallView(JsonView):
             if sha256:
                 if not check_sha256(install_file_path, version_info['sha256']):
                     return self.render_to_json_error('安装时sha256校验失败！')
-        try:
-            extract_path = install_folder / version
-            if extract_path.exists():
-                return self.render_to_json_error('该版本已存在！')
-            from .urls import app_name
-            from jiefoundation.utils import extract_from_zip, move_and_rename_folder
+        # try:
+        extract_path = install_folder
+        if extract_path.exists():
+            return self.render_to_json_error('该版本已存在！')
 
-            result = False
-            if Path(install_file_path).suffix.lower() == '.zip':
-                result = extract_from_zip(install_file_path, extract_to=extract_path)
-            if Path(install_file_path).suffix.lower() == '.nupkg':
-                version_tmp_path = cache_dir / version
-                result = extract_from_zip(install_file_path, extract_to=version_tmp_path )
-                if result:
-                    move_and_rename_folder(version_tmp_path / 'tools', install_folder, new_name=version)
-                    shutil.rmtree(version_tmp_path)
+        from .urls import app_name
+        from jiefoundation.utils import extract_from_zip, move_and_rename_folder
+
+        result = False
+        if Path(install_file_path).suffix.lower() == '.zip':
+            result = extract_from_zip(install_file_path, extract_to=folder)
+        if Path(install_file_path).suffix.lower() == '.nupkg':
+            install_dir =os.path.dirname(folder)
+            folder_name = folder.split(os.sep)[-1]
+            version_tmp_path = cache_dir / folder_name
+
+            if version_tmp_path.exists():
+                shutil.rmtree(version_tmp_path)
+            result = extract_from_zip(install_file_path, extract_to=version_tmp_path )
             if result:
-                # 配置运行 get-pip.py
-                from jiefoundation.utils import run_command, copy_file_content_only
+                move_and_rename_folder(version_tmp_path / 'tools', install_dir, new_name=folder_name)
+                shutil.rmtree(version_tmp_path)
 
-                version_split = version_info['sort_version'].split('.')
-                version_major = int(version_split[0])
-                version_minor = int(version_split[1])
-                get_pip_file = app_data_dir / 'get-pip' / 'get-pip.py'
-                if version_minor == 3 and version_major <= 8:
-                    get_pip_file = app_data_dir / 'get-pip' / f'get-pip-{version_major}.{version_minor}.py'
-                python_interpreter = install_folder / version / 'python.exe'
-                result = run_command(
-                    [python_interpreter, get_pip_file, '--no-warn-script-location'],
-                    shell=True, cwd=install_folder / version
-                )
-                installed_python = {}
-                with open(user_installed_json, 'r', encoding='utf-8') as f:
-                    installed_python = json.load(f)
-                installed_python[version] = {
-                    'version': version,
-                    'folder': ensure_path_separator(str(extract_path)),
-                    'create_type': 'install',
-                    'create_type_title': create_type['install'],
-                    'version_major': int(version_split[0]),
-                    'version_minor': int(version_split[1]),
-                    'version_patch': int(version_split[2]),
-                }
-                with open(user_installed_json, 'w', encoding='utf-8') as f:
-                    json.dump(installed_python, f, ensure_ascii=False, indent=4)
-            return self.render_to_json_success('解压成功~')
-        except Exception as e:
-            return self.render_to_json_error(f'解压失败: {str(e)}')
+        if result:
+            # 配置运行 get-pip.py
+            from jiefoundation.utils import run_command, copy_file_content_only
+            version_split = version_info['sort_version'].split('.')
+            version_major = int(version_split[0])
+            version_minor = int(version_split[1])
+            get_pip_file = app_data_dir / 'get-pip' / 'get-pip.py'
+            if version_minor == 3 and version_major <= 8:
+                get_pip_file = app_data_dir / 'get-pip' / f'get-pip-{version_major}.{version_minor}.py'
+
+            python_interpreter = Path(folder) / 'python.exe'
+            result = run_command(
+                [python_interpreter, get_pip_file, '--no-warn-script-location'], cwd=folder
+            )
+            installed_python = {}
+            with open(user_installed_json, 'r', encoding='utf-8') as f:
+                installed_python = json.load(f)
+            unique_identifier = str(uuid.uuid4())
+            installed_python[unique_identifier] = {
+                'name': name,
+                'version': version,
+                'folder': ensure_path_separator(str(extract_path)),
+                'create_type': 'install',
+                'create_type_title': create_type['install'],
+                'version_major': int(version_split[0]),
+                'version_minor': int(version_split[1]),
+                'version_patch': int(version_split[2]),
+            }
+            with open(user_installed_json, 'w', encoding='utf-8') as f:
+                json.dump(installed_python, f, ensure_ascii=False, indent=4)
+        return self.render_to_json_success('安装成功~')
+        # except Exception as e:
+        #     return self.render_to_json_error(f'解压失败: {str(e)}')
+
+
+class NameEditView(PythonRuntimeMixin, FormView):
+    form_class = PythonForm
+    template_name = f'{app_name}/update_name.html'
+    success_url = reverse_lazy(f'{app_name}:python_list')
+
+    def get_initial(self):
+        initial = super().get_initial()
+        unique_identifier = self.kwargs.get('uuid')
+        installed_python = get_installed(unique_identifier)
+        if installed_python:
+            if 'name' in installed_python:
+                initial['name'] = installed_python['name']
+            else:
+                initial['name'] = installed_python['version']
+            initial['folder'] = installed_python['folder']
+            initial['version'] = installed_python['version']
+        return initial.copy()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = '修改环境信息'
+        context['breadcrumb'] = [
+            {
+                'title': 'Runtime环境管理',
+                'href': reverse_lazy(f'{app_name}:config_check'),
+                'active': False
+            },
+            {
+                'title': '修改环境信息',
+                'href': '',
+                'active': True
+            }
+        ]
+        return context
+
+    def form_valid(self, form):
+        unique_identifier = self.kwargs.get('uuid')
+        name = form.cleaned_data.get('name')
+        installed_dict = get_installed()
+        if unique_identifier in installed_dict:
+            installed_dict[unique_identifier]['name'] = name
+            with open(user_installed_json, 'w', encoding='utf-8') as f:
+                json.dump(installed_dict, f, ensure_ascii=False, indent=4)
+
+            messages.success(self.request, '环境标题修改成功~')
+        else:
+            form.add_error('name', '没有找到需要修改的环境~')
+            return super().form_invalid(form)
+        return super().form_valid(form)
 
 
 class SetDefaultView(RedirectView):
@@ -282,6 +396,18 @@ class UninstallView(PythonRuntimeMixin, FormView):
     def form_valid(self, form):
         version = self.kwargs.get('version')
         installed_info = get_installed(version)
+
+        if os.path.exists(installed_info['folder']):
+            # 删除安装目录
+            shutil.rmtree(installed_info['folder'])
+        else:
+            if 'name' in installed_info:
+                name = installed_info['name']
+            else:
+                name = installed_info['version']
+            messages.warning(
+                self.request, f'{name} 安装目录{installed_info['folder']}不存在~仅删除安装信息~'
+            )
         # 删除环境变量
         get_user_env = get_reg_user_env('PATH').split(';')
         for item in get_user_env[:]:
@@ -294,8 +420,6 @@ class UninstallView(PythonRuntimeMixin, FormView):
         del installed_python[version]
         with open(user_installed_json, 'w', encoding='utf-8') as f:
             json.dump(installed_python, f, ensure_ascii=False, indent=4)
-        # 删除安装目录
-        shutil.rmtree(installed_info['folder'])
 
         return super().form_valid(form)
 
@@ -333,6 +457,7 @@ class ImportView(PythonRuntimeMixin, FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['page_title'] = '导入Python环境'
+        context['startpath'] = get_user_config('install_folder').replace("\\", '\\\\')
         return  context
 
     def form_valid(self, form):
@@ -343,9 +468,13 @@ class ImportView(PythonRuntimeMixin, FormView):
                 import_version = run_command([import_python_file, '-V'])['stdout'].split(maxsplit=1)[1].strip()
                 import_version_list = import_version.split('.')
                 import_name = f'Python-{import_version}'
-                installed_list = get_installed()
-                if import_name not in installed_list:
-                    installed_list[import_name] = {
+                installed_dict = get_installed()
+                folder_list = [item['folder'] for item in installed_dict.values()]
+
+                if ensure_path_separator(import_dir) not in folder_list:
+                    unique_identifier = str(uuid.uuid4())
+                    installed_dict[unique_identifier] = {
+                        'name': import_name,
                         'version': import_name,
                         'folder': ensure_path_separator(import_dir),
                         'create_type': 'import',
@@ -355,9 +484,9 @@ class ImportView(PythonRuntimeMixin, FormView):
                         'version_patch': int(import_version_list[2]),
                     }
                     with open(user_installed_json, 'w', encoding='utf-8') as f:
-                        json.dump(installed_list, f, ensure_ascii=False, indent=4)
+                        json.dump(installed_dict, f, ensure_ascii=False, indent=4)
                 else:
-                    form.add_error('import_dir', '存在已安装信息记录！请检查是否选择错误~')
+                    form.add_error('import_dir', '存在已安装路径记录！请检查是否选择错误~')
                     return super().form_invalid(form)
             else:
                 form.add_error('import_dir', '所选择的目录没有 python.exe 解释器文件~')
@@ -370,8 +499,11 @@ class PackageListView(PythonRuntimeMixin, PackageListMixin):
     app_namespace = app_name
 
     def get_python_path(self):
-        python_version_info = get_installed()[self.kwargs.get('version')]
+        python_version_info = get_installed(self.kwargs.get('version'))
         return f'{ensure_path_separator(python_version_info["folder"])}Python.exe'
+
+    def get_env_info(self):
+        return get_installed(self.kwargs.get('version'))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -397,8 +529,10 @@ class PackageInstallView(PythonRuntimeMixin, PackageInstallMixin):
 
     def get_python_path(self):
         installed_info = get_installed(self.kwargs.get('version'))
-        print(installed_info)
         return ensure_path_separator(installed_info['folder']) + 'python.exe'
+
+    def get_env_info(self):
+        return get_installed(self.kwargs.get('version'))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -440,3 +574,51 @@ class PackageUpgradeView(PackageUpgradeMixin):
     def get_python_path(self):
         version = self.kwargs.get('version')
         return ensure_path_separator(get_installed(version)['folder']) + 'python.exe'
+
+
+class  OpenTerminal(RedirectView):
+    """
+    根据传入的path路径打开终端窗口
+    """
+    def get(self, request, *args, **kwargs):
+        import os
+        # 从请求中获取路径参数
+        path = request.GET.get('path') or request.POST.get('path')
+        if not path or not os.path.exists(path):
+            messages.error(request, '路径不存在')
+            self.url = reverse_lazy(f'{app_name}:python_list')
+        else:
+            # 确保路径是绝对路径且存在
+            abs_path = os.path.abspath(path)
+            try:
+                # 在Windows上打开CMD窗口
+                run_command(f'start cmd /k cd /d "{abs_path}"', shell=True)
+            except Exception as e:
+                messages.error(request, f'打开终端失败: {str(e)}')
+            self.url = reverse_lazy(f'{app_name}:python_list')
+        return super().get(request, *args, **kwargs)
+
+
+class PythonDeleteView(RedirectView):
+    """
+    根据传入的path路径删除Python配置，不会删除实际环境
+    """
+    url = reverse_lazy(f'{app_name}:python_list')
+
+    def get(self, request, *args, **kwargs):
+        uuid_name = request.GET.get('uuid')
+        installed_dict = get_installed()
+        if uuid_name in installed_dict:
+            if 'name' in installed_dict[uuid_name]:
+                name = installed_dict[uuid_name]['name']
+            else:
+                name = installed_dict[uuid_name]['version']
+
+            del installed_dict[uuid_name]
+
+            with open(user_installed_json, 'w', encoding='utf-8') as f:
+                json.dump(installed_dict, f, ensure_ascii=False, indent=4)
+            messages.success(request, f'{name}删除成功')
+        else:
+            messages.error(request, '删除失败~没有找到要删除的记录~')
+        return super().get(request, *args, **kwargs)

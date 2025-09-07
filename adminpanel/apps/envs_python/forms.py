@@ -1,4 +1,3 @@
-
 from django import forms
 from jiefoundation.forms import FormBase
 
@@ -18,4 +17,13 @@ class PackageInstallForm(FormBase):
             attrs={'class': 'form-control'},
             choices=(('latest', '自动适配版本'),)
         ),
+    )
+
+class PackagePipExportForm(FormBase):
+    """
+    Python包导出表单
+    """
+    save_path = forms.CharField(
+        label="保存路径",
+        widget=forms.TextInput(attrs={'class': 'form-control', 'lay-verify': 'required', 'lay-reqtext':'请选择保存路径~'})
     )

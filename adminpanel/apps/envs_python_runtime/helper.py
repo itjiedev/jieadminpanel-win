@@ -81,14 +81,20 @@ def get_versions(version=None):
     return versions
 
 
-def get_installed(version=None):
+def get_installed(unique_identifier=None):
     """
     读取已安装的版本信息json文件，返回字典
     """
     with open(user_installed_json, 'r', encoding='utf-8') as f:
         installed = json.load(f)
-    if version and (version in installed):
-        return installed[version]
+    for unique_name, info in installed.items():
+        installed[unique_name]['is_path'] = os.path.exists(info['folder'])
+    if unique_identifier:
+        if unique_identifier in installed:
+            return installed[unique_identifier]
+        else:
+            return None
+
     return installed
 
 def get_available_versions():

@@ -17,7 +17,7 @@ def download_sites():
 class InstallConfigForm(FormBase):
     install_folder = forms.CharField(
         label="安装目录",
-        help_text="所有的版本都将经一安装到所选的目录中。建议使用空白文件夹~",
+        help_text="所有的版本都将统一安装到所选的目录中。建议使用空白文件夹~",
         widget=forms.TextInput(
             attrs={'class': 'form-control', 'lay-verify': 'required', 'lay-reqtext':'请选择安装文件夹~'}
         )
@@ -58,3 +58,28 @@ class ImportForm(FormBase):
         )
     )
 
+
+from .helper import get_versions
+class PythonForm(FormBase):
+    """
+    安装Python版本表单
+    """
+    name = forms.CharField(
+        label="环境标题",
+        help_text='留空会自动以版本号作为标题',
+        widget=forms.TextInput(
+            attrs={'class': 'form-control'}
+        )
+    )
+    version = forms.CharField(
+        label="Python版本",
+        widget=forms.TextInput(
+            attrs={'class': 'form-control', 'readonly':'True', 'lay-verify': 'required', 'lay-reqtext':'Python版本不能为空~'},
+        )
+    )
+    folder = forms.CharField(
+        label="安装路径",
+        widget=forms.TextInput(
+            attrs={'class': 'form-control', 'readonly':'True', 'lay-verify': 'required', 'lay-reqtext':'路径不能为空~'},
+        )
+    )

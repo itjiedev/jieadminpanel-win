@@ -1,14 +1,14 @@
 {
     "systeminfo": {
         "id": "systeminfo",
-        "title": "\u7cfb\u7edf\u4fe1\u606f",
+        "title": "系统信息",
         "icon": "fab fa-windows",
         "url": "home",
         "rules": []
     },
     "project": {
         "id": "project",
-        "title": "\u9879\u76ee\u7ba1\u7406",
+        "title": "项目管理",
         "icon": "fas fa-project-diagram",
         "url": "",
         "rules": [],
@@ -16,15 +16,38 @@
     },
     "runtime_envs": {
         "id": "runtime_envs",
-        "title": "\u8fd0\u884c\u73af\u5883",
+        "title": "运行环境",
         "icon": "fas fa-code",
         "url": "",
         "rules": [],
-        "children": {}
+        "children": {
+            "envs_python": {
+                "id": "envs_python",
+                "title": "Python",
+                "url": "envs_python_runtime:config_check",
+                "rules": [],
+                "children": {
+                    "category": {
+                        "envs_python_runtime": {
+                            "id": "envs_python_runtime",
+                            "title": "Runtime环境管理",
+                            "url": "envs_python_runtime:config_check",
+                            "rules": []
+                        },
+                        "envs_python_installer": {
+                            "id": "envs_python_installer",
+                            "title": "安装包环境管理",
+                            "url": "envs_python_installer:python_list",
+                            "rules": []
+                        }
+                    }
+                }
+            }
+        }
     },
     "database": {
         "id": "database",
-        "title": "\u6570\u636e\u5e93",
+        "title": "数据库",
         "icon": "fas fa-database",
         "url": "",
         "rules": [],

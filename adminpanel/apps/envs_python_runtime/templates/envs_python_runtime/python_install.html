@@ -1,0 +1,124 @@
+{% extends 'envs_python/layout_envs_python.html' %}
+
+{% block js_code %}
+<script>
+layui.use(function(){
+  var $ = layui.$;
+  var layer = layui.layer;
+  var form = layui.form;
+  var util = layui.util;
+
+function parseXHRError(xhr) {
+    let message = '未知错误';
+
+    try {
+        const response = JSON.parse(xhr.responseText);
+        if (response && response.message) {
+            message = response.message;
+        } else if (xhr.statusText) {
+            message = xhr.statusText;
+        }
+    } catch (e) {
+        if (xhr.statusText) {
+            message = xhr.statusText;
+        }
+        console.error('无法解析错误响应:', xhr.responseText);
+    }
+
+    return message;
+    }
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
+
+    form.on('submit(startinstall)', function(data){
+        var loadIndex = layer.msg('下载Python安装包...', {
+            icon: 16,
+            shade: 0.6,
+            time: 0,
+        });
+
+        $.ajax({
+            url: '{% url  'envs_python_runtime:download' %}',
+            type: 'POST',
+            data: {
+                name: data.field.name,
+                version: data.field.version,
+                folder: data.field.folder,
+                csrfmiddlewaretoken: csrftoken,
+            },
+            success: function (response) {
+                layer.close(loadIndex);
+                layer.msg('下载成功~开始安装....', {icon: 16, time:0, shade: 0.6});
+
+                $.ajax({
+                    url: '{% url  'envs_python_runtime:install' %}',
+                    type: 'post',
+                    data: {
+                        name: $('#id_name').val(),
+                        version: $('#id_version').val(),
+                        folder: $('#id_folder').val(),
+                        csrfmiddlewaretoken: csrftoken,
+                    },
+                    success: function (response) {
+                        if (response.status == 'success') {
+                            location.href = '{% url 'envs_python_runtime:python_list' %}'
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        let errorMsg = '安装失败: ';
+                        const message = parseXHRError(xhr);
+                        layer.msg(errorMsg + message, {icon:2});
+                    }
+                 })
+
+            },
+            error: function (xhr, status, error) {
+                let errorMsg = '下载失败: ';
+                const message = parseXHRError(xhr);
+                layer.msg(errorMsg + message, {icon:2});
+            }
+        });
+  })
+});
+</script>
+{% endblock %}
+
+{% block pagecontent %}
+{{ block.super }}
+<div class="card">
+<form name="forminstall" id="forminstall" method="post" class="form-horizontal layui-form">{% csrf_token %}
+    <div class="card-body">
+{% for hidden in form.hidden_fields %}
+{{ hidden }}
+{% endfor %}
+{% for field in form.visible_fields %}
+<div class="form-group row">
+    <label for="inputEmail3" class="col-sm-2 col-form-label">{{ field.label }}</label>
+    <div class="col-sm-10">
+      {{ field }}{{ field.help_text }}
+    </div>
+</div>
+{% endfor %}
+    </div>
+    <div class="card-footer">
+        <button type="button" class="btn btn-primary" lay-submit lay-filter="startinstall">提交</button>
+        <a href="{% url 'envs_python_runtime:python_list' %}" class="btn btn-default float-right">取消</a>
+    </div>
+</form>
+</div>
+
+{% endblock %}

@@ -5,6 +5,9 @@ set "CURRENT_DIR=%~dp0"
 set "CURRENT_DIR=%CURRENT_DIR:~0,-1%"
 set "PYTHON_RUN=%CURRENT_DIR%\Python\python.exe"
 
+echo 创建用户data文件夹...
+mkdir "%CURRENT_DIR%\data"
+
 echo 安装系统依赖项...
 "%PYTHON_RUN%" -m pip install -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple -r "%CURRENT_DIR%\requirements.txt" --no-warn-script-location
 echo 配置安装默认组件...
@@ -20,8 +23,6 @@ echo 配置安装默认组件...
 echo 生成密钥...
 "%PYTHON_RUN%" "%CURRENT_DIR%\adminpanel\manage.py" secretkey
 
-echo 创建用户data文件夹...
-mkdir "%CURRENT_DIR%\data"
 
 set "TARGET_EXE=RunJieAdminPanel.bat"
 set "TARGET_PATH=%CURRENT_DIR%\%TARGET_EXE%"
@@ -62,5 +63,5 @@ if exist "%URL_SHORTCUT%" (
     echo 错误: 创建URL快捷方式失败
 )
 
-echo 卸载完成，按任意键关闭。。。
+echo 安装脚本执行完毕，请关闭运行窗口并刷新桌面。。。
 pause

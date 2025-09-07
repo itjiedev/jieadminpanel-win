@@ -1,0 +1,27 @@
+{% extends 'envs_python/layout_envs_python.html' %}
+
+{% block pagecontent %}
+{{ block.super }}
+<div class="card">
+<form name="forminstall" id="forminstall" method="post" class="form-horizontal layui-form">{% csrf_token %}
+    <div class="card-body">
+{% for hidden in form.hidden_fields %}
+{{ hidden }}
+{% endfor %}
+{% for field in form.visible_fields %}
+<div class="form-group row">
+    <label for="inputEmail3" class="col-sm-2 col-form-label">{{ field.label }}</label>
+    <div class="col-sm-10">
+      {{ field }}
+        {{ field.help_text }}
+    </div>
+</div>
+{% endfor %}
+    </div>
+    <div class="card-footer">
+        <button type="submit" class="btn btn-primary" lay-submit >提交</button>
+        <a href="{% url 'envs_python_runtime:python_list' %}" class="btn btn-default float-right">取消</a>
+    </div>
+</form>
+</div>
+{% endblock %}

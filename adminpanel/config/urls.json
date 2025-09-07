@@ -1,1 +1,22 @@
-{}
+{
+    "apps.sharedkit": {
+        "path": "sharedkit/",
+        "include": "apps.sharedkit.urls",
+        "namespace": "sharedkit"
+    },
+    "apps.envs_python": {
+        "path": "envs_python/",
+        "include": "apps.envs_python.urls",
+        "namespace": "envs_python"
+    },
+    "apps.envs_python_runtime": {
+        "path": "envs_python_runtime/",
+        "include": "apps.envs_python_runtime.urls",
+        "namespace": "envs_python_runtime"
+    },
+    "apps.envs_python_installer": {
+        "path": "envs_python_installer/",
+        "include": "apps.envs_python_installer.urls",
+        "namespace": "envs_python_installer"
+    }
+}

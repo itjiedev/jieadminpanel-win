@@ -83,12 +83,20 @@ layui.use(['jquery', 'layer'], function() {
 {% block pagecontent %}
     {{ block.super }}
 {% include 'include_messages.html' %}
+<dl class="row">
+    <dt class="col-sm-1">环境名称</dt><dd class="col-sm-11">{{ env_info.name }}</dd>
+    <dt class="col-sm-1">版本</dt><dd class="col-sm-11">{{ env_info.version }}</dd>
+    <dt class="col-sm-1">路径</dt><dd class="col-sm-11">{{ env_info.folder }}</dd>
+</dl>
+    <hr/>
+{% if not is_path %}
+    <h4 class="text-danger">Python解释器路径不存在~</h4>
+{% else %}
 <div class="card">
-<div class="card-header">
-  <h3 class="card-title">安装 <span class="text-danger"> Python {{ version }} </span>包</h3>
-</div>
 <form id="form_package" method="post" class="form-horizontal">{% csrf_token %}
     <div class="card-body">
+        <hr/>
+
         <div class="form-group row">
             <label for="{{ form.package_name.for_label }}" class="col-sm-1 col-form-label">{{ form.package_name.label }}</label>
             <div class="col-sm-4">
@@ -115,6 +123,7 @@ layui.use(['jquery', 'layer'], function() {
     </div>
 </form>
 </div>
+ {% endif %}
 {% if form.non_field_errors %}
 <div class="card" id="non_field_error">
 <div class="card-body bg-dark">

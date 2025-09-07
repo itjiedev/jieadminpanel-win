@@ -1,4 +1,12 @@
 {
+    "Python-3.13.7": {
+        "sort_version": "3.13.7",
+        "tag": "3.13-64",
+        "display_name": "Python-3.13.7",
+        "url": "https://www.python.org/ftp/python/3.13.7/python-3.13.7-amd64.zip",
+        "file_name": "python-3.13.7-amd64.zip",
+        "sha256": "99740e9bce8ea47c726a0247800e18467be7cc90d9bd16754066a62320d9e123"
+    },
     "Python-3.13.6": {
         "sort_version": "3.13.6",
         "tag": "3.13-64",

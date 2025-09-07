@@ -65,10 +65,14 @@ def get_packages(python_path):
     Returns:
         包含包信息的字典列表
     """
-    cmd = [python_path, '-m', 'pip', 'list', '--format=json']
-    result = run_command(cmd)
-    package_list = json.loads(result['stdout'])
-    return package_list
+    if os.path.exists(python_path):
+        cmd = [python_path, '-m', 'pip', 'list', '--format=json']
+        result = run_command(cmd)
+        package_list = json.loads(result['stdout'])
+        return package_list
+    else:
+        raise FileNotFoundError(f"指定的Python路径 {python_path} 无法找到~")
+    return []
 
 
 def get_packages_update(python_path, packages = None):
@@ -82,6 +86,8 @@ def get_packages_update(python_path, packages = None):
     Returns:
         包含更新信息的字典列表
     """
+    if not os.path.exists(python_path):
+        raise FileNotFoundError(f"指定的Python路径 {python_path} 无法找到~")
     if packages is None:
         cmd = [python_path, '-m', 'pip', 'list', '--outdated', '--format=json']
     else:
@@ -109,52 +115,24 @@ def get_package_list(python_path, packages = None):
     Returns:
         包含更新信息的字典列表
     """
-    try:
-        packages = get_packages(python_path)
-        updates = get_packages_update(python_path)
 
-        return_dict = {}
-        for package in packages:
-            latest_version = ''
-            latest_filetype = ''
-            if package['name'] in updates:
-                latest_version = updates[package['name']]['latest_version']
-                latest_filetype = updates[package['name']]['latest_filetype']
-            return_dict[package['name']] = {
-                'name': package['name'],
-                'current_version': package['version'],
-                'latest_version': latest_version,
-                'latest_filetype': latest_filetype,
-            }
-        return return_dict
-    except json.JSONDecodeError as e:
-        print(f"解析JSON时出错: {e}")
-        return []
+    packages = get_packages(python_path)
+    updates = get_packages_update(python_path)
 
-
-# def parse_pip_list(python_path):
-#     packages = get_package_list(python_path)
-#     updates = get_package_updates(python_path)
-#
-#     package_list = {}
-#     for line in output.strip().split('\n'):
-#         if line.startswith('Package') or not line.strip() or line.startswith('---'):
-#             continue
-#         parts = line.split()
-#         if len(parts) >= 2:
-#             package_name = parts[0]
-#             version = parts[1]
-#             latest = ''
-#             if updates:
-#                 if package_name in updates:
-#                     latest = updates[package_name]['latest_version']
-#             package_list[package_name] = {
-#                 'name': package_name,
-#                 'version': version,
-#                 'latest': latest,
-#             }
-#     return package_list
-
+    return_dict = {}
+    for package in packages:
+        latest_version = ''
+        latest_filetype = ''
+        if package['name'] in updates:
+            latest_version = updates[package['name']]['latest_version']
+            latest_filetype = updates[package['name']]['latest_filetype']
+        return_dict[package['name']] = {
+            'name': package['name'],
+            'current_version': package['version'],
+            'latest_version': latest_version,
+            'latest_filetype': latest_filetype,
+        }
+    return return_dict
 
 
 def package_upgrade(python_path, package_name):

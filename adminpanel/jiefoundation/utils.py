@@ -200,6 +200,78 @@ def ensure_path_separator(path):
             return path
         return path + os.sep
 
+def remove_trailing_separator(path, keep_root_separator=True):
+    """
+    删除URL或路径末尾的分隔符的通用函数
+
+    自动识别并处理:
+    - 本地文件系统路径 (处理操作系统特定分隔符)
+    - 网络URL路径 (处理正斜杠分隔符)
+
+    参数:
+        path (str): 输入路径或URL字符串
+        keep_root_separator (bool): 是否保留根路径分隔符，如 "/" 或 "C:\\"
+
+    返回:
+        str: 删除末尾分隔符后的路径或URL字符串
+
+    示例:
+        remove_trailing_separator('/path/to/resource/') -> '/path/to/resource'
+        remove_trailing_separator('https://example.com/api/') -> 'https://example.com/api'
+        remove_trailing_separator('C:\\Users\\Admin\\') -> 'C:\\Users\\Admin'
+        remove_trailing_separator('/') -> '/' 或 '' (取决于keep_root_separator参数)
+    """
+    import os
+    from urllib.parse import urlparse
+
+    if not isinstance(path, str):
+        raise TypeError("路径必须是字符串类型")
+
+    if not path:
+        return '' if not keep_root_separator else os.sep
+
+    # 判断是否为URL
+    parsed = urlparse(path)
+    is_url = parsed.scheme and parsed.scheme in ['http', 'https', 'ftp', 'ftps']
+
+    if is_url:
+        # 处理URL
+        while path.endswith('/'):
+            path = path[:-1]
+            # 如果只剩协议部分，停止删除
+            if path.count('/') <= 2 and '://' in path:
+                break
+    else:
+        # 处理本地路径
+        while path.endswith(os.sep) or (os.name == 'nt' and path.endswith('/')):
+            # 检查是否是根目录
+            if len(path) <= 1:
+                break
+
+            # Windows驱动器根目录检查 (如 C:\)
+            if os.name == 'nt' and len(path) == 3 and path[1:] == ':\\':
+                break
+
+            path = path[:-1]
+
+            # Unix根目录检查
+            if os.name != 'nt' and path == '':
+                if keep_root_separator:
+                    return '/'
+                else:
+                    return ''
+                break
+
+    # 特殊情况处理：Windows驱动器根目录
+    if os.name == 'nt' and len(path) == 2 and path.endswith(':'):
+        return path + '\\'
+
+    # 特殊情况处理：根目录
+    if path in ['/', '\\']:
+        return path if keep_root_separator else ''
+
+    return path
+
 
 def download_file_with_retry(url, destination, chunk_size=8192, max_retries=3, timeout=30):
     """
@@ -378,6 +450,7 @@ def move_and_rename_folder(src_folder, dest_parent, new_name=None):
     # 构建目标路径
     dest_path = os.path.join(dest_parent, new_name)
     # 检查目标是否已存在
+    print(dest_path)
     if os.path.exists(dest_path):
         raise FileExistsError(f"目标路径已存在: {dest_path}")
     # 确保目标父目录存在
@@ -431,3 +504,4 @@ def get_unique_missing_elements(sub_list, main_list):
             seen.add(item)
 
     return missing_elements
+

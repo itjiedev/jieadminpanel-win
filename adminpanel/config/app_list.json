@@ -1,1 +1,6 @@
-[]
+[
+    "apps.sharedkit",
+    "apps.envs_python",
+    "apps.envs_python_runtime",
+    "apps.envs_python_installer"
+]

@@ -1,7 +1,0 @@
-{
-  "id": "envs_python",
-  "name": "python环境基础应用",
-  "version": "0.0.2",
-  "description": "python开发语言环境通用应用",
-  "dependency": ["apps.sharedkit"]
-}

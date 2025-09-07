@@ -91,6 +91,7 @@ function parseXHRError(xhr) {
         </div>
     </div>
     <div class="card-body p-2">
+<div>以下已安装版本仅根据安装记录显示，并未验证真实性。。</div>
         <table class="table table-hover table-striped">
             <thead>
                 <tr>
@@ -108,7 +109,7 @@ function parseXHRError(xhr) {
                     <td>{{ version.tag }}</td>
                     <td>
 {#{% if name in installed %} 已安装 {% else %}#}
-    <a data="{{ name }}" class="btn btn-outline-info btn-xs" lay-on="startinstall">安装</a>
+    <a href="{% url 'envs_python_runtime:python_install' name %}" data="{{ name }}" class="btn btn-outline-info btn-xs">安装</a>
 {# {% endif %}#}
                     </td>
                 </tr>

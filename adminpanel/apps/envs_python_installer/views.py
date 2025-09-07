@@ -10,7 +10,6 @@ from django.views.generic import FormView
 from pathlib import Path
 from django.urls import reverse, reverse_lazy
 from django.views.generic.base import TemplateView, RedirectView
-from django.utils.safestring import mark_safe
 
 from jiefoundation.utils import (
     run_command, get_file_md5, WindowsAPI, set_reg_user_env,
@@ -24,7 +23,8 @@ from .config import (
     installed_file_path, python_download_path,
     python_cache_dir,py_ini_path
 )
-from .helper import get_python_versions, get_installed_python, python_list_paths
+from .helper import get_installed as get_installed_python
+from .helper import get_python_versions, python_list_paths
 from .forms import PythonInstallForm, PythonUninstallForm
 
 app_name = 'envs_python_installer'

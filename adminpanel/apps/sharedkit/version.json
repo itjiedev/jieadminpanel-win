@@ -1,7 +1,0 @@
-{
-  "id": "sharedkit",
-  "name": "sharedkit",
-  "version": "0.0.1",
-  "description": "应用于windows环境下的共享组件，使用时根据需要包含urls",
-  "dependency": []
-}

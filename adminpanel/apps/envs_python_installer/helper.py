@@ -13,7 +13,7 @@ def get_python_versions(version_name=None):
         return versions[version_name]
     return versions
 
-def get_installed_python(version_name=None):
+def get_installed(version_name=None):
     versions = {}
     with open(installed_file_path, 'r', encoding='utf-8') as f:
         versions = json.load(f)

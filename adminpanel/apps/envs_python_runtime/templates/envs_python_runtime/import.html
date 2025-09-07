@@ -13,7 +13,7 @@ layui.use(function(){
         title:"选择文件/文件夹",
         type: 2,
         area: ['800px', '600px'],
-        content: '{% url 'sharedkit:picker_file_dir' 'dir' %}',
+        content: '{% url 'sharedkit:picker_file_dir' 'dir' %}?path={{ startpath }}',
         fixed: false, // 不固定
         maxmin: true,
         shade: 0.5,
