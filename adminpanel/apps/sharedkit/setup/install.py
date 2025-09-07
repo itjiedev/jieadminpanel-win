@@ -12,8 +12,7 @@ version_json = Path(__file__).resolve().parent.parent / 'version.json'
 
 with open(app_list_json, 'r', encoding='utf-8') as f:
     main_list = json.load(f)
-with open(version_json, 'r', encoding='utf-8') as f:
-    sub_list = json.load(f)['dependency']
+sub_list = []
 main_set = set(main_list)
 check_dependency = []
 seen = set()
