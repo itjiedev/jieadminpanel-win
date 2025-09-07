@@ -15,14 +15,12 @@ version_json_path = Path(__file__).resolve().parent.parent / 'version.json'
 
 #------------------------------------------------------------------------
 (project_data_dir / app_name).mkdir(exist_ok=True)
-print(project_data_dir / app_name)
 (Path(__file__).resolve().parent.parent / 'cache').mkdir(exist_ok=True)
 
 #------------------------------------------------------------------------
 with open(app_list_path, 'r', encoding='utf-8') as f:
     main_list = json.load(f)
-with open(version_json_path, 'r', encoding='utf-8') as f:
-    sub_list = json.load(f)['dependency']
+sub_list = ['apps.sharedkit', 'apps.envs_python']
 main_set = set(main_list)
 check_dependency = []
 seen = set()

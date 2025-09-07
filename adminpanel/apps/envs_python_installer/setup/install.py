@@ -12,12 +12,10 @@ project_data_dir = project_root / 'data'
 project_config_dir = panel_root / 'config'
 
 app_list_path = project_config_dir / 'app_list.json'
-version_json_path = Path(__file__).resolve().parent.parent / 'version.json'
 
 with open(app_list_path, 'r', encoding='utf-8') as f:
     main_list = json.load(f)
-with open(version_json_path, 'r', encoding='utf-8') as f:
-    sub_list = json.load(f)['dependency']
+sub_list = ['apps.sharedkit', 'apps.envs_python']
 main_set = set(main_list)
 check_dependency = []
 seen = set()

@@ -8,12 +8,12 @@ app_name = 'envs_python'
 project_dir = Path(__file__).resolve().parent.parent.parent.parent
 config_dir =  project_dir / 'config'
 app_list_path = config_dir / 'app_list.json'
-version_json_path = Path(__file__).resolve().parent.parent / 'version.json'
 
 with open(app_list_path, 'r', encoding='utf-8') as f:
     main_list = json.load(f)
-with open(version_json_path, 'r', encoding='utf-8') as f:
-    sub_list = json.load(f)['dependency']
+
+sub_list = ['apps.sharedkit']
+
 main_set = set(main_list)
 check_dependency = []
 seen = set()
