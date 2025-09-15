@@ -1,5 +1,7 @@
 {% extends 'envs_python/layout_envs_python.html' %}
-{% block js_code %}
+
+{% block html_js_code %}
+{{ block.super }}
 <script>
 layui.use(function(){
   var $ = layui.$;
@@ -129,10 +131,10 @@ function getCookie(name) {
 </script>
 {% endblock %}
 
-{% block pagecontent %}
+{% block page_content %}
     {{ block.super }}
 <div class="callout callout-warning">
-<h5>安装完成后请手动重新刷新环境列表！</h5>
+<p class="text-lg">安装完成后请手动重新刷新环境列表！</p>
 </div>
 
 <div class="card">

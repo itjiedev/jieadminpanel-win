@@ -1,4 +1,4 @@
-import os, json
+import json
 from pathlib import Path
 
 print('安装 python环境管理基础（envs_python） 组件...')
@@ -27,24 +27,24 @@ if check_dependency:
     input('安装中止...')
     exit()
 
-with open(app_list_path, 'r', encoding='utf-8') as f:
-    app_list = json.load(f)
-    if 'apps.envs_python' not in app_list:
-        app_list.append(f'apps.{app_name}')
-with open(app_list_path, 'w', encoding='utf-8') as f:
-    json.dump(app_list, f, ensure_ascii=False, indent=4)
-
-url_path = config_dir / 'urls.json'
-with open(url_path, 'r', encoding='utf-8') as f:
-    urls = json.load(f)
-    urls[f'apps.{app_name}'] = {
-        "path": f"{app_name}/",
-        "include": f"apps.{app_name}.urls",
-        "namespace": app_name
-    }
-with open(url_path, 'w', encoding='utf-8') as f:
-    json.dump(urls, f, ensure_ascii=False, indent=4)
-
-
-print('安装完成。。。')
+# with open(app_list_path, 'r', encoding='utf-8') as f:
+#     app_list = json.load(f)
+#     if 'apps.envs_python' not in app_list:
+#         app_list.append(f'apps.{app_name}')
+# with open(app_list_path, 'w', encoding='utf-8') as f:
+#     json.dump(app_list, f, ensure_ascii=False, indent=4)
+#
+# url_path = config_dir / 'urls.json'
+# with open(url_path, 'r', encoding='utf-8') as f:
+#     urls = json.load(f)
+#     urls[f'apps.{app_name}'] = {
+#         "path": f"{app_name}/",
+#         "include": f"apps.{app_name}.urls",
+#         "namespace": app_name
+#     }
+# with open(url_path, 'w', encoding='utf-8') as f:
+#     json.dump(urls, f, ensure_ascii=False, indent=4)
+#
+#
+# print('安装完成。。。')
 

@@ -18,7 +18,6 @@ pypi_json = app_data_dir / 'pypi.json'
 user_config_json = user_data_dir / 'user_config.json'
 user_installed_json = user_data_dir / 'installed.json'
 
-
 download_site_json_url = [
     "https://www.python.org/ftp/python/index-windows.json",
     "https://www.python.org/ftp/python/index-windows-recent.json",

@@ -1,6 +1,4 @@
-import subprocess
 import locale
-
 from django.views.generic.base import ContextMixin, TemplateView
 
 
@@ -11,6 +9,7 @@ class HomeMixin(ContextMixin):
         return context
 
 def get_system_info():
+    import subprocess
     encoding = locale.getpreferredencoding()
     result = subprocess.run(
         ['systeminfo'],

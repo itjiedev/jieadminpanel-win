@@ -1,10 +1,7 @@
 {% if messages %}
-<div class="message-box-warning">
-{% for message in messages %}
-    {% if message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
-    <p class="text-danger">{{ message|safe }}</p>
-    {% else %}<p class="text-{{ message.tags }}">{{ message }}</p>
-    {% endif %}
-{% endfor %}
+<div class="alert alert-warning text-lg"  role="alert">
+    {% for message in messages %}
+    <div{% if message.tags %} class="message-text-{{ message.tags }} text-bold"{% endif %}>{{ message }}</div>
+    {% endfor %}
 </div>
 {% endif %}

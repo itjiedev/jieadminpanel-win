@@ -1,7 +1,88 @@
 import hashlib
 import ctypes
-import winreg
 
+from django.urls import reverse, reverse_lazy
+
+def url_reverse_lazy(urlconf):
+    from django.urls import reverse_lazy
+    if urlconf['route_name']:
+        args = None
+        kwargs = None
+        query = None
+        fragment = None
+        if 'args' in urlconf:
+            if urlconf['args']: args = urlconf['args']
+        if 'kwargs' in urlconf:
+            if urlconf['kwargs']: kwargs = urlconf['kwargs']
+        if 'query' in urlconf:
+            if urlconf['query']: query = urlconf['query']
+        if 'fragment' in urlconf:
+            if urlconf['fragment']: fragment = urlconf['fragment']
+        return reverse_lazy(urlconf['route_name'], args=args, kwargs=kwargs, query=query, fragment=fragment)
+    return ''
+
+def windows_api(executable, parameters= "", operation="open", directory=None, show_cmd=1):
+        """
+        使用 ShellExecuteW 调用 Windows 程序或执行命令
+        :param executable: 要执行的程序路径，如 "cmd.exe", "notepad.exe"
+        :param parameters: 命令行参数，如 "/c echo Hello"
+        :param operation: 操作类型，如 "open", "print", "runas"（管理员权限）
+        :param directory: 工作目录，可为 None
+        :param show_cmd: 显示方式，1=正常显示, 3=最大化, 5=恢复
+        :return: 成功返回 True，失败返回 False
+        """
+        result = ctypes.windll.shell32.ShellExecuteW(
+            None,           # 父窗口句柄
+            operation,      # 操作类型
+            executable,     # 程序路径
+            parameters,     # 参数
+            directory,      # 工作目录
+            show_cmd        # 显示方式
+        )
+        if result <= 32:
+            raise RuntimeError(f"ShellExecuteW failed with code: {result}")
+        return True
+
+def run_command(args,timeout=None, shell=False,cwd=None, env=None, encoding='utf-8'):
+    """
+    通用命令执行工具函数，适用于执行外部命令并处理输出和错误。
+    参数:
+        args (list): 要执行的命令和参数，例如 ['ls', '-l']。
+        check (bool): 如果为 True，当命令返回非0状态码时抛出异常。
+        timeout (float, optional): 命令执行的最大时间（秒），超时则抛出异常。
+        shell (bool): 是否通过系统 shell 执行命令（注意安全风险）。
+        cwd (str, optional): 设置命令执行的当前工作目录。
+        env (dict, optional): 设置环境变量。
+        encoding (str): 用于解码 stdout 和 stderr 的编码格式，默认为 'utf-8'。
+
+    返回:
+        返回一个 subprocess.CompletedProcess 对象
+        result: returncode, stdout, stderr, args。
+        返回值的属性
+            args   执行的命令及其参数（字符串或列表形式）。
+                示例：['ls', '-l'] 或 'echo $HOME'（如果通过 shell=True 执行）。
+            returncode   子进程的退出状态码：
+                0 表示命令执行成功。
+                非零值表示命令执行失败（具体含义取决于命令本身）。
+                示例：result.returncode
+            stdout   子进程的标准输出内容（bytes 类型或字符串，取决于参数设置）。
+                如果未设置 stdout=subprocess.PIPE 或 capture_output=True，则此属性为 None。
+                示例：result.stdout.decode('utf-8')（需手动解码字节为字符串）。
+            stderr 子进程的标准错误输出内容（与 stdout 类似）。
+            示例：result.stderr
+    """
+    import subprocess
+    return subprocess.run(
+        args,
+        shell=shell,
+        cwd=cwd,
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        encoding=encoding,
+        timeout=timeout
+    )
 
 def get_file_md5(file_path):
     """
@@ -24,123 +105,6 @@ def list_to_dict(from_list, key):
     :return: 字典
     """
     return {item[key]: item for item in from_list}
-
-
-def run_command(args,timeout=None, shell=False,cwd=None, env=None, encoding='utf-8'):
-    """
-    通用命令执行工具函数，适用于执行外部命令并处理输出和错误。
-
-    参数:
-        args (list): 要执行的命令和参数，例如 ['ls', '-l']。
-        check (bool): 如果为 True，当命令返回非0状态码时抛出异常。
-        timeout (float, optional): 命令执行的最大时间（秒），超时则抛出异常。
-        shell (bool): 是否通过系统 shell 执行命令（注意安全风险）。
-        cwd (str, optional): 设置命令执行的当前工作目录。
-        env (dict, optional): 设置环境变量。
-        encoding (str): 用于解码 stdout 和 stderr 的编码格式，默认为 'utf-8'。
-
-    返回:
-        dict{returncode, stdout, stderr}: {returncode, stdout, stderr} 的字符串内容。
-    """
-    import subprocess
-
-    result = subprocess.run(
-        args,
-        shell=shell,
-        cwd=cwd,
-        env=env,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-        encoding=encoding,
-        timeout=timeout
-    )
-    return {'returncode': result.returncode, 'stdout': result.stdout, 'stderr': result.stderr}
-
-
-class WindowsAPI:
-    @staticmethod
-    def execute(
-        executable: str,
-        parameters: str = "",
-        operation: str = "open",
-        directory: str = None,
-        show_cmd: int = 1
-    ):
-        """
-        使用 ShellExecuteW 调用 Windows 程序或执行命令
-
-        :param executable: 要执行的程序路径，如 "cmd.exe", "notepad.exe"
-        :param parameters: 命令行参数，如 "/c echo Hello"
-        :param operation: 操作类型，如 "open", "print", "runas"（管理员权限）
-        :param directory: 工作目录，可为 None
-        :param show_cmd: 显示方式，1=正常显示, 3=最大化, 5=恢复
-        :return: 成功返回 True，失败返回 False
-        """
-        result = ctypes.windll.shell32.ShellExecuteW(
-            None,           # 父窗口句柄
-            operation,      # 操作类型
-            executable,     # 程序路径
-            parameters,     # 参数
-            directory,      # 工作目录
-            show_cmd        # 显示方式
-        )
-        if result <= 32:
-            raise RuntimeError(f"ShellExecuteW failed with code: {result}")
-        return True
-
-
-def get_reg_user_env(env_name):
-    """获取当前用户注册表环境变量"""
-    value = ''
-    with winreg.OpenKey(winreg.HKEY_CURRENT_USER, 'Environment') as key:
-        value, _ = winreg.QueryValueEx(key, env_name)
-    return value
-
-def set_reg_user_env(env_name, env_value):
-    """
-    设置用户环境变量到注册表
-    :param env_name: 环境变量名，例如 "PATH"
-    :param env_value: 环境变量值，例如 "C:\\Python39;%PATH%"
-    """
-    try:
-        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, 'Environment', 0, winreg.KEY_SET_VALUE) as key:
-            winreg.SetValueEx(key, env_name, 0, winreg.REG_EXPAND_SZ, env_value)
-        return True
-    except Exception as e:
-        print(f"写入注册表失败: {e}")
-        return False
-
-
-def set_reg_system_env(env_name, env_value):
-    """
-    设置系统环境变量到注册表（需要管理员权限）
-    :param env_name: 环境变量名，例如 "PATH"
-    :param env_value: 环境变量值，例如 "C:\\Python39;%PATH%"
-    """
-    key_path = r"SYSTEM\CurrentControlSet\Control\Session Manager\Environment"
-    try:
-        with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, key_path, 0, winreg.KEY_SET_VALUE) as key:
-            winreg.SetValueEx(key, env_name, 0, winreg.REG_EXPAND_SZ, env_value)
-        return True
-    except PermissionError:
-        print("权限不足，请以管理员身份运行程序。")
-        return False
-    except Exception as e:
-        print(f"写入系统注册表失败: {e}")
-        return False
-
-# 获取系统 PATH
-def get_reg_system_env(env_name):
-    """
-    获取系统环境变量
-    """
-    value = ''
-    with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE,
-                        r'SYSTEM\CurrentControlSet\Control\Session Manager\Environment') as key:
-        value, _ = winreg.QueryValueEx(key, env_name)
-    return value
-
 
 def check_sha256(file_path, expected_sha256):
     """
@@ -167,7 +131,7 @@ def check_sha256(file_path, expected_sha256):
     except Exception:
         return False
 
-def ensure_path_separator(path):
+def ensure_path_end_separator(path):
     """
     确保路径或URL以适当分隔符结尾的通用函数
 
@@ -188,17 +152,14 @@ def ensure_path_separator(path):
         raise TypeError("路径必须是字符串类型")
 
     if not path:
-        return os.sep
+        return ''
 
     parsed = urlparse(path)
     if parsed.scheme and parsed.scheme in ['http', 'https', 'ftp', 'ftps']:
         return path if path.endswith('/') else path + '/'
     else:
-        if path.endswith(os.sep):
-            return path
-        if os.name == 'nt' and path.endswith('/'):
-            return path
-        return path + os.sep
+        if path.endswith('/'): return path
+        return path + '/'
 
 def remove_trailing_separator(path, keep_root_separator=True):
     """
@@ -243,7 +204,7 @@ def remove_trailing_separator(path, keep_root_separator=True):
                 break
     else:
         # 处理本地路径
-        while path.endswith(os.sep) or (os.name == 'nt' and path.endswith('/')):
+        while path.endswith('/') or (os.name == 'nt' and path.endswith('/')):
             # 检查是否是根目录
             if len(path) <= 1:
                 break
@@ -271,51 +232,6 @@ def remove_trailing_separator(path, keep_root_separator=True):
         return path if keep_root_separator else ''
 
     return path
-
-
-def download_file_with_retry(url, destination, chunk_size=8192, max_retries=3, timeout=30):
-    """
-    带重试机制的大文件下载
-
-    参数:
-        url (str): 要下载文件的URL地址
-        destination (str): 文件保存的目标路径
-        chunk_size (int): 每次读取的数据块大小，默认为8192字节
-        max_retries (int): 最大重试次数，默认为3次
-
-    返回值:
-        bool: 下载成功返回True，失败返回False
-    """
-    import requests
-    import time
-
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
-    }
-
-    for attempt in range(max_retries):
-        try:
-            # 发起GET请求，stream=True表示流式下载
-            response = requests.get(url, headers=headers, stream=True, timeout=timeout)
-            response.raise_for_status()  # 检查HTTP错误
-            # 写入文件
-            with open(destination, 'wb') as file:
-                for chunk in response.iter_content(chunk_size=chunk_size):
-                    if chunk:  # 过滤掉保持连接的空块
-                        file.write(chunk)
-            print("下载完成!")
-            return True
-        except requests.exceptions.RequestException as e:
-            if attempt < max_retries - 1:
-                print(f"下载失败 (尝试 {attempt + 1}/{max_retries}): {e}")
-                time.sleep(2 ** attempt)  # 指数退避
-            else:
-                print(f"下载失败，已达到最大重试次数: {e}")
-                return False
-        except Exception as e:
-            print(f"下载过程中发生错误: {e}")
-            return False
-    return False
 
 
 def extract_from_zip(zip_path, extract_items=None, extract_to=None, overwrite=True):
@@ -450,7 +366,6 @@ def move_and_rename_folder(src_folder, dest_parent, new_name=None):
     # 构建目标路径
     dest_path = os.path.join(dest_parent, new_name)
     # 检查目标是否已存在
-    print(dest_path)
     if os.path.exists(dest_path):
         raise FileExistsError(f"目标路径已存在: {dest_path}")
     # 确保目标父目录存在
@@ -504,4 +419,44 @@ def get_unique_missing_elements(sub_list, main_list):
             seen.add(item)
 
     return missing_elements
+    
+def read_file(filepath, mode='r'):
+    from pathlib import Path
 
+    if not Path(filepath): return False
+    fp = None
+    try:
+        fp = open(filepath, mode)
+        f_content = fp.read()
+    except Exception as ex:
+        fp = open(filepath, mode, encoding="utf-8", errors='ignore')
+        f_content = fp.read()
+    finally:
+        if fp and not fp.closed: fp.close()
+    return f_content
+
+
+def write_file(filename, content, mode='w+'):
+    try:
+        fp = open(filename, mode)
+        fp.write(content)
+        fp.close()
+        return True
+    except:
+        try:
+            fp = open(filename, mode, encoding="utf-8")
+            fp.write(content)
+            fp.close()
+            return True
+        except:
+            return False
+
+
+def make_dir(dir_path):
+    try:
+        if not dir_path.exists():
+            dir_path.mkdir(parents=True, exist_ok=True)
+        return dir_path
+    except:
+        return False
+    

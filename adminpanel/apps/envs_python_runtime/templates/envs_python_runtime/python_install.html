@@ -1,6 +1,7 @@
 {% extends 'envs_python/layout_envs_python.html' %}
 
-{% block js_code %}
+{% block html_js_code %}
+{{ block.super }}
 <script>
 layui.use(function(){
   var $ = layui.$;
@@ -97,7 +98,7 @@ const csrftoken = getCookie('csrftoken');
 </script>
 {% endblock %}
 
-{% block pagecontent %}
+{% block page_content %}
 {{ block.super }}
 <div class="card">
 <form name="forminstall" id="forminstall" method="post" class="form-horizontal layui-form">{% csrf_token %}
@@ -115,7 +116,7 @@ const csrftoken = getCookie('csrftoken');
 {% endfor %}
     </div>
     <div class="card-footer">
-        <button type="button" class="btn btn-primary" lay-submit lay-filter="startinstall">提交</button>
+        <button type="button" class="btn btn-primary" lay-submit lay-filter="startinstall">下载安装</button>
         <a href="{% url 'envs_python_runtime:python_list' %}" class="btn btn-default float-right">取消</a>
     </div>
 </form>

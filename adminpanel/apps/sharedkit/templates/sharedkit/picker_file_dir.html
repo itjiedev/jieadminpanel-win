@@ -1,8 +1,16 @@
-{% extends 'sharedkit/layout_page.html' %}
+{% extends 'layout_html.html' %}
 {% load static %}
 {% load foundation_tags %}
 
-{% block css_code %}
+{% block html_css_files %}
+<link rel="stylesheet" href="{% static 'layui/css/layui.css' %}">
+{% endblock %}
+
+{% block html_js_files %}
+<script src="{% static 'layui/layui.js' %}"></script>
+{% endblock %}
+
+{% block html_css_code %}
 <style>
     .open_dir.active {
         border: 1px solid #000;
@@ -14,7 +22,7 @@
 </style>
 {% endblock %}
 
-{% block js_code %}
+{% block html_js_code %}
 <script>
 layui.use(['form', 'laydate', 'util'], function(){
   var form = layui.form;
@@ -72,7 +80,7 @@ var csrftoken = getCookie('csrftoken');
       var newFolderName = field.new_folder_name;
 
         $.ajax({
-            url: '{% url 'sharedkit:picker_dir_create' %}',
+            url: '{% url 'sharedkit:picker_dir_create' %}?path={{ path }}',
             type: 'POST',
             data: {
                 folder_name: newFolderName,
@@ -118,8 +126,8 @@ var csrftoken = getCookie('csrftoken');
     $('.open_dir').on('click', function (e) {
         e.preventDefault();
         var $element = $(this);
-        var currentPath = $(this).data('current-path');
-        var currentType = $(this).data('current-type');
+        var currentPath = $(this).data('current-path').replace('\\', '/');
+        var currentType = $(this).data('current-type').replace('\\', '/');
 
         $('.open_dir').removeClass('active');
         $('.info-box').removeClass('bg_none');
@@ -178,7 +186,14 @@ var csrftoken = getCookie('csrftoken');
 </script>
 {% endblock %}
 
-{% block pagecontent %}
+{% block layout %}
+<body class="{% get_settings 'PACE_COLOR' %} sidebar-collapse layout-top-nav control-sidebar-slide-open layout-fixed layout-navbar-fixed">
+<div class="wrapper">
+<nav class="main-header navbar navbar-expand-md navbar-light navbar-white ml-1">
+      当前选中：<div id="select_path" class="font-weight-bold" style="font-size:1.2em;">{{ path }}</div>
+</nav>
+<div class="content-wrapper">
+    <section class="content">
 <input type="hidden" name="picker_path" class="form-control" id="picker_path" value="{{ path }}">
     <div class="card text-sm">
         <div class="card-header">
@@ -271,5 +286,8 @@ var csrftoken = getCookie('csrftoken');
         </div>
             </div>
     </div>
-
+    </section>
+  </div>
+</div>
+</body>
 {% endblock %}

@@ -1,6 +1,7 @@
 {% extends 'envs_python/layout_envs_python.html' %}
 
-{% block js_code %}
+{% block html_js_code %}
+{{ block.super }}
 <script>
 layui.use(function(){
   var $ = layui.$;
@@ -76,7 +77,7 @@ function parseXHRError(xhr) {
 </script>
 {% endblock %}
 
-{% block pagecontent %}
+{% block page_content %}
     {{ block.super }}
 {% include 'include_messages.html' %}
 <div class="card">

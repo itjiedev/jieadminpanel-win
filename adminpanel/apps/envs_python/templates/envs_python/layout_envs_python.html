@@ -1,5 +1,48 @@
 {% extends 'layout_panel.html' %}
+{% load static %}
 
-{% block pagecontent %}
-{% include 'envs_python/include_python_category.html' %}
+{% block panel_js_files %}
+<script src="{% static 'js/sharedkit.js' %}"></script>
+{% endblock %}
+
+{% block html_js_code %}
+<script>
+layui.use(function(){
+  var layer = layui.layer;
+  var util = layui.util;
+
+  util.on('lay-on', {
+    "OpenSystemProperties": function(obj){
+        var url = obj.data('url');
+        OpenSystemEnvironmentVariables(url);
+        return false;
+    },
+  });
+});
+
+</script>
+{% endblock %}
+
+{% block page_content %}
+<div class="row mb-2">
+{% for category, python_category in category_list.items %}
+<dov class="col-sm-4 col-md-2">
+<a href="{% if python_category.url.route_name %}{% url python_category.url.route_name %}{% endif %}"
+   class="btn btn-block {% if current_category == category %}btn-info{% else %}btn-outline-info{% endif %}">
+{{ python_category.title }}
+</a>
+</dov>
+{% endfor %}
+</div>
+<div class="card-header">
+    <div class="card-tools">
+        <a href="{% url 'envs_python:pypi_list' %}" class="btn btn-outline-info btn-sm">
+            <i class="fas fa-cog"></i> 全局PyPi源
+        </a>
+<button type="button" class="btn btn-outline-info btn-sm"
+        data-url="{% url 'sharedkit:open_system_var' %}" lay-on="OpenSystemProperties">
+    <i class="fa-solid fa-circle-exclamation"></i>环境变量
+</button>
+    </div>
+</div>
 {% endblock %}

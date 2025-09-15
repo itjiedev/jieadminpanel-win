@@ -17,8 +17,7 @@ def get_installed(version_name=None):
     versions = {}
     with open(installed_file_path, 'r', encoding='utf-8') as f:
         versions = json.load(f)
-    if version_name:
-        return versions[version_name]
+    if version_name: return versions[version_name]
     return versions
 
 
@@ -28,11 +27,11 @@ def get_py_default_python():
     """
     if py_installed:
         result = run_command([py_path, '-V'])
-        if result['returncode'] == 0:
-            if result['stdout'].strip():
-                return result['stdout'].strip().split(maxsplit=1)[1].strip()
+        if result.returncode == 0:
+            if result.stdout.strip():
+                return result.stdout.strip().split(maxsplit=1)[1].strip()
             else:
-                return result['stderr'].strip().split(maxsplit=1)[1].strip()
+                return result.stderr.strip().split(maxsplit=1)[1].strip()
     return ''
 
 def python_list_paths():
@@ -40,8 +39,8 @@ def python_list_paths():
     使用 py launcher获取已经安装的python版本列表，并进行默认设置
     """
     result = run_command([py_path, '--list-paths'])
-    if result['returncode'] == 0:
-        lines = result['stdout'].strip().splitlines()
+    if result.returncode == 0:
+        lines = result.stdout.strip().splitlines()
         versions = {}
         for line in lines:
             if not line.startswith('No'):
@@ -52,10 +51,10 @@ def python_list_paths():
                         path = path.replace('* ', '').strip()
                         run_get_version = run_command([path, '-V'])
                         out_str = ''
-                        if run_get_version['stdout'].strip():
-                            out_str = run_get_version['stdout'].strip()
+                        if run_get_version.stdout.strip():
+                            out_str = run_get_version.stdout.strip()
                         else:
-                            out_str = run_get_version['stderr'].strip()
+                            out_str = run_get_version.stderr.strip()
                         version = out_str.split(maxsplit=1)[1].strip()
                         version_split = version.split('.')
                         py_default = get_py_default_python()
@@ -63,7 +62,8 @@ def python_list_paths():
                         if py_default == version: is_py_default = True
 
                         versions[version] = {
-                            'path': path.rstrip('python.exe'),
+                            'name':  f"Python-{version}",
+                            'folder': path.rstrip('python.exe').replace('\\', '/'),
                             'version': version,
                             'is_py_default': is_py_default,
                             'version_major': int(version_split[0]),

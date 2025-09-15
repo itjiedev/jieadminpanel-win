@@ -15,7 +15,7 @@ echo 配置安装默认组件...
 "%PYTHON_RUN%" "%CURRENT_DIR%\adminpanel\apps\sharedkit\setup\install.py"
 "%PYTHON_RUN%" -m pip install -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple -r "%CURRENT_DIR%\adminpanel\apps\envs_python\setup\requirements.txt" --no-warn-script-location
 "%PYTHON_RUN%" "%CURRENT_DIR%\adminpanel\apps\envs_python\setup\install.py"
-"%PYTHON_RUN%" -m pip install -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple -r "%CURRENT_DIR%\adminpanel\apps\envs_python_runtime\setup\requirements.txt" --no-warn-script-location
+@REM "%PYTHON_RUN%" -m pip install -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple -r "%CURRENT_DIR%\adminpanel\apps\envs_python_runtime\setup\requirements.txt" --no-warn-script-location
 "%PYTHON_RUN%" "%CURRENT_DIR%\adminpanel\apps\envs_python_runtime\setup\install.py"
 "%PYTHON_RUN%" -m pip install -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple -r "%CURRENT_DIR%\adminpanel\apps\envs_python_installer\setup\requirements.txt" --no-warn-script-location
 "%PYTHON_RUN%" "%CURRENT_DIR%\adminpanel\apps\envs_python_installer\setup\install.py"

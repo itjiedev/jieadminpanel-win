@@ -1,83 +1,41 @@
 {% extends 'envs_python/layout_envs_python.html' %}
+{% load static %}
+{% load foundation_tags %}
 
-{% block js_code %}
-<script>$(document).ready(function() {
-    // 复制完整路径功能
-    $('.copy-full-path-btn').on('click', function() {
-        var fullPath = $(this).data('full-path');
-        copyToClipboard(fullPath);
-    });
+{% block panel_js_files %}
+<script src="{% static 'js/sharedkit.js' %}"></script>
+{% endblock %}
+
+{% block html_js_code %}
+{{ block.super }}
+<script>
+layui.use(function(){
+  var layer = layui.layer;
+  var util = layui.util;
+
+  // 事件绑定
+  util.on('lay-on', {
+    "open_explorer": function(obj){
+        var url = obj.data('url');
+        openFolder(url);
+        return false;
+    },
+    "openTerminal": function(obj){
+        var url = obj.data('url');
+        openTerminal(url);
+        return false;
+    },
+      "copy-full-path-btn": function(obj){
+          var fullPath = obj.data('path');
+          copyToClipboard(fullPath);
+          return false;
+      }
+  });
 });
-
-// 使用Clipboard API复制文本
-function copyToClipboard(text) {
-    if (navigator.clipboard && window.isSecureContext) {
-        // 使用现代Clipboard API
-        navigator.clipboard.writeText(text).then(function() {
-            showMessage('路径已复制到剪贴板', 'success');
-        }, function(err) {
-            console.error('复制失败:', err);
-            showMessage('复制失败', 'error');
-        });
-    } else {
-        fallbackCopyTextToClipboard(text);
-    }
-}
-
-function fallbackCopyTextToClipboard(text) {
-    var textArea = document.createElement("textarea");
-    textArea.value = text;
-    textArea.style.position = "fixed";
-    textArea.style.left = "-999999px";
-    textArea.style.top = "-999999px";
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-
-    try {
-        var successful = document.execCommand('copy');
-        if (successful) {
-            showMessage('路径已复制到剪贴板', 'success');
-        } else {
-            showMessage('复制失败', 'error');
-        }
-    } catch (err) {
-        showMessage('复制失败', 'error');
-        console.error('复制失败:', err);
-    }
-
-    document.body.removeChild(textArea);
-}
-
-// 显示消息提示
-function showMessage(message, type) {
-    // 检查是否已存在消息容器，如果不存在则创建
-    if ($('#copy-alert').length === 0) {
-        $('body').append('<div id="copy-alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>');
-    }
-
-    var alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
-    var alertHtml = `        <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
-            ${message}            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    `;
-
-    var $alert = $(alertHtml);
-    $('#copy-alert').append($alert);
-
-    // 3秒后自动移除
-    setTimeout(function() {
-        $alert.fadeOut(function() {
-            $(this).remove();
-        });
-    }, 3000);
-}
 </script>
 {% endblock %}
 
-{% block pagecontent %}
+{% block page_content %}
 {{ block.super }}
 {% include 'include_messages.html' %}
 <div class="card">
@@ -120,13 +78,20 @@ function showMessage(message, type) {
 {% if version.folder == default_env_python.path %}默认{% else %}-{% endif %}
                     </td>
                     <td>
-<button class="btn btn-outline-secondary btn-xs copy-full-path-btn" data-full-path="{{ version.folder }}python.exe" title="复制完整路径">
+<button class="btn btn-outline-secondary btn-xs"
+        data-url="{% url 'sharedkit:open_explorer' %}?path={% replace_str version.folder '\\' '/' %}"
+        title="打开文件夹" lay-on="open_explorer">
+    <i class="far fa-folder-open"></i>
+</button>
+<button class="btn btn-outline-secondary btn-xs" data-path="{% replace_str version.folder '/' '\\' %}python.exe"
+        title="复制完整路径"  lay-on="copy-full-path-btn">
     <i class="far fa-copy"></i>
 </button>
-<a href="{% url 'envs_python_runtime:open_terminal' %}?path={{ version.folder }}" class="btn btn-outline-secondary btn-xs" title="打开终端命令行">
+<button type="button" data-url="{% url 'sharedkit:open_terminal' %}?path={{ version.folder }}"
+        class="btn btn-outline-secondary btn-xs" title="打开终端命令行" lay-on="openTerminal">
     <i class="fa fa-terminal fa-xs"></i>
-</a>
-{{ version.folder }}python.exe
+</button>
+{% replace_str version.folder '/' '\\' %}python.exe
                     </td>
                     <td>
 {% if version.is_path %}

@@ -28,22 +28,22 @@ if check_dependency:
     input('安装中止....')
     exit()
 
-with open(app_list_json, 'r', encoding='utf-8') as f:
-    app_list = json.load(f)
-    if 'apps.sharedkit' not in app_list:
-        app_list.append('apps.sharedkit')
-with open(app_list_json, 'w', encoding='utf-8') as f:
-    json.dump(app_list, f, ensure_ascii=False, indent=4)
+# with open(app_list_json, 'r', encoding='utf-8') as f:
+#     app_list = json.load(f)
+#     if 'apps.sharedkit' not in app_list:
+#         app_list.append('apps.sharedkit')
+# with open(app_list_json, 'w', encoding='utf-8') as f:
+#     json.dump(app_list, f, ensure_ascii=False, indent=4)
+#
+# url_path = config_root / 'urls.json'
+# with open(url_path, 'r', encoding='utf-8') as f:
+#     urls = json.load(f)
+#     urls['apps.sharedkit'] = {
+#         "path": "sharedkit/",
+#         "include": "apps.sharedkit.urls",
+#         "namespace": "sharedkit"
+#     }
+# with open(url_path, 'w', encoding='utf-8') as f:
+#     json.dump(urls, f, ensure_ascii=False, indent=4)
 
-url_path = config_root / 'urls.json'
-with open(url_path, 'r', encoding='utf-8') as f:
-    urls = json.load(f)
-    urls['apps.sharedkit'] = {
-        "path": "sharedkit/",
-        "include": "apps.sharedkit.urls",
-        "namespace": "sharedkit"
-    }
-with open(url_path, 'w', encoding='utf-8') as f:
-    json.dump(urls, f, ensure_ascii=False, indent=4)
-
-print('安装完成...')
+print('共享工具 组件 安装完成...')

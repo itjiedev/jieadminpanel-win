@@ -5,7 +5,8 @@
 <link rel="stylesheet" href="{% static 'plugins/icheck-bootstrap/icheck-bootstrap.min.css' %}">
 {% endblock %}
 
-{% block js_code %}
+{% block html_js_code %}
+{{ block.super }}
 <script>
 $(document).ready(function() {
     $('#id_accept').on('change', function() {
@@ -22,7 +23,7 @@ $(document).ready(function() {
 </script>
 {% endblock %}
 
-{% block pagecontent %}
+{% block page_content %}
     {{ block.super }}
 <div class="card">
     <div class="card-header">

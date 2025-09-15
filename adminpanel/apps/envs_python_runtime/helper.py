@@ -8,8 +8,10 @@ from .config import (
 )
 from jiefoundation.utils import run_command
 
-
 def get_user_config(config_name=None):
+    if not os.path.exists(user_config_json):
+        with open(user_config_json, 'w', encoding='utf-8') as f:
+            json.dump({}, f, ensure_ascii=False, indent=4)
     with open(user_config_json, 'r', encoding='utf-8') as f:
         configs = json.load(f)
     if config_name and config_name in configs: return configs[config_name]
@@ -88,6 +90,7 @@ def get_installed(unique_identifier=None):
     with open(user_installed_json, 'r', encoding='utf-8') as f:
         installed = json.load(f)
     for unique_name, info in installed.items():
+        installed[unique_name]['folder'] = installed[unique_name]['folder'].replace('\\', '/')
         installed[unique_name]['is_path'] = os.path.exists(info['folder'])
     if unique_identifier:
         if unique_identifier in installed:

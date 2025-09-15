@@ -1,13 +1,14 @@
 {% extends 'layout_content.html' %}
-{% load panelcore_tags %}
 {% load static %}
+{% load foundation_tags %}
+{% load panelcore_tags %}
 
-{% block css_files %}
-    <link rel="stylesheet" href="{% static 'layui/css/layui.css' %}">
-    {% block panel_css_files %}{% endblock %}
+{% block html_css_files %}
+<link rel="stylesheet" href="{% static 'layui/css/layui.css' %}">
+{% block panel_css_files %}{% endblock %}
 {% endblock %}
 
-{% block js_files %}
+{% block html_js_files %}
 <script src="{% static 'layui/layui.js' %}"></script>
 {% block panel_js_files %}{% endblock %}
 {% endblock %}
@@ -18,41 +19,11 @@
         <a class="d-block">{% get_server_name %}<br/>{% get_server_ip %}</a>
     </div>
 {% endblock %}
-{##}
-{#{% block sidebar %}#}
-{#<li class="nav-item">#}
-{#    <a href="" class="nav-link{% if parent_menu == 'home' %} active{% endif %}">#}
-{#      <i class="nav-icon fas fa-tachometer-alt"></i>#}
-{#      <p>概览</p>#}
-{#    </a>#}
-{#</li>#}
-{##}
-{#<li class="nav-item">#}
-{#    <a href="" class="nav-link">#}
-{#      <i class="nav-icon fas fa-cubes"></i>#}
-{#      <p>项目部署</p>#}
-{#    </a>#}
-{#</li>#}
-{##}
-{#<li class="nav-item">#}
-{#    <a href="" class="nav-link">#}
-{#      <i class="nav-icon fas fa-code"></i>#}
-{#      <p>运行环境</p>#}
-{#    </a>#}
-{#</li>#}
-{##}
-{#<li class="nav-item">#}
-{#    <a href="" class="nav-link">#}
-{#      <i class="nav-icon fas fa-server"></i>#}
-{#      <p>服务器</p>#}
-{#    </a>#}
-{#</li>#}
-{##}
-{#<li class="nav-item">#}
-{#    <a href="" class="nav-link">#}
-{#      <i class="nav-icon fas fa-database"></i>#}
-{#      <p>数据库</p>#}
-{#    </a>#}
-{#</li>#}
-{##}
-{#{% endblock %}#}
+
+{% block logo %}
+<a href="" class="brand-link text-center">
+    <img src="{% static 'img/JieLogo.png' %}" alt="itjie Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+  <span class="brand-text font-weight-light">{% get_settings 'SYSTEM_NAME' %}</span>
+</a>
+{% endblock %}
+

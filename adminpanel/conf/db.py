@@ -4,8 +4,9 @@ DATABASES = {
     # sqlite
     # 'default': {
     #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': Path.joinpath(Path(__file__).resolve().parent.parent, 'db')
+    #     'NAME': Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'db')
     # }
+
     # MySQL. 需要安装 mysqlcient
     # 'default': {
     #     'ENGINE': 'django.db.backends.mysql',

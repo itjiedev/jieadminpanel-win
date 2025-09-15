@@ -2,27 +2,46 @@
     background-color: #e6e6e6;
     color: #000000;
 }
-.hand-cursor{
-    cursor: pointer;
+.alert-danger{
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
 }
-.list_activate{
-    border: 1px solid #000;
-    background-color: #cce8ff;
+.alert-info{
+    color: #0c5460;
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
 }
-.message-box-warning{
-    background-color: #FFFFCC;
-    border:1px solid #ffc107;
-    border-left: 5px solid #ffc107;
-    position: relative;
-    padding: .75rem 1.25rem;
-    margin-bottom: 1rem;
-    border-radius: .25rem;
-    font-size:1rem;
-    font-weight: bold;
+.alert-warning{
+    color: #856404;
+    background-color: #fff3cd;
+    border-color: #ffeeba;
 }
-.message-box-warning p{
-    margin-bottom: 0;
+.alert-success{
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+.alert-primary{
+    color: #004085;
+    background-color: #cce5ff;
+    border-color: #b8daff;
 }
 .errorlist{
     color: red;
+}
+.message-text-debug{
+    color: #6c757d
+}
+.message-text-warning{
+    color: #e58b05;
+}
+.message-text-error{
+    color: red;
+}
+.message-text-success{
+    color: green;
+}
+.message-text-info{
+    color: blue;
 }

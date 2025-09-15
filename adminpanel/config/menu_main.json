@@ -3,54 +3,69 @@
         "id": "systeminfo",
         "title": "系统信息",
         "icon": "fab fa-windows",
-        "url": "home",
+        "url": {
+            "route_name": "home",
+            "args": [],
+            "kwargs": {},
+            "query": {},
+            "fragment": ""
+        },
+        "children": {},
         "rules": []
-    },
-    "project": {
-        "id": "project",
-        "title": "项目管理",
-        "icon": "fas fa-project-diagram",
-        "url": "",
-        "rules": [],
-        "children": {}
     },
     "runtime_envs": {
         "id": "runtime_envs",
         "title": "运行环境",
-        "icon": "fas fa-code",
-        "url": "",
+        "icon": "fab fa-codepen",
+        "url": {
+            "route_name": "",
+            "args": [],
+            "kwargs": {},
+            "query": {},
+            "fragment": ""
+        },
         "rules": [],
         "children": {
             "envs_python": {
                 "id": "envs_python",
                 "title": "Python",
-                "url": "envs_python_runtime:config_check",
+                "url": {
+                    "route_name": "envs_python_runtime:config_check",
+                    "args": [],
+                    "kwargs": {},
+                    "query": {},
+                    "fragment": ""
+                },
                 "rules": [],
                 "children": {
                     "category": {
                         "envs_python_runtime": {
                             "id": "envs_python_runtime",
                             "title": "Runtime环境管理",
-                            "url": "envs_python_runtime:config_check",
+                            "url": {
+                                "route_name": "envs_python_runtime:config_check",
+                                "args": [],
+                                "kwargs": {},
+                                "query": {},
+                                "fragment": ""
+                            },
                             "rules": []
                         },
                         "envs_python_installer": {
                             "id": "envs_python_installer",
                             "title": "安装包环境管理",
-                            "url": "envs_python_installer:python_list",
+                            "url": {
+                                "route_name": "envs_python_installer:python_list",
+                                "args": [],
+                                "kwargs": {},
+                                "query": {},
+                                "fragment": ""
+                            },
                             "rules": []
                         }
                     }
                 }
             }
         }
-    },
-    "database": {
-        "id": "database",
-        "title": "数据库",
-        "icon": "fas fa-database",
-        "url": "",
-        "rules": [],
-        "children": {}
     }
 }

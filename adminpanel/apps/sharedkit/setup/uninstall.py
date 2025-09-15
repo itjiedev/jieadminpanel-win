@@ -1,7 +1,6 @@
 import os, shutil, json
 from pathlib import Path
 
-
 app_name = 'sharedkit'
 
 project_dir = Path(__file__).resolve().parent.parent.parent.parent

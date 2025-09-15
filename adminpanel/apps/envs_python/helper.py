@@ -1,15 +1,16 @@
 import os
 import json
-from jiefoundation.utils import run_command, get_reg_user_env, ensure_path_separator
+from jiefoundation.utils import run_command, ensure_path_end_separator
+from panelcore.helper import get_reg_user_env
 
 from .config import project_python_path, pypi_json
 
 def get_default_pypi():
     result = run_command(f"{project_python_path} -m pip config get global.index-url")
-    if result['returncode'] == 1:
+    if result.returncode == 1:
         return "https://pypi.org/simple"
     else:
-        return result['stdout'].strip()
+        return result.stdout.strip()
 
 
 def get_pypi_list(pypi_name=None):
@@ -48,10 +49,12 @@ def get_default_env_python():
     """
     user_path_list = get_reg_user_env("PATH").split(";")
     for path in user_path_list:
-        path = ensure_path_separator(path)
+        path = ensure_path_end_separator(path.replace('\\', '/'))
         if os.path.exists(os.path.join(path, 'python.exe')):
             return {
-                "path": path, "version": run_command([f'{path}python.exe', '-V'])['stdout'].split(maxsplit=1)[1].strip()}
+                "path": path, "version": run_command([f'{path}python.exe', '-V']).stdout.split(maxsplit=1)[1].strip()}
+
+
     return ''
 
 
@@ -68,7 +71,7 @@ def get_packages(python_path):
     if os.path.exists(python_path):
         cmd = [python_path, '-m', 'pip', 'list', '--format=json']
         result = run_command(cmd)
-        package_list = json.loads(result['stdout'])
+        package_list = json.loads(result.stdout)
         return package_list
     else:
         raise FileNotFoundError(f"指定的Python路径 {python_path} 无法找到~")
@@ -92,7 +95,7 @@ def get_packages_update(python_path, packages = None):
         cmd = [python_path, '-m', 'pip', 'list', '--outdated', '--format=json']
     else:
         cmd = [python_path, '-m', 'pip', 'list', '--outdated', packages, '--format=json']
-    outdated_list = json.loads(run_command(cmd)['stdout'])
+    outdated_list = json.loads(run_command(cmd).stdout)
     return_dict = {}
     for package in outdated_list:
         return_dict[package['name']] = {

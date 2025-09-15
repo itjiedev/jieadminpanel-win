@@ -1,6 +1,9 @@
 {% extends 'envs_python/layout_envs_python.html' %}
+{% load static %}
+{% load foundation_tags %}
 
-{% block js_code %}
+{% block html_js_code %}
+{{ block.super }}
 <script>
 layui.use(function(){
   var layer = layui.layer;
@@ -9,7 +12,6 @@ layui.use(function(){
   // 事件绑定
   util.on('lay-on', {
     'layer_uninstall': function(obj){
-
       var loadIndex = layer.msg('卸载中...', {
         icon: 16,
         shade: 0.01
@@ -36,14 +38,29 @@ layui.use(function(){
           console.error('Error:', error);
         });
       return false;
-    }
+    },
+    "open_explorer": function(obj){
+        var url = obj.data('url');
+        openFolder(url);
+        return false;
+    },
+    "openTerminal": function(obj){
+        var url = obj.data('url');
+        openTerminal(url);
+        return false;
+    },
+      "copy-full-path-btn": function(obj){
+          var fullPath = obj.data('path');
+          copyToClipboard(fullPath);
+          return false;
+      }
   });
 });
 
 </script>
 {% endblock %}
 
-{% block pagecontent %}
+{% block page_content %}
 {{ block.super }}
 {% include 'include_messages.html' %}
 <div class="card">
@@ -56,7 +73,6 @@ layui.use(function(){
         <div class="card-tools pr-2">
 <a href="JavaScript:location.reload();" class="btn btn-outline-info"><i class="fas fa-sync"></i> 刷新列表</a>
 <a href="{% url 'envs_python_installer:reset_default_python' %}" class="btn btn-outline-info"><i class="far fa-window-restore"></i> 重置默认</a>
-{#<a href="{% url 'envs_python:pypi_list' %}" class="btn btn-outline-info"><i class="fas fa-cog"></i> 全局PyPi源</a>#}
 <a href="{% url 'envs_python_installer:clear_cache' %}" class="btn btn-outline-info"><i class="fas fa-trash"></i> 清理下载缓存</a>
         </div>
     </div>
@@ -74,19 +90,32 @@ layui.use(function(){
     <tbody>
     {% for version, python in pythons.items %}
     <tr>
-        <td>{{ python.version }}</td>
+        <td>{{ python.name }}</td>
         <td>{% if python.is_py_default %}默认{% else %}-{% endif %}</td>
-        <td>{% if python.path == default_python.path %}默认{% else %}-{% endif %}</td>
-        <td>{{ python.path }}python.exe</td>
+        <td>{% if python.folder == default_python.path %}默认{% else %}-{% endif %}</td>
+        <td>
+<button class="btn btn-outline-secondary btn-xs"
+        data-url="{% url 'sharedkit:open_explorer' %}?path={% replace_str python.folder '\\' '/' %}"
+        title="打开文件夹" lay-on="open_explorer">
+    <i class="far fa-folder-open"></i>
+</button>
+<button class="btn btn-outline-secondary btn-xs" data-path="{% replace_str python.folder '/' '\\'  %}python.exe" title="复制完整路径" lay-on="copy-full-path-btn">
+    <i class="far fa-copy"></i>
+</button>
+<button type="button" data-url="{% url 'sharedkit:open_terminal' %}?path={% replace_str python.folder '\\' '/' %}"
+        class="btn btn-outline-secondary btn-xs" title="打开终端命令行" lay-on="openTerminal">
+    <i class="fa fa-terminal fa-xs"></i>
+</button>
+            {% replace_str python.folder '/' '\\'  %}python.exe
+        </td>
         <td>
 {% if python.version_major == 3 and python.version_minor >= 5 %}
  <a href="{% url 'envs_python_installer:set_py_default_python' version %}"
     class="btn btn-outline-info btn-xs{% if python.is_py_default %} disabled{% endif %}">py默认</a>
 <a href="{% url 'envs_python_installer:set_env_default_python' version %}"
-   class="btn btn-outline-info btn-xs{% if python.path == default_python.path %} disabled{% endif %}">环境变量默认</a>
+   class="btn btn-outline-info btn-xs{% if python.folder == default_python.path %} disabled{% endif %}">环境变量默认</a>
 <a href="{% url 'envs_python_installer:package_list' version %}" class="btn btn-outline-info btn-xs">包管理</a>
 <a href="{% url 'envs_python_installer:python_uninstall' version %}" class="btn btn-outline-info btn-xs">卸载</a>
-
     {% else %}
     不支持
 {% endif %}

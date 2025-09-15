@@ -12,9 +12,9 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic.base import TemplateView, RedirectView
 
 from jiefoundation.utils import (
-    run_command, get_file_md5, WindowsAPI, set_reg_user_env,
-    get_reg_user_env, ensure_path_separator
+    run_command, get_file_md5, windows_api, ensure_path_end_separator
 )
+from panelcore.helper import set_reg_user_env, get_reg_user_env
 from jiefoundation.jiebase import JsonView
 from apps.envs_python.helper import get_default_env_python
 from apps.envs_python.views import EnvsPythonMixin
@@ -97,7 +97,7 @@ class SetEnvironDefaultView(PythonInstallerMixin, RedirectView):
             with open(installed_file_path, 'r', encoding='utf-8') as f:
                 installed_path = json.load(f)
 
-            installed_dir = installed_path[version]['path'].rstrip('\\python.exe')
+            installed_dir = installed_path[version]['folder'].rstrip('\\python.exe')
             user_path_list.insert(0, installed_dir)
             user_path_list.insert(0, os.path.join(installed_dir, 'Scripts'))
 
@@ -138,7 +138,7 @@ class PythonUninstallView(PythonInstallerMixin, FormView):
                 # version_info = get_python_versions(version)
                 install_file_name = f'python-{version}-amd64.exe'
                 cache_file_path = python_cache_dir / install_file_name
-                installed_dir = installed_info['path'].replace('python.exe', '')
+                installed_dir = installed_info['folder'].replace('python.exe', '')
 
                 if not cache_file_path.exists():
                     version_list = version.split('.')
@@ -152,7 +152,7 @@ class PythonUninstallView(PythonInstallerMixin, FormView):
                                 cache_file_path = system_cache_file
                 try:
                     result = run_command([str(cache_file_path), '/uninstall', '/passive', '/simple'])
-                    if result['returncode'] == 0:
+                    if result.returncode == 0:
                         # 删除安装目录
                         if rm_folder:
                             if os.path.exists(installed_dir): shutil.rmtree(installed_dir)
@@ -165,14 +165,6 @@ class PythonUninstallView(PythonInstallerMixin, FormView):
                         # 如果是py默认，重置默认
                         if installed_info['is_py_default']:
                             if os.path.exists(py_ini_path): os.remove(py_ini_path)
-                        # 如果是环境变量默认，重置默认
-                        # if installed_info['is_default']:
-                        #     reg_user_env = get_reg_user_env("PATH").split(";")
-                        #     for path in reg_user_env:
-                        #         if reg_user_env.startswith(installed_dir):
-                        #             reg_user_env.remove(path)
-                        #     set_reg_user_env("PATH", ';'.joing(reg_user_env))
-
                 except WindowsError as e:
                     raise e
         return super().form_valid(form)
@@ -251,14 +243,17 @@ class PythonDownloadView(JsonView):
 class RunPythonInstallView(JsonView):
 
     def post(self, request, *args, **kwargs):
-        folder = request.POST.get('folder')
+        folder = request.POST.get('folder').replace('/', '\\')
         version = request.POST.get('version')
         version_info = get_python_versions(version)
-        install_folder = os.path.join(folder, f'Python{version_info["version_major"]}{version_info["version_minor"]}')
+        install_folder = os.path.join(
+            folder,
+            f'Python{version_info["version_major"]}{version_info["version_minor"]}'
+        )
         python_cache_file = python_cache_dir / version_info['installer-file-name']
 
         try:
-            WindowsAPI.execute(
+            windows_api(
                 executable=str(python_cache_file),
                 parameters=f'/passive InstallAllUsers=1 TargetDir="{install_folder}"',
                 operation="runas",
@@ -303,7 +298,10 @@ class PackageListView(PythonInstallerMixin, PackageListMixin):
 
     def get_python_path(self):
         version = self.kwargs.get('version')
-        return ensure_path_separator(get_installed_python(version)['path']) + 'python.exe'
+        return ensure_path_end_separator(get_installed_python(version)['folder']) + 'python.exe'
+
+    def get_env_info(self):
+        return get_installed_python(self.kwargs.get('version'))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -329,7 +327,10 @@ class PackageInstallView(PythonInstallerMixin, PackageInstallMixin):
 
     def get_python_path(self):
         version = self.kwargs.get('version')
-        return ensure_path_separator(get_installed_python(version)['path']) + 'python.exe'
+        return ensure_path_end_separator(get_installed_python(version)['folder']) + 'python.exe'
+
+    def get_env_info(self):
+        return get_installed_python(self.kwargs.get('version'))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -361,7 +362,7 @@ class PackageUninstallView(PackageUninstallMixin):
 
     def get_python_path(self):
         version = self.kwargs.get('version')
-        return ensure_path_separator(get_installed_python(version)['path']) + 'python.exe'
+        return ensure_path_end_separator(get_installed_python(version)['folder']) + 'python.exe'
 
 
 from apps.envs_python.views import PackageUpgradeMixin
@@ -370,4 +371,4 @@ class PackageUpgradeView(PackageUpgradeMixin):
 
     def get_python_path(self):
         version = self.kwargs.get('version')
-        return ensure_path_separator(get_installed_python(version)['path']) + 'python.exe'
+        return ensure_path_end_separator(get_installed_python(version)['folder']) + 'python.exe'

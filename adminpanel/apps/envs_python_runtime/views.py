@@ -4,14 +4,14 @@ from pathlib import Path
 import uuid
 
 from django.contrib import messages
-from django.views.generic.edit import FormView, DeleteView
-from django.views.generic.base import TemplateView, RedirectView
+from django.views.generic.edit import FormView
+from django.views.generic.base import  TemplateView, RedirectView
 from django.urls import reverse_lazy
 
 from jiefoundation.jiebase import JsonView
-from jiefoundation.utils import (
-    check_sha256, download_file_with_retry,get_reg_user_env,run_command,
-    set_reg_user_env, ensure_path_separator, remove_trailing_separator
+from jiefoundation.utils import check_sha256, run_command, ensure_path_end_separator
+from panelcore.helper import (
+    download_file_with_retry,get_reg_user_env, set_reg_user_env,
 )
 
 from apps.envs_python.views import EnvsPythonMixin
@@ -76,13 +76,17 @@ class InstallConfigView(PythonRuntimeMixin, FormView):
                 'active': True
             }
         ]
+        user_config = get_user_config()
+        context['install_folder'] = ''
+        if user_config:
+            context['install_folder'] = get_user_config()['install_folder'].replace('\\', '/')
         return  context
 
     def get_initial(self):
         inited = super().get_initial()
         get_config = get_user_config()
         if get_config:
-            inited['install_folder'] = get_config['install_folder']
+            inited['install_folder'] = get_config['install_folder'].replace('\\', '/')
             inited['install_source'] = get_config['install_source']['id']
             inited['check_file'] = get_config['check_file']
         return inited.copy()
@@ -172,7 +176,7 @@ class DownloadView(JsonView):
         if (download_url.startswith('https://www.python.org/ftp/python/') and
                 get_user_config('install_source')['id'] != 'python'):
             download_url = download_url.replace(
-                'https://www.python.org/ftp/python/', ensure_path_separator(get_user_config('install_source')['url-prefix'])
+                'https://www.python.org/ftp/python/', ensure_path_end_separator(get_user_config('install_source')['url-prefix'])
             )
         sha256 = version_info['sha256']
         if not install_file_path.exists():
@@ -198,15 +202,16 @@ class PythonInstallView(PythonRuntimeMixin, FormView):
         version = self.kwargs.get('version')
         initial['version'] = self.kwargs.get('version')
         install_config = get_user_config()
-        import string
-        import random
+
         folder_name = version
         if os.path.exists(os.path.join(install_config['install_folder'], folder_name)):
+            import string
+            import random
             chars = string.ascii_lowercase + string.digits
             random_suffix = ''.join(random.choices(chars, k=3))
             folder_name = f"{version}_{random_suffix}"
 
-        initial['folder'] = os.path.join(install_config['install_folder'], folder_name)
+        initial['folder'] = os.path.join(install_config['install_folder'], folder_name).replace("/", "\\")
         return initial.copy()
 
     def get_context_data(self, **kwargs):
@@ -241,7 +246,7 @@ class InstallView(JsonView):
     def post(self, request, *args, **kwargs):
         name = request.POST.get('name').strip()
         version = request.POST.get('version')
-        folder = request.POST.get('folder')
+        folder = request.POST.get('folder').replace("\\", "/")
         if not name:  name = version
 
         version_info = get_versions(version)
@@ -261,7 +266,6 @@ class InstallView(JsonView):
         if extract_path.exists():
             return self.render_to_json_error('该版本已存在！')
 
-        from .urls import app_name
         from jiefoundation.utils import extract_from_zip, move_and_rename_folder
 
         result = False
@@ -269,7 +273,7 @@ class InstallView(JsonView):
             result = extract_from_zip(install_file_path, extract_to=folder)
         if Path(install_file_path).suffix.lower() == '.nupkg':
             install_dir =os.path.dirname(folder)
-            folder_name = folder.split(os.sep)[-1]
+            folder_name = folder.split('/')[-1]
             version_tmp_path = cache_dir / folder_name
 
             if version_tmp_path.exists():
@@ -280,8 +284,6 @@ class InstallView(JsonView):
                 shutil.rmtree(version_tmp_path)
 
         if result:
-            # 配置运行 get-pip.py
-            from jiefoundation.utils import run_command, copy_file_content_only
             version_split = version_info['sort_version'].split('.')
             version_major = int(version_split[0])
             version_minor = int(version_split[1])
@@ -300,7 +302,7 @@ class InstallView(JsonView):
             installed_python[unique_identifier] = {
                 'name': name,
                 'version': version,
-                'folder': ensure_path_separator(str(extract_path)),
+                'folder': ensure_path_end_separator(str(extract_path).replace('\\', '/')),
                 'create_type': 'install',
                 'create_type_title': create_type['install'],
                 'version_major': int(version_split[0]),
@@ -328,7 +330,7 @@ class NameEditView(PythonRuntimeMixin, FormView):
                 initial['name'] = installed_python['name']
             else:
                 initial['name'] = installed_python['version']
-            initial['folder'] = installed_python['folder']
+            initial['folder'] = installed_python['folder'].replace('/', '\\')
             initial['version'] = installed_python['version']
         return initial.copy()
 
@@ -357,7 +359,6 @@ class NameEditView(PythonRuntimeMixin, FormView):
             installed_dict[unique_identifier]['name'] = name
             with open(user_installed_json, 'w', encoding='utf-8') as f:
                 json.dump(installed_dict, f, ensure_ascii=False, indent=4)
-
             messages.success(self.request, '环境标题修改成功~')
         else:
             form.add_error('name', '没有找到需要修改的环境~')
@@ -373,11 +374,12 @@ class SetDefaultView(RedirectView):
         installed_info = get_installed(version)
         get_user_env = get_reg_user_env('PATH').split(';')
         for item in get_user_env[:]:
+            item = item.replace("/", "\\")
             if os.path.exists(os.path.join(item, 'python.exe')) or os.path.exists(os.path.join(item, 'pip.exe')):
                 get_user_env.remove(item)
 
-        get_user_env.insert(0, str(os.path.join(installed_info['folder'], 'Scripts')))
-        get_user_env.insert(0, installed_info['folder'])
+        get_user_env.insert(0, str(os.path.join(installed_info['folder'].replace('/', '\\'), 'Scripts')))
+        get_user_env.insert(0, installed_info['folder'].replace('/', '\\'))
         set_reg_user_env('PATH', ';'.join(get_user_env))
 
         return super().get(request, *args, **kwargs)
@@ -438,14 +440,7 @@ class ResetDefaultView(RedirectView):
             else:
                 user_path_list.remove('')
         set_reg_user_env("PATH", ";".join(user_path_list))
-
-        # with open(user_installed_json, 'r', encoding='utf-8') as f:
-        #     installed_python = json.load(f)
-        #     for k, v in installed_python.items():
-        #         installed_python[k]['default'] = False
-        # with open(user_installed_json, 'w', encoding='utf-8') as f:
-        #     json.dump(installed_python, f, ensure_ascii=False, indent=4)
-
+        messages.success(self.request, '环境变量重置完成~')
         return super().get(request, *args, **kwargs)
     
 
@@ -465,18 +460,18 @@ class ImportView(PythonRuntimeMixin, FormView):
         if import_dir and os.path.exists(import_dir):
             import_python_file = os.path.join(import_dir, 'python.exe')
             if os.path.exists(import_python_file):
-                import_version = run_command([import_python_file, '-V'])['stdout'].split(maxsplit=1)[1].strip()
+                import_version = run_command([import_python_file, '-V']).stdout.split(maxsplit=1)[1].strip()
                 import_version_list = import_version.split('.')
                 import_name = f'Python-{import_version}'
                 installed_dict = get_installed()
                 folder_list = [item['folder'] for item in installed_dict.values()]
 
-                if ensure_path_separator(import_dir) not in folder_list:
+                if ensure_path_end_separator(import_dir) not in folder_list:
                     unique_identifier = str(uuid.uuid4())
                     installed_dict[unique_identifier] = {
                         'name': import_name,
                         'version': import_name,
-                        'folder': ensure_path_separator(import_dir),
+                        'folder': ensure_path_end_separator(import_dir),
                         'create_type': 'import',
                         'create_type_title': create_type['import'],
                         'version_major': int(import_version_list[0]),
@@ -500,7 +495,7 @@ class PackageListView(PythonRuntimeMixin, PackageListMixin):
 
     def get_python_path(self):
         python_version_info = get_installed(self.kwargs.get('version'))
-        return f'{ensure_path_separator(python_version_info["folder"])}Python.exe'
+        return f'{ensure_path_end_separator(python_version_info["folder"])}Python.exe'
 
     def get_env_info(self):
         return get_installed(self.kwargs.get('version'))
@@ -529,7 +524,7 @@ class PackageInstallView(PythonRuntimeMixin, PackageInstallMixin):
 
     def get_python_path(self):
         installed_info = get_installed(self.kwargs.get('version'))
-        return ensure_path_separator(installed_info['folder']) + 'python.exe'
+        return ensure_path_end_separator(installed_info['folder']) + 'python.exe'
 
     def get_env_info(self):
         return get_installed(self.kwargs.get('version'))
@@ -564,7 +559,7 @@ class PackageUninstallView(PackageUninstallMixin):
     def get_python_path(self):
         version = self.kwargs.get('version')
         installed_info = get_installed(version)
-        return ensure_path_separator(str(installed_info['folder'])) + 'python.exe'
+        return ensure_path_end_separator(str(installed_info['folder'])) + 'python.exe'
 
 
 from apps.envs_python.views import PackageUpgradeMixin
@@ -573,31 +568,7 @@ class PackageUpgradeView(PackageUpgradeMixin):
 
     def get_python_path(self):
         version = self.kwargs.get('version')
-        return ensure_path_separator(get_installed(version)['folder']) + 'python.exe'
-
-
-class  OpenTerminal(RedirectView):
-    """
-    根据传入的path路径打开终端窗口
-    """
-    def get(self, request, *args, **kwargs):
-        import os
-        # 从请求中获取路径参数
-        path = request.GET.get('path') or request.POST.get('path')
-        if not path or not os.path.exists(path):
-            messages.error(request, '路径不存在')
-            self.url = reverse_lazy(f'{app_name}:python_list')
-        else:
-            # 确保路径是绝对路径且存在
-            abs_path = os.path.abspath(path)
-            try:
-                # 在Windows上打开CMD窗口
-                run_command(f'start cmd /k cd /d "{abs_path}"', shell=True)
-            except Exception as e:
-                messages.error(request, f'打开终端失败: {str(e)}')
-            self.url = reverse_lazy(f'{app_name}:python_list')
-        return super().get(request, *args, **kwargs)
-
+        return ensure_path_end_separator(get_installed(version)['folder']) + 'python.exe'
 
 class PythonDeleteView(RedirectView):
     """

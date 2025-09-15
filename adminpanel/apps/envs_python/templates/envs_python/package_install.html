@@ -1,6 +1,7 @@
 {% extends 'envs_python/layout_envs_python.html' %}
 
-{% block js_code %}
+{% block html_js_code %}
+    {{ block.super }}
 <script>
 layui.use(['jquery', 'layer'], function() {
     var $ = layui.jquery;
@@ -80,23 +81,21 @@ layui.use(['jquery', 'layer'], function() {
 </script>
 {% endblock %}
 
-{% block pagecontent %}
+{% block page_content %}
     {{ block.super }}
 {% include 'include_messages.html' %}
-<dl class="row">
-    <dt class="col-sm-1">环境名称</dt><dd class="col-sm-11">{{ env_info.name }}</dd>
-    <dt class="col-sm-1">版本</dt><dd class="col-sm-11">{{ env_info.version }}</dd>
-    <dt class="col-sm-1">路径</dt><dd class="col-sm-11">{{ env_info.folder }}</dd>
-</dl>
-    <hr/>
 {% if not is_path %}
     <h4 class="text-danger">Python解释器路径不存在~</h4>
 {% else %}
 <div class="card">
 <form id="form_package" method="post" class="form-horizontal">{% csrf_token %}
     <div class="card-body">
-        <hr/>
-
+<dl class="row">
+    <dt class="col-sm-1">环境名称</dt><dd class="col-sm-11">{{ env_info.name }}</dd>
+    <dt class="col-sm-1">版本</dt><dd class="col-sm-11">{{ env_info.version }}</dd>
+    <dt class="col-sm-1">路径</dt><dd class="col-sm-11">{{ env_info.folder }}</dd>
+</dl>
+    <hr/>
         <div class="form-group row">
             <label for="{{ form.package_name.for_label }}" class="col-sm-1 col-form-label">{{ form.package_name.label }}</label>
             <div class="col-sm-4">

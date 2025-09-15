@@ -2,14 +2,15 @@
 {% load static %}
 
 {% block panel_css_files %}
-<link rel="stylesheet" href="{% static 'plugins/bootstrap-switch/bootstrap3/bootstrap-switch.css' %}">
+<link rel="stylesheet" href="{% static 'plugins/bootstrap-switch/css/bootstrap3/bootstrap-switch.css' %}">
 {% endblock %}
 
 {% block panel_js_files %}
 <script src="{% static 'plugins/bootstrap-switch/js/bootstrap-switch.min.js' %}"></script>
 {% endblock %}
 
-{% block js_code %}
+{% block html_js_code %}
+{{ block.super }}
 <script>
 layui.use(function(){
   var $ = layui.$;
@@ -17,7 +18,7 @@ layui.use(function(){
   var util = layui.util;
 
       $("input[data-bootstrap-switch]").each(function () {
-          $(this).bootstrapSwitch('state', $(this).prop('checked'));
+          $(this).bootstrapSwitch('state', $(this).prop('checked'))
       })
 
 function parseXHRError(xhr) {
@@ -61,7 +62,7 @@ function getCookie(name) {
         title:"选择文件/文件夹",
         type: 2,
         area: ['800px', '600px'],
-        content: '{% url 'sharedkit:picker_file_dir' 'dir' %}',
+        content: '{% url 'sharedkit:picker_file_dir' 'dir' %}?path={% if install_folder %}{{ install_folder }}{% endif %}',
         fixed: false, // 不固定
         maxmin: true,
         shade: 0.5,
@@ -83,7 +84,7 @@ function getCookie(name) {
 </script>
 {% endblock %}
 
-{% block pagecontent %}
+{% block page_content %}
 {{ block.super }}
 {% include 'include_messages.html' %}
 <div class="card">

@@ -19,3 +19,14 @@ for app_name, app_url in apps_url.items():
         urlpatterns.append(
             path(app_url['path'], include(app_url['include']))
         )
+
+'''
+    url.json文件里的格式
+{
+    "apps.sharedkit": {
+        "path": "namespace路径/",
+        "include": "apps.xxx.urls",
+        "namespace": "xxxx"
+    }
+}
+'''
