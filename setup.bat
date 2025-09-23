@@ -10,19 +10,21 @@ mkdir "%CURRENT_DIR%\data"
 
 echo 安装系统依赖项...
 "%PYTHON_RUN%" -m pip install -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple -r "%CURRENT_DIR%\requirements.txt" --no-warn-script-location
-echo 配置安装默认组件...
-"%PYTHON_RUN%" -m pip install -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple -r "%CURRENT_DIR%\adminpanel\apps\sharedkit\setup\requirements.txt" --no-warn-script-location
-"%PYTHON_RUN%" "%CURRENT_DIR%\adminpanel\apps\sharedkit\setup\install.py"
 "%PYTHON_RUN%" -m pip install -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple -r "%CURRENT_DIR%\adminpanel\apps\envs_python\setup\requirements.txt" --no-warn-script-location
-"%PYTHON_RUN%" "%CURRENT_DIR%\adminpanel\apps\envs_python\setup\install.py"
-@REM "%PYTHON_RUN%" -m pip install -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple -r "%CURRENT_DIR%\adminpanel\apps\envs_python_runtime\setup\requirements.txt" --no-warn-script-location
-"%PYTHON_RUN%" "%CURRENT_DIR%\adminpanel\apps\envs_python_runtime\setup\install.py"
+"%PYTHON_RUN%" -m pip install -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple -r "%CURRENT_DIR%\adminpanel\apps\sharedkit\setup\requirements.txt" --no-warn-script-location
+"%PYTHON_RUN%" -m pip install -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple -r "%CURRENT_DIR%\adminpanel\apps\envs_python_runtime\setup\requirements.txt" --no-warn-script-location
 "%PYTHON_RUN%" -m pip install -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple -r "%CURRENT_DIR%\adminpanel\apps\envs_python_installer\setup\requirements.txt" --no-warn-script-location
+"%PYTHON_RUN%" -m pip install -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple -r "%CURRENT_DIR%\adminpanel\apps\db_mysql\setup\requirements.txt" --no-warn-script-location
+
+echo 组件初始化
+"%PYTHON_RUN%" "%CURRENT_DIR%\adminpanel\apps\sharedkit\setup\install.py"
+"%PYTHON_RUN%" "%CURRENT_DIR%\adminpanel\apps\envs_python\setup\install.py"
+"%PYTHON_RUN%" "%CURRENT_DIR%\adminpanel\apps\envs_python_runtime\setup\install.py"
 "%PYTHON_RUN%" "%CURRENT_DIR%\adminpanel\apps\envs_python_installer\setup\install.py"
+"%PYTHON_RUN%" "%CURRENT_DIR%\adminpanel\apps\db_mysql\setup\install.py"
 
 echo 生成密钥...
 "%PYTHON_RUN%" "%CURRENT_DIR%\adminpanel\manage.py" secretkey
-
 
 set "TARGET_EXE=RunJieAdminPanel.bat"
 set "TARGET_PATH=%CURRENT_DIR%\%TARGET_EXE%"

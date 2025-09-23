@@ -694,5 +694,13 @@
         "url": "https://api.nuget.org/v3-flatcontainer/python/3.5.2.2/python.3.5.2.2.nupkg",
         "file_name": "python.3.5.2.2.nupkg",
         "sha256": ""
+    },
+    "Python-2.7.18": {
+        "sort_version": "2.7.18",
+        "tag": "2.7-64",
+        "display_name": "Python-2.7.18",
+        "url": "https://globalcdn.nuget.org/packages/python2.2.7.18.nupkg",
+        "file_name": "python2.2.7.18.nupkg",
+        "sha256": ""
     }
 }

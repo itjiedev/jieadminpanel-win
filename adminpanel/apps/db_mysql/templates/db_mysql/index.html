@@ -1,0 +1,119 @@
+{% extends 'layout_panel.html' %}
+
+{% block html_js_code %}
+<script>
+layui.use(function(){
+  var layer = layui.layer;
+  var util = layui.util;
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+    util.event('lay-on', {
+        input_pass: function() {
+            var url = $(this).attr('data-url');
+            var id = $(this).attr('data-id');
+            layer.prompt({title: '请输入root帐号登录密码', formType: 1}, function(value, index, elem){
+                if(value === '') return elem.focus();
+                var get_value = util.escape(value);
+                const csrftoken = getCookie('csrftoken');
+                $.ajax({
+                    url: url,
+                    type: 'post',
+                    headers: {'X-CSRFToken': csrftoken},
+                    mode: 'same-origin',
+                    data: {
+                        'id': id,
+                        'password': get_value,
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        Msg = '<p class="text-success text-lg">登录测试成功</p>'
+                        layer.close(index);
+                        layer.alert( Msg + response.message, {icon: 1, title:null});
+                    },
+                    error: function(xhr, status, error) {
+                        errorMsg = '<p class="text-danger text-lg">登录测试失败</p>'
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMsg += xhr.responseJSON.message;
+                        } else {
+                            errorMsg += error;
+                        }
+                        layer.alert(errorMsg, {icon: 2, title:null})
+                    }
+                })
+            })
+        }
+    })
+})
+</script>
+{% endblock %}
+
+{% block page_content %}
+{% include 'include_messages.html' %}
+ <div class="card-header border-0">
+        <div class="card-title">
+    <a href="{% url 'db_mysql:version_list' %}" class="btn btn-success"><i class="fa fa-plus"></i> 安装MySQL</a>
+        </div>
+    <div class="card-tools">
+          <a href="{% url 'db_mysql:clean_cache' %}" class="btn btn-outline-info">
+                <i class="fa fa-trash"></i> 清理下载缓存
+            </a>
+    </div>
+</div>
+
+{% if not installed_list %}
+    <div class="alert alert-warning text-lg"  role="alert">
+        没有找到安装信息,请先安装MySQL~
+    </div>
+{% else %}
+<div class="row">
+{% for id, item in installed_list.items %}
+<div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch flex-column">
+  <div class="card bg-light d-flex flex-fill">
+    <div class="card-body p-2 pl-4">
+        <h2 class="lead"><b>{{ item.title }}</b></h2>
+          <div class="text-muted text-sm mb-1"><b>版本: </b> {{ item.name }} </div>
+          <ul class="ml-4 mb-0 fa-ul text-muted">
+            <li>
+                <span class="fa-li"><i class="fas fa-lg fa-user"></i></span>
+                root{% if item.set_root_password  %}(已设置密码){% else %}(密码为空){% endif %}
+            </li>
+            <li>
+                <span class="fa-li"><i class="fa-solid fa-network-wired"></i></span>
+                localhost:{{ item.port|default:"端口未设置" }}
+            </li>
+          </ul>
+    </div>
+    <div class="card-footer">
+      {% if item.config_status == 1 %}
+          {% if item.set_root_password %}
+        <button type="button" class="btn btn-sm btn-info" data-url="{% url "db_mysql:login_mysql" id %}" data-id="{{ id }}" lay-on="input_pass">测试root登录</button>
+          {% else %}
+        <a href="{% url 'db_mysql:init_root_password' id %}" class="btn btn-sm btn-warning">设置root密码</a>
+          {% endif %}
+      {% endif %}
+      {% if item.config_status == 0 %}
+          <a href="{% url 'db_mysql:initialize' %}?id={{ id }}" class="btn btn-sm btn-danger">初始化</a>
+      {% endif %}
+        <a href="{% url 'db_mysql:detail' id %}" class="btn btn-sm btn-primary float-right">详情</a>
+    </div>
+  </div>
+</div>
+{% endfor %}
+</div>
+{% endif %}
+{% endblock %}

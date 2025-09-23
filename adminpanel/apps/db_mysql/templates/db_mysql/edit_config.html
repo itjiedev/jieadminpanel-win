@@ -1,0 +1,23 @@
+{% extends 'layout_panel.html' %}
+
+{% block page_content %}
+<form method="post" class="form-horizontal layui-form">{% csrf_token %}
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">
+                {{ conf_file }}
+            </div>
+        </div>
+        <div class="card-body">
+<span class="text-danger">切勿修改 port, basedir,  datadir参数，否则可能无法正常启动！</span>
+{% include 'include_messages.html' %}
+{{ form.content }}
+        </div>
+        <div class="card-footer">
+            <button type="submit" class="btn btn-primary" lay-submit>保存</button>
+            <button type="reset" class="btn btn-dark">重置</button>
+
+        </div>
+    </div>
+</form>
+{% endblock %}

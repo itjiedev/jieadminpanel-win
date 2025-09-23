@@ -72,6 +72,11 @@ def run_command(args,timeout=None, shell=False,cwd=None, env=None, encoding='utf
             示例：result.stderr
     """
     import subprocess
+    import locale
+
+    # 首先尝试使用指定的编码
+
+    system_encoding = locale.getpreferredencoding()
     return subprocess.run(
         args,
         shell=shell,
@@ -80,7 +85,7 @@ def run_command(args,timeout=None, shell=False,cwd=None, env=None, encoding='utf
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
-        encoding=encoding,
+        encoding=system_encoding,
         timeout=timeout
     )
 
@@ -234,113 +239,46 @@ def remove_trailing_separator(path, keep_root_separator=True):
     return path
 
 
-def extract_from_zip(zip_path, extract_items=None, extract_to=None, overwrite=True):
+def extract_from_zip(zip_path, extract_to=None):
     """
-    从ZIP压缩包中解压指定的文件或文件夹
+    使用 zipfile 解压 ZIP 文件
 
-    参数:
-        zip_path (str): ZIP压缩包的路径
-        extract_items (str or list, optional): 要解压的文件或文件夹名称，
-            可以是单个字符串或字符串列表。如果为None，则解压所有内容
-        extract_to (str, optional): 解压目标目录，默认为当前目录
-        overwrite (bool): 是否覆盖已存在的文件，默认为True
+    Args:
+        zip_path (str): ZIP 文件的路径
+        extract_to (str, optional): 解压目标目录路径。如果为 None，则解压到 ZIP 文件同目录下
 
-    返回:
-        list: 成功解压的文件列表
+    Returns:
+        str: 解压后的目录路径
 
-    异常:
-        FileNotFoundError: 当ZIP文件不存在时抛出
-        zipfile.BadZipFile: 当ZIP文件损坏时抛出
-
-    # 使用示例
-    # 解压整个ZIP文件
-    extract_from_zip('example.zip')
-
-    # 解压ZIP中的特定文件
-    extract_from_zip('example.zip', extract_items='config.txt')
-
-    # 解压ZIP中的特定文件夹
-    extract_from_zip('example.zip', extract_items=['src/', 'docs/'])
-
-    # 解压到指定目录
-    extract_from_zip('example.zip', extract_items=['src/main.py'], extract_to='./extracted')
-
-    # 解压多个指定文件和文件夹
-    extract_from_zip('example.zip', extract_items=['README.md', 'src/', 'tests/'])
-
+    Raises:
+        FileNotFoundError: 当 ZIP 文件不存在时
+        zipfile.BadZipFile: 当文件不是有效的 ZIP 文件时
+        PermissionError: 当没有权限访问文件时
     """
-    import os
     import zipfile
-    # 检查ZIP文件是否存在
+    import os
+
+    # 检查 ZIP 文件是否存在
     if not os.path.exists(zip_path):
-        raise FileNotFoundError(f"ZIP文件不存在: {zip_path}")
-    # 设置默认解压目录
+        raise FileNotFoundError(f"ZIP 文件不存在: {zip_path}")
+
+    # 如果未指定解压目录，则使用 ZIP 文件同名文件夹
     if extract_to is None:
-        extract_to = os.getcwd()
-    # 确保解压目录存在
+        extract_to = os.path.splitext(zip_path)[0]
+
+    # 创建解压目录（如果不存在）
     os.makedirs(extract_to, exist_ok=True)
-    # 标准化extract_items为列表
-    if extract_items is None:
-        extract_items = []
-    elif isinstance(extract_items, str):
-        extract_items = [extract_items]
-    extracted_files = []
 
-    # 打开ZIP文件
-    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-        # 获取ZIP文件中的所有文件列表
-        all_files = zip_ref.namelist()
-        # 确定需要解压的文件列表
-        if not extract_items:
-            # 如果没有指定特定文件，则解压所有文件
-            files_to_extract = all_files
-        else:
-            # 筛选出需要解压的文件
-            files_to_extract = []
-            for item in extract_items:
-                matched = False
-                for file_name in all_files:
-                    # 精确匹配文件名
-                    if file_name == item:
-                        files_to_extract.append(file_name)
-                        matched = True
-                    # 匹配文件夹（以指定名称开头且后面跟着分隔符）
-                    elif file_name.startswith(item.rstrip('/') + '/'):
-                        files_to_extract.append(file_name)
-                        matched = True
-                    # 匹配文件夹内所有文件（处理不同操作系统分隔符）
-                    elif item.endswith('/') and file_name.startswith(item):
-                        files_to_extract.append(file_name)
-                        matched = True
-                if not matched:
-                    print(f"警告: 在ZIP中未找到 '{item}'")
+    try:
+        # 打开并解压 ZIP 文件
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall(extract_to)
 
-        # 解压选定的文件
-        for file_name in files_to_extract:
-            try:
-                target_path = os.path.join(extract_to, file_name)
-                # 检查是否需要覆盖已存在的文件
-                if not overwrite and os.path.exists(target_path):
-                    print(f"跳过已存在的文件: {target_path}")
-                    continue
-                # 创建目标目录（如果需要）
-                target_dir = os.path.dirname(target_path)
-                if target_dir:
-                    os.makedirs(target_dir, exist_ok=True)
-                # 解压单个文件
-                with zip_ref.open(file_name) as source, open(target_path, 'wb') as target:
-                    while True:
-                        chunk = source.read(8192)
-                        if not chunk:
-                            break
-                        target.write(chunk)
+        print(f"成功解压 {zip_path} 到 {extract_to}")
+        return extract_to
 
-                extracted_files.append(file_name)
-                print(f"已解压: {file_name}")
-
-            except Exception as e:
-                print(f"解压文件 '{file_name}' 时出错: {e}")
-    return True
+    except zipfile.BadZipFile:
+        raise zipfile.BadZipFile(f"无效的 ZIP 文件: {zip_path}")
 
 
 def move_and_rename_folder(src_folder, dest_parent, new_name=None):
@@ -424,33 +362,22 @@ def read_file(filepath, mode='r'):
     from pathlib import Path
 
     if not Path(filepath): return False
-    fp = None
     try:
-        fp = open(filepath, mode)
-        f_content = fp.read()
+        with open(filepath, mode, encoding="utf-8") as f:
+            f_content = f.read()
     except Exception as ex:
-        fp = open(filepath, mode, encoding="utf-8", errors='ignore')
-        f_content = fp.read()
-    finally:
-        if fp and not fp.closed: fp.close()
+        with open(filepath, mode, encoding="utf-8", errors='ignore') as fp:
+            f_content = f.read()
     return f_content
 
 
 def write_file(filename, content, mode='w+'):
     try:
-        fp = open(filename, mode)
-        fp.write(content)
-        fp.close()
+        with open(filename, mode, encoding="utf-8") as fp:
+            fp.write(content)
         return True
     except:
-        try:
-            fp = open(filename, mode, encoding="utf-8")
-            fp.write(content)
-            fp.close()
-            return True
-        except:
-            return False
-
+        return False
 
 def make_dir(dir_path):
     try:

@@ -67,5 +67,33 @@
                 }
             }
         }
+    },
+    "database": {
+      "id": "database",
+      "title": "数据库",
+      "icon": "fa-solid fa-database",
+      "url": {
+        "route_name": "",
+        "args": [],
+        "kwargs": {},
+        "query": {},
+        "fragment": ""
+      },
+      "rules": [],
+      "children": {
+            "db_mysql": {
+              "id": "db_mysql",
+              "title": "MySQL",
+              "url": {
+                "route_name": "db_mysql:checkconfig",
+                "args": [],
+                "kwargs": {},
+                "query": {},
+                "fragment": ""
+              },
+              "rules": [],
+              "children": {}
+            }
+      }
     }
 }

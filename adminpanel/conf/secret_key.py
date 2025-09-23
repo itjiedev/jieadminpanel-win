@@ -1,1 +1,1 @@
-SECRET_KEY = 'django-insecure-=@)_$#dxhoe!ie11=!a#78y3@bd+-d@e3_z4grr@e&ph0j+^hb'
+SECRET_KEY = 'django-insecure-n$^kv6zk)(1g!#qr9wp=tv#3v(ym_w!w4k9r#1fe-vvfu41cuw'

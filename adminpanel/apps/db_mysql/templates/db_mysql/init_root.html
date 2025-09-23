@@ -1,0 +1,40 @@
+{% extends 'layout_panel.html' %}
+{% load static %}
+
+{% block page_content %}
+{% if install_info.set_root_password %}
+<div class="alert alert-success">
+    <div class="text-lg">Root用户密码已初始化完成！</div>
+</div>
+    {% else %}
+{% include 'include_messages.html' %}
+<form method="post" class="form-horizontal layui-form">{% csrf_token %}
+<div class="card">
+    <div class="card-body">
+    <div class="text-muted">密码不保存到本地，且程序不进行密码强度检测，请自行保证密码强度！~</div>
+    <hr/>
+        <div class="form-group row">
+            <label for="" class="col-sm-1 col-form-label">用户名</label>
+            <div class="col-sm-6 text-lg text-bold text-red">root</div>
+        </div>
+{% for field in form %}
+        <div class="form-group row">
+            <label for="" class="col-sm-1 col-form-label">
+                {{ field.label }}<span class="text-danger">*</span>
+            </label>
+            <div class="col-sm-6">
+                {{ field }}
+            <span class="text-danger">{{ field.errors.as_text }}</span>
+            </div>
+        </div>
+{% endfor %}
+
+    </div>
+    <div class="card-footer">
+        <button type="submit" class="btn btn-primary" lay-submit>设置密码</button>
+    </div>
+</div>
+{% endif %}
+</form>
+
+{% endblock %}

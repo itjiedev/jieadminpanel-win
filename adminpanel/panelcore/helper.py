@@ -96,110 +96,218 @@ def download_file_with_retry(url, destination, chunk_size=8192, max_retries=3, t
     return False
 
 
-def extract_from_zip(zip_path, extract_items=None, extract_to=None, overwrite=True):
+# def extract_from_zip(zip_path, extract_items=None, extract_to=None, overwrite=True):
+#     """
+#     从ZIP压缩包中解压指定的文件或文件夹
+#
+#     参数:
+#         zip_path (str): ZIP压缩包的路径
+#         extract_items (str or list, optional): 要解压的文件或文件夹名称，
+#             可以是单个字符串或字符串列表。如果为None，则解压所有内容
+#         extract_to (str, optional): 解压目标目录，默认为当前目录
+#         overwrite (bool): 是否覆盖已存在的文件，默认为True
+#
+#     返回:
+#         list: 成功解压的文件列表
+#
+#     异常:
+#         FileNotFoundError: 当ZIP文件不存在时抛出
+#         zipfile.BadZipFile: 当ZIP文件损坏时抛出
+#
+#     # 使用示例
+#     # 解压整个ZIP文件
+#     extract_from_zip('example.zip')
+#
+#     # 解压ZIP中的特定文件
+#     extract_from_zip('example.zip', extract_items='config.txt')
+#
+#     # 解压ZIP中的特定文件夹
+#     extract_from_zip('example.zip', extract_items=['src/', 'docs/'])
+#
+#     # 解压到指定目录
+#     extract_from_zip('example.zip', extract_items=['src/main.py'], extract_to='./extracted')
+#
+#     # 解压多个指定文件和文件夹
+#     extract_from_zip('example.zip', extract_items=['README.md', 'src/', 'tests/'])
+#
+#     """
+#     import os
+#     import zipfile
+#     # 检查ZIP文件是否存在
+#     if not os.path.exists(zip_path):
+#         raise FileNotFoundError(f"ZIP文件不存在: {zip_path}")
+#     # 设置默认解压目录
+#     if extract_to is None:
+#         extract_to = os.getcwd()
+#     # 确保解压目录存在
+#     os.makedirs(extract_to, exist_ok=True)
+#     # 标准化extract_items为列表
+#     if extract_items is None:
+#         extract_items = []
+#     elif isinstance(extract_items, str):
+#         extract_items = [extract_items]
+#     extracted_files = []
+#
+#     # 打开ZIP文件
+#     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+#         # 获取ZIP文件中的所有文件列表
+#         all_files = zip_ref.namelist()
+#         # 确定需要解压的文件列表
+#         if not extract_items:
+#             # 如果没有指定特定文件，则解压所有文件
+#             files_to_extract = all_files
+#         else:
+#             # 筛选出需要解压的文件
+#             files_to_extract = []
+#             for item in extract_items:
+#                 matched = False
+#                 for file_name in all_files:
+#                     # 精确匹配文件名
+#                     if file_name == item:
+#                         files_to_extract.append(file_name)
+#                         matched = True
+#                     # 匹配文件夹（以指定名称开头且后面跟着分隔符）
+#                     elif file_name.startswith(item.rstrip('/') + '/'):
+#                         files_to_extract.append(file_name)
+#                         matched = True
+#                     # 匹配文件夹内所有文件（处理不同操作系统分隔符）
+#                     elif item.endswith('/') and file_name.startswith(item):
+#                         files_to_extract.append(file_name)
+#                         matched = True
+#                 if not matched:
+#                     print(f"警告: 在ZIP中未找到 '{item}'")
+#
+#         # 解压选定的文件
+#         for file_name in files_to_extract:
+#             try:
+#                 target_path = os.path.join(extract_to, file_name)
+#                 # 检查是否需要覆盖已存在的文件
+#                 if not overwrite and os.path.exists(target_path):
+#                     print(f"跳过已存在的文件: {target_path}")
+#                     continue
+#                 # 创建目标目录（如果需要）
+#                 target_dir = os.path.dirname(target_path)
+#                 if target_dir:
+#                     os.makedirs(target_dir, exist_ok=True)
+#                 # 解压单个文件
+#                 with zip_ref.open(file_name) as source, open(target_path, 'wb') as target:
+#                     while True:
+#                         chunk = source.read(8192)
+#                         if not chunk:
+#                             break
+#                         target.write(chunk)
+#
+#                 extracted_files.append(file_name)
+#                 print(f"已解压: {file_name}")
+#
+#             except Exception as e:
+#                 print(f"解压文件 '{file_name}' 时出错: {e}")
+#     return True
+
+import socket
+
+def is_port_available(port):
     """
-    从ZIP压缩包中解压指定的文件或文件夹
-
-    参数:
-        zip_path (str): ZIP压缩包的路径
-        extract_items (str or list, optional): 要解压的文件或文件夹名称，
-            可以是单个字符串或字符串列表。如果为None，则解压所有内容
-        extract_to (str, optional): 解压目标目录，默认为当前目录
-        overwrite (bool): 是否覆盖已存在的文件，默认为True
-
-    返回:
-        list: 成功解压的文件列表
-
-    异常:
-        FileNotFoundError: 当ZIP文件不存在时抛出
-        zipfile.BadZipFile: 当ZIP文件损坏时抛出
-
-    # 使用示例
-    # 解压整个ZIP文件
-    extract_from_zip('example.zip')
-
-    # 解压ZIP中的特定文件
-    extract_from_zip('example.zip', extract_items='config.txt')
-
-    # 解压ZIP中的特定文件夹
-    extract_from_zip('example.zip', extract_items=['src/', 'docs/'])
-
-    # 解压到指定目录
-    extract_from_zip('example.zip', extract_items=['src/main.py'], extract_to='./extracted')
-
-    # 解压多个指定文件和文件夹
-    extract_from_zip('example.zip', extract_items=['README.md', 'src/', 'tests/'])
-
+    检查指定端口是否可用
     """
-    import os
-    import zipfile
-    # 检查ZIP文件是否存在
-    if not os.path.exists(zip_path):
-        raise FileNotFoundError(f"ZIP文件不存在: {zip_path}")
-    # 设置默认解压目录
-    if extract_to is None:
-        extract_to = os.getcwd()
-    # 确保解压目录存在
-    os.makedirs(extract_to, exist_ok=True)
-    # 标准化extract_items为列表
-    if extract_items is None:
-        extract_items = []
-    elif isinstance(extract_items, str):
-        extract_items = [extract_items]
-    extracted_files = []
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        # 尝试绑定到指定端口
+        sock.bind(('localhost', port))
+        # 如果绑定成功，说明端口可用
+        return True
+    except socket.error:
+        # 如果绑定失败，说明端口已被占用
+        return False
+    finally:
+        sock.close()
+def find_available_port(start_port=3306):
+    """
+    从指定端口开始查找可用的端口
+    默认从3306端口开始检查
+    """
+    port = start_port
+    while True:
+        if is_port_available(port):
+            return port
+        port += 1
 
-    # 打开ZIP文件
-    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-        # 获取ZIP文件中的所有文件列表
-        all_files = zip_ref.namelist()
-        # 确定需要解压的文件列表
-        if not extract_items:
-            # 如果没有指定特定文件，则解压所有文件
-            files_to_extract = all_files
+
+def get_sorted(dict_list, key):
+    """
+    获取按版本从高到低排序的已安装MySQL列表
+    """
+    from collections import OrderedDict
+
+    def version_key(version_string):
+        return [int(x) for x in version_string.split('.')]
+    sorted_items = sorted(
+        dict_list.items(),
+        key=lambda item: version_key(item[1][key]),
+        reverse=True
+    )
+    return OrderedDict(sorted_items)
+
+
+def get_service_status(service_name):
+    """
+    获取指定 Windows 服务的当前状态（简化版）
+
+    Args:
+        service_name (str): Windows 服务名称
+
+    Returns:
+        dict: 包含服务状态信息的字典
+    """
+    if not service_name:
+        return {
+            'status': 'invalid',
+            'status_text': '服务名称无效',
+            'service_name': service_name
+        }
+
+    try:
+        from jiefoundation.utils import run_command
+
+        # 查询服务状态
+        result = run_command(['sc', 'query', service_name])
+
+        if result.returncode == 0:
+            output = result.stdout.lower()
+            if 'state' in output:
+                if 'running' in output or '4 running' in output:
+                    color, status, status_text = 'success', 'running', '运行中'
+                elif 'stopped' in output or '1 stopped' in output:
+                    color, status, status_text = 'danger', 'stopped', '已停止'
+                elif 'paused' in output or '7 paused' in output:
+                    color, status, status_text = 'warning', 'paused', '已暂停'
+                elif 'start pending' in output or '2 start_pending' in output:
+                    color, status, status_text = 'success', 'starting', '正在启动'
+                elif 'stop pending' in output or '3 stop_pending' in output:
+                    color, status, status_text = 'warning', 'stopping', '正在停止'
+                else:
+                    color, status, status_text = 'secondary', 'unknown', '未知状态'
+            else:
+                color, status, status_text = 'secondary', 'unknown', '未知状态'
+
+            return {
+                'status': status,
+                'color': color,
+                'status_text': status_text,
+                'service_name': service_name
+            }
         else:
-            # 筛选出需要解压的文件
-            files_to_extract = []
-            for item in extract_items:
-                matched = False
-                for file_name in all_files:
-                    # 精确匹配文件名
-                    if file_name == item:
-                        files_to_extract.append(file_name)
-                        matched = True
-                    # 匹配文件夹（以指定名称开头且后面跟着分隔符）
-                    elif file_name.startswith(item.rstrip('/') + '/'):
-                        files_to_extract.append(file_name)
-                        matched = True
-                    # 匹配文件夹内所有文件（处理不同操作系统分隔符）
-                    elif item.endswith('/') and file_name.startswith(item):
-                        files_to_extract.append(file_name)
-                        matched = True
-                if not matched:
-                    print(f"警告: 在ZIP中未找到 '{item}'")
+            return {
+                'status': 'not_found',
+                'color': 'secondary',
+                'status_text': '服务不存在',
+                'service_name': service_name
+            }
 
-        # 解压选定的文件
-        for file_name in files_to_extract:
-            try:
-                target_path = os.path.join(extract_to, file_name)
-                # 检查是否需要覆盖已存在的文件
-                if not overwrite and os.path.exists(target_path):
-                    print(f"跳过已存在的文件: {target_path}")
-                    continue
-                # 创建目标目录（如果需要）
-                target_dir = os.path.dirname(target_path)
-                if target_dir:
-                    os.makedirs(target_dir, exist_ok=True)
-                # 解压单个文件
-                with zip_ref.open(file_name) as source, open(target_path, 'wb') as target:
-                    while True:
-                        chunk = source.read(8192)
-                        if not chunk:
-                            break
-                        target.write(chunk)
-
-                extracted_files.append(file_name)
-                print(f"已解压: {file_name}")
-
-            except Exception as e:
-                print(f"解压文件 '{file_name}' 时出错: {e}")
-    return True
+    except Exception as e:
+        return {
+            'status': 'error',
+            'color': 'danger',
+            'status_text': f'查询失败: {str(e)}',
+            'service_name': service_name
+        }

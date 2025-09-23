@@ -1,0 +1,97 @@
+{% extends 'layout_panel.html' %}
+{% load foundation_tags %}
+
+{% block html_js_code %}
+<script>
+layui.use(['util', 'layer'], function(){
+    var util = layui.util;
+    var layer = layui.layer;
+
+    util.on('lay-on', {
+        btn_download: function(elem, index){
+            var loadIndex = layer.msg('开始下载~请稍候....', {icon: 16, time:0, shade: 0.6});
+            var dataKey = $(this).attr('data-href');
+            $.ajax({
+                url: "{% url 'db_mysql:download' %}?version=" + dataKey,
+                type: 'GET',
+                success: function(response){
+                    if (response.status == 'success') {
+                        layer.close(loadIndex);
+                        var DownloadIndex = layer.msg('下载成功~解压中....', {icon: 16, time:0, shade: 0.6});
+                        $.ajax({
+                            url: "{% url 'db_mysql:unzip' %}?version=" + dataKey,
+                            type: 'GET',
+                            success: function(response){
+                                if (response.status == 'success') {
+                                    layer.close(DownloadIndex);
+                                    layer.confirm('解压安装完成~现在进行配置吗?', {icon: 3}, function() {
+                                        location.href = "{% url 'db_mysql:initialize' %}?id=" + response.id;
+                                    }, function() {
+                                        location.href = "{% url 'db_mysql:index' %}";
+                                    });
+                                }
+                            },
+                            error: function(xhr, status, message) {
+                                let errorMsg = '操作失败: ';
+                                if (xhr.responseJSON && xhr.responseJSON.message) {
+                                    errorMsg += xhr.responseJSON.message;
+                                } else {
+                                    errorMsg += error;
+                                }
+                                layer.msg(errorMsg, {icon: 2});
+                            }
+                        })
+                    }
+                },
+                error: function(xhr, status, message) {
+                        let errorMsg = '操作失败: ';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMsg += xhr.responseJSON.message;
+                        } else {
+                            errorMsg += message;
+                        }
+                        layer.msg(errorMsg, {icon: 2});
+                }
+            })
+        }
+    })
+})
+</script>
+{% endblock %}
+
+
+{% block page_content %}
+ {% include 'include_messages.html' %}
+<div class="card p-0">
+<div class="card-header">
+    <div class="card-tools">
+        <a href="{% url 'db_mysql:versions_refresh' %}" class="btn btn-outline-info">
+            <i class="fas fa-list"></i>更新版本
+        </a>
+    </div>
+</div>
+<div class="card-body p-0">
+    <table class="table table-hover table-striped p-0">
+        <thead>
+            <tr>
+                <th>名称</th>
+                <th>版本</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for key, item in versions.items %}
+            <tr{% if item.version in installed_version %} class="table-success"{% endif %}>
+                <td>{% if item.is_new %}<span class="text-success">(最新版)</span>{% endif %}{{ item.name }}</td>
+                <td>{{ item.version }}</td>
+                <td>
+<button type="button" data-href="{{ key }}" class="btn btn-info btn-xs" lay-on="btn_download">安装配置</button>
+<a href="{{ item.download_url }}" class="btn btn-outline-info btn-xs">另存下载</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+</div>
+{% endblock %}

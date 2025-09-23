@@ -26,6 +26,7 @@ layui.use(['jquery', 'layer'], function() {
 
     return message;
 }
+    $('#btn_get_detail').hide();
     $('#btn_submit').on('click', function() {
         var packageName = $('#id_package_name').val();
         if (!packageName) {
@@ -62,6 +63,7 @@ layui.use(['jquery', 'layer'], function() {
                     $('#btn_search_package').prop('disabled', false);
                     $('#btn_search_package').find('i').removeClass('fa-spinner fa-spin').addClass('fa-search');
                     $('#btn_submit').prop('disabled', false);
+                    $('#btn_get_detail').show();
                 }
             },
             error: function(xhr, status, error) {
@@ -77,6 +79,13 @@ layui.use(['jquery', 'layer'], function() {
             },
         });
     });
+    {#$('#btn_get_detail').on('click', function() {#}
+    {#    const version = $('#id_package_version').val();#}
+    {#    if (version == 'latest'){#}
+    {#        layer.alert('请选择版本', {title: false, icon: 2, shade: 0.6});#}
+    {#    }#}
+    {##}
+    {#});#}
 });
 </script>
 {% endblock %}
@@ -112,7 +121,8 @@ layui.use(['jquery', 'layer'], function() {
             <label for="{{ form.package_version.for_label }}" class="col-sm-1 col-form-label">
                 {{ form.package_version.label }}
             </label>
-            <div class="col-sm-4">{{ form.package_version }}</div>
+            <div class="col-sm-4">{{ form.package_version }} </div>
+{#            <div class="col-sm-2"><button type="button" class="btn btn-outline-secondary" id="btn_get_detail">版本详情</button></div>#}
         </div>
 
     </div>
@@ -122,6 +132,11 @@ layui.use(['jquery', 'layer'], function() {
     </div>
 </form>
 </div>
+{#<div class="card" id="package_detail">#}
+{#    <div class="card-header"></div>#}
+{#    <div class="card-header"></div>#}
+{#    <div class="card-body"></div>#}
+{#</div>#}
  {% endif %}
 {% if form.non_field_errors %}
 <div class="card" id="non_field_error">

@@ -5,18 +5,23 @@
         "namespace": "sharedkit"
     },
     "apps.envs_python": {
-        "path": "envs_python/",
+        "path": "envs/python/",
         "include": "apps.envs_python.urls",
         "namespace": "envs_python"
     },
     "apps.envs_python_runtime": {
-        "path": "envs_python_runtime/",
+        "path": "envs/python/runtime/",
         "include": "apps.envs_python_runtime.urls",
         "namespace": "envs_python_runtime"
     },
     "apps.envs_python_installer": {
-        "path": "envs_python_installer/",
+        "path": "envs/python/installer/",
         "include": "apps.envs_python_installer.urls",
         "namespace": "envs_python_installer"
+    },
+    "apps.db_mysql": {
+        "path": "database/mysql/",
+        "include": "apps.db_mysql.urls",
+        "namespace": "db_mysql"
     }
 }

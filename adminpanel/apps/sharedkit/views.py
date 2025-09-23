@@ -179,3 +179,12 @@ class  OpenTerminal(JsonView):
             except Exception as e:
                 return self.render_to_json_error(f'打开终端失败: {str(e)}')
         return self.render_to_json_success('终端窗口已打开~')
+
+
+def check_port(port):
+    """检查端口是否可用"""
+    import socket
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    result = sock.connect_ex(('localhost', port))
+    sock.close()
+    return result == 0

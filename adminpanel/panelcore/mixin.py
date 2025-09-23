@@ -6,11 +6,11 @@ from django.views.generic.base import ContextMixin
 #         context['parent_menu'] = 'project_deploy'
 #         return context
 
-# class DatabasesMixin(ContextMixin):
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['parent_menu'] = 'databases'
-#         return context
+class DatabaseMixin(ContextMixin):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['parent_menu'] = 'database'
+        return context
 
 class RuntimeEnvsMixin(ContextMixin):
     def get_context_data(self, **kwargs):

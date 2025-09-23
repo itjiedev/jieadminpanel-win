@@ -190,3 +190,37 @@ class PackagePipExportView(PythonRunMixin, FormView):
         save_path = form.cleaned_data.get('save_path')
         python_path = self.get_python_path()
         cmd = [python_path, "-m", 'pip', 'freeze ', '>', f'{save_path}requirements.txt']
+
+
+class PackageDetailView(JsonView):
+    def get(self, request, *args, **kwargs):
+        package_name = self.kwargs.get('package')
+        version = self.kwargs.get('version')
+        if version == 'latest':
+            # 获取最新的版本号
+            pass
+
+        detail_url = 'https://pypi.org/pypi/{}/{}/json'.format(package_name, version)
+        try:
+            import requests
+            response = requests.get(detail_url)
+            if response.status_code == 200:
+                json_data = response.json()
+                data = {
+                    'package': json_data['info']['name'],
+                    'version': json_data['info']['version'],
+                    'summary': json_data['info']['summary'],
+                    'author_email': json_data['info']['author_email'],
+                    'requires_dist': json_data['info']['requires_dist'],
+                    'requires_python': json_data['info']['requires_python'],
+                    'package_url': json_data['info']['package_url'],
+                    'release_url': json_data['info']['release_url'],
+                    'license': json_data['info']['license'],
+                }
+
+                return self.render_to_json_response(data)
+            else:
+                return self.render_to_json_error(message=f"获取数据失败，状态码: {response.status_code}")
+        except Exception as e:
+            return self.render_to_json_error(message=f"请求出错: {str(e)}")
+

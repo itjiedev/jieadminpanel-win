@@ -268,6 +268,7 @@ class InstallView(JsonView):
 
         from jiefoundation.utils import extract_from_zip, move_and_rename_folder
 
+        print('解压，请稍候....')
         result = False
         if Path(install_file_path).suffix.lower() == '.zip':
             result = extract_from_zip(install_file_path, extract_to=folder)

@@ -86,3 +86,17 @@ function OpenSystemEnvironmentVariables(url){
         }
     })
 }
+
+function OpenSystemServices(url){
+    layer.msg('尝试打开系统服务管理列表!请检查屏幕或者任务栏~');
+    fetch(url, {
+        method: 'GET'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+        } else {
+            layer.alert('系统服务打开失败: ' + data.message, {icon: 2, title: null});
+        }
+    })
+}
