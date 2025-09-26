@@ -86,7 +86,7 @@ layui.use(['util', 'layer'], function(){
                 <td>{{ item.version }}</td>
                 <td>
 <button type="button" data-href="{{ key }}" class="btn btn-info btn-xs" lay-on="btn_download">安装配置</button>
-<a href="{{ item.download_url }}" class="btn btn-outline-info btn-xs">另存下载</a>
+<a href="{{ item.download_url }}" target="_blank" class="btn btn-outline-info btn-xs">另存下载</a>
                 </td>
             </tr>
             {% endfor %}

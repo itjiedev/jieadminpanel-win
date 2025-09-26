@@ -21,6 +21,67 @@ def url_reverse_lazy(urlconf):
         return reverse_lazy(urlconf['route_name'], args=args, kwargs=kwargs, query=query, fragment=fragment)
     return ''
 
+
+def windows_api_blocking(executable, parameters="", operation="open", directory=None, show_cmd=1):
+    """
+    使用 ShellExecuteExW 实现阻塞运行
+    """
+    import ctypes
+    from ctypes import wintypes
+    # 定义结构体
+    class SHELLEXECUTEINFO(ctypes.Structure):
+        _fields_ = [
+            ('cbSize', wintypes.DWORD),
+            ('fMask', wintypes.ULONG),
+            ('hwnd', wintypes.HWND),
+            ('lpVerb', wintypes.LPCWSTR),
+            ('lpFile', wintypes.LPCWSTR),
+            ('lpParameters', wintypes.LPCWSTR),
+            ('lpDirectory', wintypes.LPCWSTR),
+            ('nShow', ctypes.c_int),
+            ('hInstApp', wintypes.HINSTANCE),
+            ('lpIDList', ctypes.c_void_p),
+            ('lpClass', wintypes.LPCWSTR),
+            ('hkeyClass', wintypes.HKEY),
+            ('dwHotKey', wintypes.DWORD),
+            ('hIcon', wintypes.HANDLE),
+            ('hProcess', wintypes.HANDLE),
+        ]
+
+    # 常量定义
+    SEE_MASK_NOCLOSEPROCESS = 0x00000040
+    INFINITE = 0xFFFFFFFF
+
+    # 创建结构体实例
+    sei = SHELLEXECUTEINFO()
+    sei.cbSize = ctypes.sizeof(SHELLEXECUTEINFO)
+    sei.fMask = SEE_MASK_NOCLOSEPROCESS
+    sei.hwnd = None
+    sei.lpVerb = operation
+    sei.lpFile = executable
+    sei.lpParameters = parameters
+    sei.lpDirectory = directory
+    sei.nShow = show_cmd
+
+    # 执行 ShellExecuteExW
+    if not ctypes.windll.shell32.ShellExecuteExW(ctypes.byref(sei)):
+        raise RuntimeError("ShellExecuteExW failed")
+
+    # 等待进程结束
+    if sei.hProcess:
+        ctypes.windll.kernel32.WaitForSingleObject(sei.hProcess, INFINITE)
+        # 获取退出代码
+        exit_code = wintypes.DWORD()
+        ctypes.windll.kernel32.GetExitCodeProcess(sei.hProcess, ctypes.byref(exit_code))
+        # 关闭进程句柄
+        ctypes.windll.kernel32.CloseHandle(sei.hProcess)
+        return exit_code.value
+
+    return 0
+
+
+
+
 def windows_api(executable, parameters= "", operation="open", directory=None, show_cmd=1):
         """
         使用 ShellExecuteW 调用 Windows 程序或执行命令

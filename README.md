@@ -20,13 +20,11 @@ Github主页： https://github.com/itjiedev
 特别提醒：建议在发行版中下载提供的zip压缩包，勿直接使用平台的zip下载功能，易造成bat文件运行失败。
 
 #### 如何升级
-如果执行终端窗口正在运行，如果程序正在运行先关闭，解压压缩包，使用压缩包里的文件夹替换安装目录里的文件夹即可。例如：
+如果执行终端窗口正在运行，如果程序正在运行先关闭，解压压缩包，使用压缩包里的文件夹替换安装目录里的文件夹即可。
 如果需要运行脚本或者其他操作，压缩包会附带升级说明，参考升级说明操作。
 
 
 #### 授权说明
 仅用于个人学习交流，请勿用于商业用途，因使用造成的损失，不承担任何责任。  
 
-![当前windows系统详情](Screenshot/systeminfo.jpg)
-![以Runtime压缩包方式安装python列表](Screenshot/runtime_list.jpg)
-![以installer安装包方式安装python环境](Screenshot/installer_install.jpg)
+![当前windows系统详情](Screenshot/systeminfo.jpg)![以Runtime压缩包方式安装python列表](Screenshot/runtime_list.jpg)![以installer安装包方式安装python环境](Screenshot/installer_install.jpg)![以installer安装包方式安装python环境](Screenshot/mysql.jpg)

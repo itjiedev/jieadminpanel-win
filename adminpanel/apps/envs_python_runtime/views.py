@@ -461,7 +461,12 @@ class ImportView(PythonRuntimeMixin, FormView):
         if import_dir and os.path.exists(import_dir):
             import_python_file = os.path.join(import_dir, 'python.exe')
             if os.path.exists(import_python_file):
-                import_version = run_command([import_python_file, '-V']).stdout.split(maxsplit=1)[1].strip()
+                version_str = ''
+                result = run_command([import_python_file, '-V'])
+                if result.stdout:version_str = result.stdout
+                if result.stderr:version_str = result.stderr
+                import_version = version_str.split(maxsplit=1)[1].strip()
+                
                 import_version_list = import_version.split('.')
                 import_name = f'Python-{import_version}'
                 installed_dict = get_installed()

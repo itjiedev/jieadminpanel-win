@@ -1,4 +1,9 @@
 {% extends 'layout_panel.html' %}
+{% load static %}
+
+{% block panel_js_files %}
+<script src="{% static 'js/sharedkit.js' %}"></script>
+{% endblock %}
 
 {% block html_js_code %}
 <script>
@@ -12,7 +17,6 @@ function getCookie(name) {
         const cookies = document.cookie.split(';');
         for (let i = 0; i < cookies.length; i++) {
             const cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?
             if (cookie.substring(0, name.length + 1) === (name + '=')) {
                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                 break;
@@ -23,6 +27,11 @@ function getCookie(name) {
 }
 
     util.event('lay-on', {
+         OpenSystemServices: function() {
+            var url = $(this).attr('data-href');
+            OpenSystemServices(url);
+            return false;
+         },
         input_pass: function() {
             var url = $(this).attr('data-url');
             var id = $(this).attr('data-id');
@@ -63,7 +72,7 @@ function getCookie(name) {
 {% endblock %}
 
 {% block page_content %}
-{% include 'include_messages.html' %}
+
  <div class="card-header border-0">
         <div class="card-title">
     <a href="{% url 'db_mysql:version_list' %}" class="btn btn-success"><i class="fa fa-plus"></i> 安装MySQL</a>
@@ -72,9 +81,12 @@ function getCookie(name) {
           <a href="{% url 'db_mysql:clean_cache' %}" class="btn btn-outline-info">
                 <i class="fa fa-trash"></i> 清理下载缓存
             </a>
+        <a data-href="{% url 'sharedkit:open_system_services' %}" class="btn btn-outline-info" lay-on="OpenSystemServices">
+            <i class="fa-solid fa-gears"></i> 系统服务
+        </a>
     </div>
 </div>
-
+{% include 'include_messages.html' %}
 {% if not installed_list %}
     <div class="alert alert-warning text-lg"  role="alert">
         没有找到安装信息,请先安装MySQL~

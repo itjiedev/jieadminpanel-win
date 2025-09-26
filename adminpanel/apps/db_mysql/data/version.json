@@ -3,315 +3,567 @@
         "version": "9.4.0",
         "name": "MySQL 9.4.0 Innovation",
         "is_new": true,
-        "download_url": "https://dev.mysql.com/get/Downloads/MySQL-9.4/mysql-9.4.0-winx64.zip",
+        "download_url": "https://cdn.mysql.com//Downloads/MySQL-9.4/mysql-9.4.0-winx64.zip",
         "filename": "mysql-9.4.0-winx64.zip"
     },
     "9.3.0": {
         "version": "9.3.0",
         "name": "MySQL 9.3.0",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-9.3.0-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-9.3/mysql-9.3.0-winx64.zip",
         "filename": "mysql-9.3.0-winx64.zip"
     },
     "9.2.0": {
         "version": "9.2.0",
         "name": "MySQL 9.2.0",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-9.2.0-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-9.2/mysql-9.2.0-winx64.zip",
         "filename": "mysql-9.2.0-winx64.zip"
     },
     "9.1.0": {
         "version": "9.1.0",
         "name": "MySQL 9.1.0",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-9.1.0-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-9.1/mysql-9.1.0-winx64.zip",
         "filename": "mysql-9.1.0-winx64.zip"
     },
     "9.0.1": {
         "version": "9.0.1",
         "name": "MySQL 9.0.1",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-9.0.1-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-9.0/mysql-9.0.1-winx64.zip",
         "filename": "mysql-9.0.1-winx64.zip"
     },
     "8.4.6": {
         "version": "8.4.6",
         "name": "MySQL 8.4.6 LTS",
         "is_new": true,
-        "download_url": "https://dev.mysql.com/get/Downloads/MySQL-8.4/mysql-8.4.6-winx64.zip",
+        "download_url": "https://cdn.mysql.com//Downloads/MySQL-8.4/mysql-8.4.6-winx64.zip",
         "filename": "mysql-8.4.6-winx64.zip"
     },
     "8.4.5": {
         "version": "8.4.5",
         "name": "MySQL 8.4.5",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.4.5-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.4/mysql-8.4.5-winx64.zip",
         "filename": "mysql-8.4.5-winx64.zip"
     },
     "8.4.4": {
         "version": "8.4.4",
         "name": "MySQL 8.4.4",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.4.4-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.4/mysql-8.4.4-winx64.zip",
         "filename": "mysql-8.4.4-winx64.zip"
     },
     "8.4.3": {
         "version": "8.4.3",
         "name": "MySQL 8.4.3",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.4.3-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.4/mysql-8.4.3-winx64.zip",
         "filename": "mysql-8.4.3-winx64.zip"
     },
     "8.4.2": {
         "version": "8.4.2",
         "name": "MySQL 8.4.2",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.4.2-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.4/mysql-8.4.2-winx64.zip",
         "filename": "mysql-8.4.2-winx64.zip"
     },
     "8.4.0": {
         "version": "8.4.0",
         "name": "MySQL 8.4.0",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.4.0-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.4/mysql-8.4.0-winx64.zip",
         "filename": "mysql-8.4.0-winx64.zip"
     },
     "8.3.0": {
         "version": "8.3.0",
         "name": "MySQL 8.3.0",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.3.0-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.3/mysql-8.3.0-winx64.zip",
         "filename": "mysql-8.3.0-winx64.zip"
     },
     "8.2.0": {
         "version": "8.2.0",
         "name": "MySQL 8.2.0",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.2.0-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.2/mysql-8.2.0-winx64.zip",
         "filename": "mysql-8.2.0-winx64.zip"
     },
     "8.1.0": {
         "version": "8.1.0",
         "name": "MySQL 8.1.0",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.1.0-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.1/mysql-8.1.0-winx64.zip",
         "filename": "mysql-8.1.0-winx64.zip"
     },
     "8.0.43": {
         "version": "8.0.43",
         "name": "MySQL 8.0.43",
         "is_new": true,
-        "download_url": "https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-8.0.43-winx64.zip",
+        "download_url": "https://cdn.mysql.com//Downloads/MySQL-8.0/mysql-8.0.43-winx64.zip",
         "filename": "mysql-8.0.43-winx64.zip"
     },
     "8.0.42": {
         "version": "8.0.42",
         "name": "MySQL 8.0.42",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.42-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.42-winx64.zip",
         "filename": "mysql-8.0.42-winx64.zip"
     },
     "8.0.41": {
         "version": "8.0.41",
         "name": "MySQL 8.0.41",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.41-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.41-winx64.zip",
         "filename": "mysql-8.0.41-winx64.zip"
     },
     "8.0.40": {
         "version": "8.0.40",
         "name": "MySQL 8.0.40",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.40-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.40-winx64.zip",
         "filename": "mysql-8.0.40-winx64.zip"
     },
     "8.0.39": {
         "version": "8.0.39",
         "name": "MySQL 8.0.39",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.39-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.39-winx64.zip",
         "filename": "mysql-8.0.39-winx64.zip"
     },
     "8.0.37": {
         "version": "8.0.37",
         "name": "MySQL 8.0.37",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.37-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.37-winx64.zip",
         "filename": "mysql-8.0.37-winx64.zip"
     },
     "8.0.36": {
         "version": "8.0.36",
         "name": "MySQL 8.0.36",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.36-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.36-winx64.zip",
         "filename": "mysql-8.0.36-winx64.zip"
     },
     "8.0.35": {
         "version": "8.0.35",
         "name": "MySQL 8.0.35",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.35-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.35-winx64.zip",
         "filename": "mysql-8.0.35-winx64.zip"
     },
     "8.0.34": {
         "version": "8.0.34",
         "name": "MySQL 8.0.34",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.34-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.34-winx64.zip",
         "filename": "mysql-8.0.34-winx64.zip"
     },
     "8.0.33": {
         "version": "8.0.33",
         "name": "MySQL 8.0.33",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.33-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.33-winx64.zip",
         "filename": "mysql-8.0.33-winx64.zip"
     },
     "8.0.32": {
         "version": "8.0.32",
         "name": "MySQL 8.0.32",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.32-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.32-winx64.zip",
         "filename": "mysql-8.0.32-winx64.zip"
     },
     "8.0.31": {
         "version": "8.0.31",
         "name": "MySQL 8.0.31",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.31-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.31-winx64.zip",
         "filename": "mysql-8.0.31-winx64.zip"
     },
     "8.0.30": {
         "version": "8.0.30",
         "name": "MySQL 8.0.30",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.30-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.30-winx64.zip",
         "filename": "mysql-8.0.30-winx64.zip"
     },
     "8.0.28": {
         "version": "8.0.28",
         "name": "MySQL 8.0.28",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.28-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.28-winx64.zip",
         "filename": "mysql-8.0.28-winx64.zip"
     },
     "8.0.27": {
         "version": "8.0.27",
         "name": "MySQL 8.0.27",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.27-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.27-winx64.zip",
         "filename": "mysql-8.0.27-winx64.zip"
     },
     "8.0.26": {
         "version": "8.0.26",
         "name": "MySQL 8.0.26",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.26-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.26-winx64.zip",
         "filename": "mysql-8.0.26-winx64.zip"
     },
     "8.0.25": {
         "version": "8.0.25",
         "name": "MySQL 8.0.25",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.25-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.25-winx64.zip",
         "filename": "mysql-8.0.25-winx64.zip"
     },
     "8.0.24": {
         "version": "8.0.24",
         "name": "MySQL 8.0.24",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.24-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.24-winx64.zip",
         "filename": "mysql-8.0.24-winx64.zip"
     },
     "8.0.23": {
         "version": "8.0.23",
         "name": "MySQL 8.0.23",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.23-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.23-winx64.zip",
         "filename": "mysql-8.0.23-winx64.zip"
     },
     "8.0.22": {
         "version": "8.0.22",
         "name": "MySQL 8.0.22",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.22-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.22-winx64.zip",
         "filename": "mysql-8.0.22-winx64.zip"
     },
     "8.0.21": {
         "version": "8.0.21",
         "name": "MySQL 8.0.21",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.21-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.21-winx64.zip",
         "filename": "mysql-8.0.21-winx64.zip"
     },
     "8.0.20": {
         "version": "8.0.20",
         "name": "MySQL 8.0.20",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.20-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.20-winx64.zip",
         "filename": "mysql-8.0.20-winx64.zip"
     },
     "8.0.19": {
         "version": "8.0.19",
         "name": "MySQL 8.0.19",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.19-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.19-winx64.zip",
         "filename": "mysql-8.0.19-winx64.zip"
     },
     "8.0.18": {
         "version": "8.0.18",
         "name": "MySQL 8.0.18",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.18-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.18-winx64.zip",
         "filename": "mysql-8.0.18-winx64.zip"
     },
     "8.0.17": {
         "version": "8.0.17",
         "name": "MySQL 8.0.17",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.17-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.17-winx64.zip",
         "filename": "mysql-8.0.17-winx64.zip"
     },
     "8.0.16": {
         "version": "8.0.16",
         "name": "MySQL 8.0.16",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.16-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.16-winx64.zip",
         "filename": "mysql-8.0.16-winx64.zip"
     },
     "8.0.15": {
         "version": "8.0.15",
         "name": "MySQL 8.0.15",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.15-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.15-winx64.zip",
         "filename": "mysql-8.0.15-winx64.zip"
     },
     "8.0.14": {
         "version": "8.0.14",
         "name": "MySQL 8.0.14",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.14-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.14-winx64.zip",
         "filename": "mysql-8.0.14-winx64.zip"
     },
     "8.0.13": {
         "version": "8.0.13",
         "name": "MySQL 8.0.13",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.13-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.13-winx64.zip",
         "filename": "mysql-8.0.13-winx64.zip"
     },
     "8.0.12": {
         "version": "8.0.12",
         "name": "MySQL 8.0.12",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.12-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.12-winx64.zip",
         "filename": "mysql-8.0.12-winx64.zip"
     },
     "8.0.11": {
         "version": "8.0.11",
         "name": "MySQL 8.0.11",
         "is_new": false,
-        "download_url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-8.0.11-winx64.zip",
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.11-winx64.zip",
         "filename": "mysql-8.0.11-winx64.zip"
+    },
+    "5.7.44": {
+        "version": "5.7.44",
+        "name": "MySQL 5.7.44",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.44-winx64.zip",
+        "filename": "mysql-5.7.44-winx64.zip"
+    },
+    "5.7.43": {
+        "version": "5.7.43",
+        "name": "MySQL 5.7.43",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.43-winx64.zip",
+        "filename": "mysql-5.7.43-winx64.zip"
+    },
+    "5.7.42": {
+        "version": "5.7.42",
+        "name": "MySQL 5.7.42",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.42-winx64.zip",
+        "filename": "mysql-5.7.42-winx64.zip"
+    },
+    "5.7.41": {
+        "version": "5.7.41",
+        "name": "MySQL 5.7.41",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.41-winx64.zip",
+        "filename": "mysql-5.7.41-winx64.zip"
+    },
+    "5.7.40": {
+        "version": "5.7.40",
+        "name": "MySQL 5.7.40",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.40-winx64.zip",
+        "filename": "mysql-5.7.40-winx64.zip"
+    },
+    "5.7.39": {
+        "version": "5.7.39",
+        "name": "MySQL 5.7.39",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.39-winx64.zip",
+        "filename": "mysql-5.7.39-winx64.zip"
+    },
+    "5.7.38": {
+        "version": "5.7.38",
+        "name": "MySQL 5.7.38",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.38-winx64.zip",
+        "filename": "mysql-5.7.38-winx64.zip"
+    },
+    "5.7.37": {
+        "version": "5.7.37",
+        "name": "MySQL 5.7.37",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.37-winx64.zip",
+        "filename": "mysql-5.7.37-winx64.zip"
+    },
+    "5.7.36": {
+        "version": "5.7.36",
+        "name": "MySQL 5.7.36",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.36-winx64.zip",
+        "filename": "mysql-5.7.36-winx64.zip"
+    },
+    "5.7.35": {
+        "version": "5.7.35",
+        "name": "MySQL 5.7.35",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.35-winx64.zip",
+        "filename": "mysql-5.7.35-winx64.zip"
+    },
+    "5.7.34": {
+        "version": "5.7.34",
+        "name": "MySQL 5.7.34",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.34-winx64.zip",
+        "filename": "mysql-5.7.34-winx64.zip"
+    },
+    "5.7.33": {
+        "version": "5.7.33",
+        "name": "MySQL 5.7.33",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.33-winx64.zip",
+        "filename": "mysql-5.7.33-winx64.zip"
+    },
+    "5.7.32": {
+        "version": "5.7.32",
+        "name": "MySQL 5.7.32",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.32-winx64.zip",
+        "filename": "mysql-5.7.32-winx64.zip"
+    },
+    "5.7.31": {
+        "version": "5.7.31",
+        "name": "MySQL 5.7.31",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.31-winx64.zip",
+        "filename": "mysql-5.7.31-winx64.zip"
+    },
+    "5.7.30": {
+        "version": "5.7.30",
+        "name": "MySQL 5.7.30",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.30-winx64.zip",
+        "filename": "mysql-5.7.30-winx64.zip"
+    },
+    "5.7.29": {
+        "version": "5.7.29",
+        "name": "MySQL 5.7.29",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.29-winx64.zip",
+        "filename": "mysql-5.7.29-winx64.zip"
+    },
+    "5.7.28": {
+        "version": "5.7.28",
+        "name": "MySQL 5.7.28",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.28-winx64.zip",
+        "filename": "mysql-5.7.28-winx64.zip"
+    },
+    "5.7.27": {
+        "version": "5.7.27",
+        "name": "MySQL 5.7.27",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.27-winx64.zip",
+        "filename": "mysql-5.7.27-winx64.zip"
+    },
+    "5.7.26": {
+        "version": "5.7.26",
+        "name": "MySQL 5.7.26",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.26-winx64.zip",
+        "filename": "mysql-5.7.26-winx64.zip"
+    },
+    "5.7.25": {
+        "version": "5.7.25",
+        "name": "MySQL 5.7.25",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.25-winx64.zip",
+        "filename": "mysql-5.7.25-winx64.zip"
+    },
+    "5.7.24": {
+        "version": "5.7.24",
+        "name": "MySQL 5.7.24",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.24-winx64.zip",
+        "filename": "mysql-5.7.24-winx64.zip"
+    },
+    "5.7.23": {
+        "version": "5.7.23",
+        "name": "MySQL 5.7.23",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.23-winx64.zip",
+        "filename": "mysql-5.7.23-winx64.zip"
+    },
+    "5.7.22": {
+        "version": "5.7.22",
+        "name": "MySQL 5.7.22",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.22-winx64.zip",
+        "filename": "mysql-5.7.22-winx64.zip"
+    },
+    "5.7.21": {
+        "version": "5.7.21",
+        "name": "MySQL 5.7.21",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.21-winx64.zip",
+        "filename": "mysql-5.7.21-winx64.zip"
+    },
+    "5.7.20": {
+        "version": "5.7.20",
+        "name": "MySQL 5.7.20",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.20-winx64.zip",
+        "filename": "mysql-5.7.20-winx64.zip"
+    },
+    "5.7.19": {
+        "version": "5.7.19",
+        "name": "MySQL 5.7.19",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.19-winx64.zip",
+        "filename": "mysql-5.7.19-winx64.zip"
+    },
+    "5.7.18": {
+        "version": "5.7.18",
+        "name": "MySQL 5.7.18",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.18-winx64.zip",
+        "filename": "mysql-5.7.18-winx64.zip"
+    },
+    "5.7.17": {
+        "version": "5.7.17",
+        "name": "MySQL 5.7.17",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.17-winx64.zip",
+        "filename": "mysql-5.7.17-winx64.zip"
+    },
+    "5.7.16": {
+        "version": "5.7.16",
+        "name": "MySQL 5.7.16",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.16-winx64.zip",
+        "filename": "mysql-5.7.16-winx64.zip"
+    },
+    "5.7.15": {
+        "version": "5.7.15",
+        "name": "MySQL 5.7.15",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.15-winx64.zip",
+        "filename": "mysql-5.7.15-winx64.zip"
+    },
+    "5.7.14": {
+        "version": "5.7.14",
+        "name": "MySQL 5.7.14",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.14-winx64.zip",
+        "filename": "mysql-5.7.14-winx64.zip"
+    },
+    "5.7.13": {
+        "version": "5.7.13",
+        "name": "MySQL 5.7.13",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.13-winx64.zip",
+        "filename": "mysql-5.7.13-winx64.zip"
+    },
+    "5.7.12": {
+        "version": "5.7.12",
+        "name": "MySQL 5.7.12",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.12-winx64.zip",
+        "filename": "mysql-5.7.12-winx64.zip"
+    },
+    "5.7.11": {
+        "version": "5.7.11",
+        "name": "MySQL 5.7.11",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.11-winx64.zip",
+        "filename": "mysql-5.7.11-winx64.zip"
+    },
+    "5.7.10": {
+        "version": "5.7.10",
+        "name": "MySQL 5.7.10",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.10-winx64.zip",
+        "filename": "mysql-5.7.10-winx64.zip"
+    },
+    "5.7.9": {
+        "version": "5.7.9",
+        "name": "MySQL 5.7.9",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.9-winx64.zip",
+        "filename": "mysql-5.7.9-winx64.zip"
     }
 }

@@ -1,6 +1,7 @@
 import json
 import os
 import shutil
+import time
 
 from django.contrib import messages
 from django.views.generic.base import TemplateView, RedirectView
@@ -9,7 +10,8 @@ from django.urls import reverse_lazy, reverse
 from django.shortcuts import redirect
 
 from jiefoundation.jiebase import JsonView
-from jiefoundation.utils import run_command, windows_api, read_file, write_file
+from jiefoundation.utils import run_command, read_file, write_file
+from jiefoundation.utils import windows_api_blocking, windows_api
 
 from panelcore.mixin import DatabaseMixin
 from panelcore.helper import find_available_port, get_sorted
@@ -110,14 +112,15 @@ class VersionsRefreshView(RedirectView):
         import re
 
         urls = [
-            ("https://dev.mysql.com/downloads/mysql/", True),
-             ("https://downloads.mysql.com/archives/community/", False),
+            ("https://dev.mysql.com/downloads/mysql/", True, '最新版'),
+             ("https://downloads.mysql.com/archives/community/", False, '历史版本'),
         ]
         versions = {}
+        success_flag = True
         for url in urls:
             response = requests.get(url[0], timeout=10)
             response.raise_for_status()
-            # 使用正则表达式匹配 id 为 version 的 select 下拉列表
+
             select_pattern = r'<select[^>]*id="version"[^>]*>(.*?)</select>'
             select_match = re.search(select_pattern, response.text, re.DOTALL)
             if select_match:
@@ -126,7 +129,6 @@ class VersionsRefreshView(RedirectView):
                     option_pattern = r'<option[^>]*value="([^"]*)"[^>]*>([^<]*)</option>'
                     options = re.findall(option_pattern, select_content)
                     for value, text in options:
-
                         if (
                                 value.strip()
                                 and value.strip() != ''
@@ -134,12 +136,17 @@ class VersionsRefreshView(RedirectView):
                                 and 'a' not in value
                                 and 'rc' not in text
                                 and 'dmr' not in text
-                                and (value.startswith('8.') or value.startswith('9.'))
+                                and 'b' not in value
+                                and 'm' not in text
+                                and (value.startswith('8.') or value.startswith('9.') or value.startswith('5.7.'))
                         ):
                             version = text.strip().split(' ')[0]
-                            download_url = f'https://downloads.mysql.com/archives/get/p/23/file/mysql-{version}-winx64.zip'
+                            version_list = version.split('.')
+                            download_url = f'https://cdn.mysql.com/archives/mysql-{version_list[0]}.{version_list[1]}/mysql-{version}-winx64.zip'
+                            # download_url = f'https://downloads.mysql.com/archives/get/p/23/file/mysql-{version}-winx64.zip'
                             if url[1]:
-                                download_url = f'https://dev.mysql.com/get/Downloads/MySQL-{value}/mysql-{version}-winx64.zip'
+                                download_url = f'https://cdn.mysql.com//Downloads/MySQL-{version_list[0]}.{version_list[1]}/mysql-{version}-winx64.zip'
+                                # download_url = f'https://dev.mysql.com/get/Downloads/MySQL-{value}/mysql-{version}-winx64.zip'
 
                             versions[version] = {
                                 'version': version,
@@ -149,15 +156,20 @@ class VersionsRefreshView(RedirectView):
                                 'filename': f"mysql-{version}-winx64.zip",
                             }
                 except Exception as e:
-                    messages.error(request, f'获取 MySQL 版本列表失败~错误信息：{e}')
+                    success_flag = False
+                    messages.error(request, f'获取 MySQL {url[2]}列表失败~错误信息：{e}')
             else:
-                messages.error(request, '分析获取 MySQL 官方归档页面失败! ')
+                success_flag = False
+                messages.error(request, f'分析获取 MySQL {url[2]}失败! ')
 
-        def version_key(version_string):
-            return [int(x) for x in version_string.split('.')]
-        versions = dict(sorted(versions.items(), key=lambda item: version_key(item[0]), reverse=True))
-        with open(version_file, 'w', encoding='utf-8') as f:
-            json.dump(versions, f, ensure_ascii=False, indent=4)
+        if success_flag:
+            def version_key(version_string):
+                return [int(x) for x in version_string.split('.')]
+            versions = dict(sorted(versions.items(), key=lambda item: version_key(item[0]), reverse=True))
+            with open(version_file, 'w', encoding='utf-8') as f:
+                json.dump(versions, f, ensure_ascii=False, indent=4)
+            messages.success(request, '获取 MySQL 列表操作完成~')
+
         return super().get(request, *args, **kwargs)
 
 
@@ -172,12 +184,14 @@ class DownloadView(JsonView):
         import requests
         if not os.path.exists(local_file_path):
             try:
+                print('开始下载..')
                 response = requests.get(download_url, stream=True)
                 response.raise_for_status()
                 os.makedirs(app_cache_dir, exist_ok=True)
                 with open(local_file_path, 'wb') as f:
                     for chunk in response.iter_content(chunk_size=8192):
                         f.write(chunk)
+                print('下载完成...')
                 return self.render_to_json_success(filename)
             except Exception as e:
                 return self.render_to_json_error(f'文件下载失败: {e}')
@@ -317,8 +331,6 @@ class InitializeView(MysqlMixin, FormView):
         service_name = form.cleaned_data.get('service_name')
 
         from panelcore.helper import is_port_available
-
-        # 检测端口是否被占用
         installed_ports = []
         installed_list = get_installed()
         for item in installed_list.values():
@@ -342,9 +354,7 @@ class InitializeView(MysqlMixin, FormView):
             messages.error(self.request, '安装信息不存在！请勿修改链接或从非法地址进入~')
             return self.form_invalid(form)
         print('创建 my.ini 文件')
-
         install_info['port'] = port
-
         import configparser
         config_dir = os.path.dirname(install_info['conf_file'])
         os.makedirs(config_dir, exist_ok=True)
@@ -369,9 +379,17 @@ class InitializeView(MysqlMixin, FormView):
         print(f"MySQL配置文件已创建: {install_info['conf_file']}")
 
         print(f"开始初始化数据库...")
+        # runt_mysqld = f'{install_info['install_dir']}/bin/mysqld.exe'
+        # parameters = f'--defaults-file={install_info['conf_file']} --initialize-insecure'
+        # print(runt_mysqld + ' ' + parameters)
+        # windows_api(runt_mysqld, parameters, operation="runas")
         run_file = f'{install_info['install_dir']}/bin/mysqld.exe --defaults-file={install_info['conf_file']} --initialize-insecure'
-        print(run_command(run_file, shell=True, cwd=install_info['install_dir']))
-        print(f"数据库初始化完成")
+        print(run_file)
+        result = run_command(run_file, shell=True, cwd=install_info['install_dir'])
+        if result.returncode != 0:
+            messages.error(self.request, f'初始化数据库失败！错误内容{result.stderr}')
+            return self.form_invalid(form)
+        # print(f"数据库初始化完成")
 
         install_info['set_service'] = set_service
         install_info['service_name'] = service_name
@@ -380,13 +398,19 @@ class InitializeView(MysqlMixin, FormView):
         if set_service:
             # 创建服务
             print(f"开始创建服务: {service_name}")
-            from jiefoundation.utils import windows_api
+
             try:
-                windows_api(
+                windows_api_blocking(
                     executable=f'{install_info['install_dir']}/bin/mysqld.exe',
                     parameters=f'--install "{service_name}" --defaults-file={install_info['conf_file']}',
                     operation="runas",
                 )
+                windows_api_blocking(
+                    executable='sc',
+                    parameters=f'description "{service_name}" "{install_info['name']} 服务"',
+                    operation="runas",
+                )
+
             except Exception as e:
                 print(f'创建服务失败！{e}')
             if service_auto:
@@ -395,13 +419,13 @@ class InitializeView(MysqlMixin, FormView):
                     auto_str = 'auto'
                 else:
                     auto_str = 'demand'
-                windows_api(
+                windows_api_blocking(
                     executable='sc',
                     parameters=f'config "{service_name}" start={auto_str}',
                     operation="runas",
                 )
                 print('尝试立即启动服务。。。')
-                windows_api(
+                windows_api_blocking(
                     executable='sc',
                     parameters=f'start "{service_name}"',
                     operation="runas",
@@ -457,21 +481,21 @@ class UninstallView(RedirectView):
             return super().get(request, *args, **kwargs)
 
         if install_info['set_service'] and install_info['service_name']:
-            from jiefoundation.utils import windows_api
             print(f"开始删除服务: {install_info['service_name']}")
-            windows_api(
+
+            windows_api_blocking(
                 executable='sc',
                 parameters=f'stop "{install_info['service_name']}"',
                 operation="runas",
             )
-            windows_api(
+            windows_api_blocking(
                 executable='sc',
                 parameters=f'delete "{install_info['service_name']}"',
                 operation="runas",
             )
             print(f"服务删除完成: {install_info['service_name']}")
-        import time
-        time.sleep(3)
+
+            # time.sleep(3)
         # 删除安装文件夹
         data_dir = os.path.dirname(install_info['conf_file'])
         if os.path.exists(data_dir):
@@ -511,13 +535,12 @@ class StatusActionView(JsonView):
 
         try:
             if action == 'restart':
-                windows_api(executable='sc', parameters=f'stop "{service_name}"', operation="runas")
-                import time
-                time.sleep(2)
-                windows_api(executable='sc', parameters=f'start "{service_name}"', operation="runas")
+                windows_api_blocking(executable='sc', parameters=f'stop "{service_name}"', operation="runas")
+                # time.sleep(2)
+                windows_api_blocking(executable='sc', parameters=f'start "{service_name}"', operation="runas")
             else:
-                windows_api(executable='sc', parameters=f'{action} "{service_name}"', operation="runas")
-            return self.render_to_json_success(f'操作成功: {service_name} {valid_actions[action]}')
+                windows_api_blocking(executable='sc', parameters=f'{action} "{service_name}"', operation="runas")
+            return self.render_to_json_success(f'服务操作完成: {service_name} {valid_actions[action]}')
         except Exception as e:
             return self.render_to_json_error(f'执行服务操作时发生异常: {str(e)}')
 
@@ -546,7 +569,7 @@ class InitRootPasswordView(MysqlMixin, FormView):
         return context
 
     def get_success_url(self):
-        return reverse_lazy(f'{app_name}:detail', kwargs={'id': self.kwargs.get('id')})
+        return reverse_lazy(f'{app_name}:init_root_password', kwargs={'id': self.kwargs.get('id')})
 
     def form_valid(self, form):
         id = self.kwargs.get('id')
