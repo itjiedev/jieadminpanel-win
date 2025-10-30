@@ -1,0 +1,91 @@
+{% extends 'project_python/layout_python.html' %}
+{% load static %}
+
+{% block panel_js_files %}
+<script src="{% static 'js/sharedkit.js' %}"></script>
+{% endblock %}
+
+{% block html_js_code %}
+<script>
+layui.use(function(){
+    var $ = layui.$;
+    var layer = layui.layer;
+    var form = layui.form;
+
+    $('#show_python_sdk').show();
+    $('#show_pycharm_sdk').hide();
+
+    form.on('radio(select_sdk_type)', function(data){
+        var elem = data.elem;
+        var checked = elem.checked;
+        var value = elem.value;
+        var othis = data.othis;
+
+        if (value=="new"){
+            $('#show_python_sdk').show();
+            $('#show_pycharm_sdk').hide(); 
+        }
+        if (value=="pycharm"){
+            $('#show_python_sdk').hide();
+            $('#show_pycharm_sdk').show(); 
+        }
+        if (value=="del"){
+            $('#show_python_sdk').hide();
+            $('#show_pycharm_sdk').hide();
+        }
+    });
+
+})
+</script>
+{% endblock %}
+
+
+{% block python_content %}
+<div class="card">
+    <div class="card-body">
+<dl class="row">
+    <dt class="col-sm-2">项目名称</dt>
+    <dd class="col-sm-10">{{ project.project_name }}</dd>
+    <dt class="col-sm-2">项目路径</dt>
+    <dd class="col-sm-10">{{ project.project_path }}</dd>
+    <dt class="col-sm-2">环境名称</dt>
+    <dd class="col-sm-10">{{ project.sdk_name }}</dd>
+    <dt class="col-sm-2">Python版本</dt>
+    <dd class="col-sm-10">{{ project.sdk_version }}</dd>
+    <dt class="col-sm-2">解释器路径</dt>
+    <dd class="col-sm-10">{{ project.sdk_path }}</dd>
+</dl>
+    </div>
+</div>
+{{ form.errors }}
+<div class="card">
+    <form method="post" class="form-horizontal layui-form">{% csrf_token %}{{ form.project_path }}
+<div class="card-body">
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">{{ form.sdk_type.label }}</label>
+        <div class="col-sm-10">
+  <input type="radio" name="sdk_type" id="id_sdk_type" value="new" title="配置新的解释器环境" checked lay-filter="select_sdk_type">  
+  <input type="radio" name="sdk_type" id="id_sdk_type" value="pycharm" title="共用Pycharm已有配置" lay-filter="select_sdk_type">
+  <input type="radio" name="sdk_type" id="id_sdk_type" value="del" title="清除解释器配置" lay-filter="select_sdk_type">
+
+        </div>
+    </div>
+
+    <div class="form-group row" id="show_python_sdk">
+        <label class="col-sm-2 col-form-label">{{ form.python_sdk.label }}</label>
+        <div class="col-sm-10">{{ form.python_sdk }}</div>
+    </div>
+
+    <div class="form-group row" id="show_pycharm_sdk">
+        <label class="col-sm-2 col-form-label">{{ form.pycharm_sdk.label }}</label>
+        <div class="col-sm-10">{{ form.pycharm_sdk }}</div>
+    </div>
+
+</div>
+<div class="card-footer">
+<button type="submit" class="btn btn-success" lay-submit>提交</button>
+<a href="{% url 'project_python:index' %}" class="btn btn-outline-secondary float-right">取消</a>
+</div>
+    </form>
+</div>
+{% endblock %}

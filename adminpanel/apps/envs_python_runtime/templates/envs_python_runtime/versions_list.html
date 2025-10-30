@@ -1,4 +1,5 @@
 {% extends 'envs_python/layout_envs_python.html' %}
+{% load foundation_tags %}
 
 {% block html_js_code %}
 {{ block.super }}
@@ -109,9 +110,10 @@ function parseXHRError(xhr) {
                     <td>{{ version.sort_version }}</td>
                     <td>{{ version.tag }}</td>
                     <td>
-{#{% if name in installed %} 已安装 {% else %}#}
-    <a href="{% url 'envs_python_runtime:python_install' name %}" data="{{ name }}" class="btn btn-outline-info btn-xs">安装</a>
-{# {% endif %}#}
+    <a href="{% url 'envs_python_runtime:python_install' name %}" data="{{ name }}" class="btn btn-primary btn-xs">安装</a>
+{% if version.file_name|slice:"-4:" == ".zip" %}
+    <a href="{% replace_str version.url 'https://www.python.org/ftp/python/' download_url_prefix %}" class="btn btn-outline-info btn-xs">另存下载</a>
+ {% endif %}
                     </td>
                 </tr>
 {% endfor %}

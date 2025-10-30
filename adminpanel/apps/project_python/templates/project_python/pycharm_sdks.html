@@ -1,0 +1,155 @@
+{% extends 'project_python/layout_python.html' %}
+{% load static %}
+
+{% block panel_js_files %}
+<script src="{% static 'js/sharedkit.js' %}"></script>
+{% endblock %}
+
+{% block html_js_code %}
+<script>
+layui.use(function(){
+    var $ = layui.$;
+    var layer = layui.layer;
+    var util = layui.util;
+
+    util.on("lay-on", {     
+        "open_explorer": function(obj){
+            var url = $(this).data('url');
+            openFolder(url);
+            return false;
+        },
+        "openTerminal": function(obj){
+            var url = obj.data('url');
+            openTerminal(url);
+            return false;
+        }, 
+
+        runPycharm: function(){       
+            layer.msg('启动Pycharm,注意屏幕...', {icon: 16,shade: 0.6, title:null});    
+            $.ajax({
+                url: $(this).data('href'),
+                type: "get",
+                success:function(response){},
+                error: function(xhr, status, message){
+                    let errorMsg = '操作失败: ';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMsg += xhr.responseJSON.message;
+                    } else {
+                        errorMsg += message;
+                    }
+                    layer.alert(errorMsg, {icon: 2, title:null});
+                }
+            })
+        },
+
+        sdkDel: function(){
+            var sdk_path = $(this).data('path');
+            var sdk_name = $(this).data('name');
+            const csrftoken = getCookie('csrftoken');
+            layer.confirm('确定要删除吗？', {icon: 3, title:null}, function(){
+                $.ajax({
+                    url: "{% url 'project_python:pycharm_sdk_del' %}",
+                    type: 'POST',
+                    headers: {'X-CSRFToken': csrftoken},
+                    mode: 'same-origin',
+                    data:{
+                        "sdk_name": sdk_name,
+                    },
+                    success: function(response){
+                        location.href="";
+                    },
+                    error: function(xhr, status, message) {
+                        let errorMsg = '';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMsg += xhr.responseJSON.message;
+                        } else {
+                            errorMsg += message;
+                        }
+                        layer.alert(errorMsg, {icon: 2, title:null});
+                    }
+                })
+            }, function(){layer.close();})
+            
+        }
+    })
+
+})
+</script>
+{% endblock %}
+
+
+{% block python_content %}
+<div class="text-danger text-bold col-md-12 p-2" style="width:100%;text-align: center;">对Pycharm操作请保持Pycharm处于关闭状态！</div>
+<div class="card-header">
+    <div class="card-tools">
+    <a href="{% url 'project_python:software' %}" class="btn btn-outline-info"><i class="fa-solid fa-wrench"></i>其他 Python 开发工具</a>
+    </div>
+</div>
+{% include 'include_messages.html' %}
+<div class="card">
+    <div class="card-header d-flex p-0">
+        <div class="card-title p-1">
+            <!-- <a href="{% url 'project_python:project_create' %}" class="btn btn-success"><i class="fa fa-plus"></i> 添加Pycharm解释器 </a> -->
+        </div>
+
+        <ul class="nav nav-pills ml-auto p-2 mr-5">
+            <li class="nav-item"><a class="nav-link " href="{% url 'project_python:index' %}">Pycharm项目</a></li>
+            <li class="nav-item ml-1"><a class="nav-link active" href="{% url 'project_python:pycharm_sdk_list' %}">Pycharm解释器</a></li>
+            <li class="nav-item dropdown ml-1">
+            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+                Pycharm管理 <span class="caret"></span>
+            </a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" tabindex="-1" href="#" data-href="{% url 'project_python:pycharm_run' 'normal' %}" lay-on="runPycharm">默认启动</a>
+                <a class="dropdown-item" tabindex="-1" href="#" data-href="{% url 'project_python:pycharm_run' 'list' %}" lay-on="runPycharm">从项目列表启动</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" tabindex="-1" href="{% url 'project_python:pycharm_reset' %}">重置Pycharm</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" tabindex="-1" href="{%  url 'project_python:pycharm_detail' %}">版本信息/卸载</a>
+            </div>
+            </li>
+        </ul>
+
+    </div>
+    <div class="card-body p-2">
+{% if sdk_list %}
+  {% for name,info in sdk_list.items %}
+<div class="row mb-0" style="border-bottom:1px solid #e9ecef;">
+      <table class="table table-borderless table-hover mb-0">
+        <tbody>
+            <tr>
+              <td>
+                  <div class="text-bold layui-font-18">
+<button class="btn btn-outline-secondary btn-xs"
+        data-url="{% url 'sharedkit:open_explorer' %}?path={{ info.sdk_path_dir }}"
+        title="打开文件夹" lay-on="open_explorer">
+    <i class="far fa-folder-open"></i>
+</button>
+<button type="button" data-url="{% url 'sharedkit:open_explorer' %}?path={{ info.sdk_path }}"
+        class="btn btn-outline-secondary btn-xs" title="打开终端命令行" lay-on="openTerminal">
+    <i class="fa fa-terminal fa-xs"></i>
+</button>
+{{ name }}</div>
+                <div class="text-muted">Python版本：{{ info.sdk_version }}</div>
+                <div class="text-muted">解释器路径：{{ info.sdk_path }}
+                    {% if not info.sdk_path_exists %}<i class="fa-solid fa-circle-exclamation text-danger" title="路径异常"></i>{% endif %}
+                </div>
+              </td>
+              <td style="width:120px;" class="p-1">
+{% if name in project_sdk_list %}
+<div class="block text-danger text-bold">已被使用</div>
+{% else %}
+<button type="button" class="btn btn-outline-danger btn-block btn-xs" data-name="{{name}}" lay-on="sdkDel">删除</button>
+{% endif %}
+
+              </td>
+            </tr>
+        </tbody>
+      </table>
+</div>
+  {% endfor %}
+  {% else %} 没有解释器信息 {%endif%}
+    </div>
+</div>
+
+{% endblock %}

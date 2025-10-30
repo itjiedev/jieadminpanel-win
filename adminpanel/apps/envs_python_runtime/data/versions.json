@@ -1,4 +1,20 @@
 {
+    "Python-3.14.0": {
+        "sort_version": "3.14.0",
+        "tag": "3.14-64",
+        "display_name": "Python-3.14.0",
+        "url": "https://www.python.org/ftp/python/3.14.0/python-3.14.0-amd64.zip",
+        "file_name": "python-3.14.0-amd64.zip",
+        "sha256": "80387540694fe8e598afd5c6a18975081b0ccc6b57f752ed22216498f4205ce0"
+    },
+    "Python-3.13.8": {
+        "sort_version": "3.13.8",
+        "tag": "3.13-64",
+        "display_name": "Python-3.13.8",
+        "url": "https://www.python.org/ftp/python/3.13.8/python-3.13.8-amd64.zip",
+        "file_name": "python-3.13.8-amd64.zip",
+        "sha256": "6cc2b1a7eda38c8899c1f94dbe191cf27218d619a7c834f2967eac774c52f413"
+    },
     "Python-3.13.7": {
         "sort_version": "3.13.7",
         "tag": "3.13-64",

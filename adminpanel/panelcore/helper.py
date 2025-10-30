@@ -1,4 +1,37 @@
 import winreg
+import os
+import configparser
+import socket
+
+
+def read_registry_value(hive, key_path, value_name, default=None):
+    """
+    通用函数：读取指定的注册表键值
+
+    参数:
+        hive: 注册表根键 (如 winreg.HKEY_CURRENT_USER, winreg.HKEY_LOCAL_MACHINE)
+        key_path: 注册表项路径 (如 'Environment', r'SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment')
+        value_name: 要读取的值名称
+        default: 如果找不到值时返回的默认值
+
+    返回:
+        注册表值或默认值
+    # 使用示例
+    # 读取用户环境变量
+    # user_path = read_registry_value(winreg.HKEY_CURRENT_USER, 'Environment', 'PATH')
+    """
+    try:
+        with winreg.OpenKey(hive, key_path) as key:
+            value, _ = winreg.QueryValueEx(key, value_name)
+            return value
+    except FileNotFoundError:
+        # 键或值不存在
+        return default
+    except Exception as e:
+        # 其他异常情况
+        print(f"读取注册表失败: {e}")
+        return default
+
 
 def get_reg_user_env(env_name):
     """获取当前用户注册表环境变量"""
@@ -68,7 +101,8 @@ def download_file_with_retry(url, destination, chunk_size=8192, max_retries=3, t
     import time
 
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+        # 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36 Edg/140.0.0.0'
     }
 
     for attempt in range(max_retries):
@@ -95,116 +129,6 @@ def download_file_with_retry(url, destination, chunk_size=8192, max_retries=3, t
             return False
     return False
 
-
-# def extract_from_zip(zip_path, extract_items=None, extract_to=None, overwrite=True):
-#     """
-#     从ZIP压缩包中解压指定的文件或文件夹
-#
-#     参数:
-#         zip_path (str): ZIP压缩包的路径
-#         extract_items (str or list, optional): 要解压的文件或文件夹名称，
-#             可以是单个字符串或字符串列表。如果为None，则解压所有内容
-#         extract_to (str, optional): 解压目标目录，默认为当前目录
-#         overwrite (bool): 是否覆盖已存在的文件，默认为True
-#
-#     返回:
-#         list: 成功解压的文件列表
-#
-#     异常:
-#         FileNotFoundError: 当ZIP文件不存在时抛出
-#         zipfile.BadZipFile: 当ZIP文件损坏时抛出
-#
-#     # 使用示例
-#     # 解压整个ZIP文件
-#     extract_from_zip('example.zip')
-#
-#     # 解压ZIP中的特定文件
-#     extract_from_zip('example.zip', extract_items='config.txt')
-#
-#     # 解压ZIP中的特定文件夹
-#     extract_from_zip('example.zip', extract_items=['src/', 'docs/'])
-#
-#     # 解压到指定目录
-#     extract_from_zip('example.zip', extract_items=['src/main.py'], extract_to='./extracted')
-#
-#     # 解压多个指定文件和文件夹
-#     extract_from_zip('example.zip', extract_items=['README.md', 'src/', 'tests/'])
-#
-#     """
-#     import os
-#     import zipfile
-#     # 检查ZIP文件是否存在
-#     if not os.path.exists(zip_path):
-#         raise FileNotFoundError(f"ZIP文件不存在: {zip_path}")
-#     # 设置默认解压目录
-#     if extract_to is None:
-#         extract_to = os.getcwd()
-#     # 确保解压目录存在
-#     os.makedirs(extract_to, exist_ok=True)
-#     # 标准化extract_items为列表
-#     if extract_items is None:
-#         extract_items = []
-#     elif isinstance(extract_items, str):
-#         extract_items = [extract_items]
-#     extracted_files = []
-#
-#     # 打开ZIP文件
-#     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-#         # 获取ZIP文件中的所有文件列表
-#         all_files = zip_ref.namelist()
-#         # 确定需要解压的文件列表
-#         if not extract_items:
-#             # 如果没有指定特定文件，则解压所有文件
-#             files_to_extract = all_files
-#         else:
-#             # 筛选出需要解压的文件
-#             files_to_extract = []
-#             for item in extract_items:
-#                 matched = False
-#                 for file_name in all_files:
-#                     # 精确匹配文件名
-#                     if file_name == item:
-#                         files_to_extract.append(file_name)
-#                         matched = True
-#                     # 匹配文件夹（以指定名称开头且后面跟着分隔符）
-#                     elif file_name.startswith(item.rstrip('/') + '/'):
-#                         files_to_extract.append(file_name)
-#                         matched = True
-#                     # 匹配文件夹内所有文件（处理不同操作系统分隔符）
-#                     elif item.endswith('/') and file_name.startswith(item):
-#                         files_to_extract.append(file_name)
-#                         matched = True
-#                 if not matched:
-#                     print(f"警告: 在ZIP中未找到 '{item}'")
-#
-#         # 解压选定的文件
-#         for file_name in files_to_extract:
-#             try:
-#                 target_path = os.path.join(extract_to, file_name)
-#                 # 检查是否需要覆盖已存在的文件
-#                 if not overwrite and os.path.exists(target_path):
-#                     print(f"跳过已存在的文件: {target_path}")
-#                     continue
-#                 # 创建目标目录（如果需要）
-#                 target_dir = os.path.dirname(target_path)
-#                 if target_dir:
-#                     os.makedirs(target_dir, exist_ok=True)
-#                 # 解压单个文件
-#                 with zip_ref.open(file_name) as source, open(target_path, 'wb') as target:
-#                     while True:
-#                         chunk = source.read(8192)
-#                         if not chunk:
-#                             break
-#                         target.write(chunk)
-#
-#                 extracted_files.append(file_name)
-#                 print(f"已解压: {file_name}")
-#
-#             except Exception as e:
-#                 print(f"解压文件 '{file_name}' 时出错: {e}")
-#     return True
-
-import socket
 
 def is_port_available(port):
     """
@@ -311,3 +235,45 @@ def get_service_status(service_name):
             'status_text': f'查询失败: {str(e)}',
             'service_name': service_name
         }
+
+
+def is_valid_ini_file(file_path):
+    """
+    综合多种方法判断是否为有效的INI文件
+    """
+    # 首先检查文件是否存在
+    if not os.path.exists(file_path):
+        return False
+
+    # 方法1: 尝试使用configparser解析
+    try:
+        config = configparser.ConfigParser()
+        config.read(file_path, encoding='utf-8')
+        # 如果解析成功且有内容，则认为是INI文件
+        if config.sections() or config.defaults():
+            return True
+    except:
+        pass
+
+    # 方法2: 检查文件内容特征
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            content = f.read(1024)  # 只读取前1024个字符
+
+        # 检查是否包含INI文件的典型特征
+        lines = content.split('\n')[:20]  # 只检查前20行
+
+        section_count = 0
+        kv_count = 0
+
+        for line in lines:
+            line = line.strip()
+            if line.startswith('[') and line.endswith(']'):
+                section_count += 1
+            elif '=' in line and not line.startswith('#') and not line.startswith(';'):
+                kv_count += 1
+
+        # 如果有足够的节或键值对，则认为是INI文件
+        return (section_count > 0) or (kv_count > 0)
+    except:
+        return False

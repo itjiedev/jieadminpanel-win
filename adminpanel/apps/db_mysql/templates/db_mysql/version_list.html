@@ -36,7 +36,7 @@ layui.use(['util', 'layer'], function(){
                                 if (xhr.responseJSON && xhr.responseJSON.message) {
                                     errorMsg += xhr.responseJSON.message;
                                 } else {
-                                    errorMsg += error;
+                                    errorMsg += message;
                                 }
                                 layer.msg(errorMsg, {icon: 2});
                             }
@@ -66,7 +66,7 @@ layui.use(['util', 'layer'], function(){
 <div class="card-header">
     <div class="card-tools">
         <a href="{% url 'db_mysql:versions_refresh' %}" class="btn btn-outline-info">
-            <i class="fas fa-list"></i>更新版本
+            <i class="fas fa-list"></i>更新版本列表
         </a>
     </div>
 </div>
@@ -86,7 +86,9 @@ layui.use(['util', 'layer'], function(){
                 <td>{{ item.version }}</td>
                 <td>
 <button type="button" data-href="{{ key }}" class="btn btn-info btn-xs" lay-on="btn_download">安装配置</button>
-<a href="{{ item.download_url }}" target="_blank" class="btn btn-outline-info btn-xs">另存下载</a>
+<a href="{{ item.download_url }}" target="_blank" class="btn btn-outline-info btn-xs">ZIP安装包</a>
+<a href="{% replace_str item.download_url '.zip' '.msi'  %}" target="_blank" class="btn btn-outline-info btn-xs">MSI安装包</a>
+
                 </td>
             </tr>
             {% endfor %}

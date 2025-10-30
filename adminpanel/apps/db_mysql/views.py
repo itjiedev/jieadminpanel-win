@@ -2,6 +2,9 @@ import json
 import os
 import shutil
 import time
+import configparser
+import uuid
+import psutil
 
 from django.contrib import messages
 from django.views.generic.base import TemplateView, RedirectView
@@ -15,12 +18,10 @@ from jiefoundation.utils import windows_api_blocking, windows_api
 
 from panelcore.mixin import DatabaseMixin
 from panelcore.helper import find_available_port, get_sorted
-from .helper import get_installed, get_config, get_version
-from .config import version_file, config_file_path, app_cache_dir, installed_file_path
-from .forms import ConfigForm, InitializeForm, UserPasswordForm, ConfigEditForm
+from .helper import get_installed, get_config, get_version, parse_mysql_version
+from .config import app_name, version_file, config_file_path, app_cache_dir, installed_file_path
+from .forms import ConfigForm, InitializeForm, UserPasswordForm, ConfigEditForm, ImportForm, ImportServiceForm
 
-
-app_name = 'db_mysql'
 
 class MysqlMixin(DatabaseMixin):
 
@@ -62,6 +63,30 @@ class ConfigView(MysqlMixin, FormView):
             json.dump(config, f, ensure_ascii=False, indent=4)
         messages.success(self.request, '配置保存成功~')
         return redirect(reverse_lazy(f'{app_name}:index'))
+
+
+class SoftwareView(MysqlMixin, TemplateView):
+    template_name = f'{app_name}/software.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = 'MySQL管理软件'
+        context['breadcrumb'] = [
+            {
+                'title': 'MySQL服务',
+                'href': reverse_lazy(f'{app_name}:index'),
+                'active': False
+            },
+            {
+                'title': 'MySQL管理软件',
+                'href': reverse_lazy(f'{app_name}:software'),
+                'active': True
+            },
+        ]
+        from .config import software_file
+        with open(software_file, 'r', encoding='utf-8') as f:
+            context['software_list'] = json.load(f)
+        return context
 
 
 class IndexView(MysqlMixin, TemplateView):
@@ -173,6 +198,217 @@ class VersionsRefreshView(RedirectView):
         return super().get(request, *args, **kwargs)
 
 
+class ImportView(MysqlMixin, FormView):
+    template_name = f'{app_name}/import.html'
+    form_class = ImportForm
+    success_url = reverse_lazy(f'{app_name}:index')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = '导入MySQL'
+        context['startpath'] = get_config().get('install_folder')
+        context['btn_read_txt'] = '读取配置'
+        context['breadcrumb'] = [
+            {
+                'title': 'MySQL服务',
+                'href': reverse_lazy(f'{app_name}:index'),
+                'active': False
+            },
+            {
+                'title': 'MySQL导入-选择配置文件',
+                'href': reverse_lazy(f'{app_name}:import'),
+                'active': False
+            },
+            {
+                'title': 'MySQL导入-分析',
+                'href': reverse_lazy(f'{app_name}:import'),
+                'active': True
+            },
+        ]
+        return context
+
+    def form_valid(self, form):
+        config_file = form.cleaned_data.get('config_file')
+
+        if os.path.isdir(config_file):
+            form.add_error('config_file', '所输入的配置文件不能是目录!')
+            return super().form_invalid(form)
+        if not os.path.exists(config_file):
+            form.add_error('config_file', '所输入的配置文件不存在!')
+            return super().form_invalid(form)
+        if os.path.splitext(config_file)[1] != '.ini':
+            form.add_error('config_file', '所输入的配置文件格式有误!')
+            return super().form_invalid(form)
+        from panelcore.helper import is_valid_ini_file
+        if not is_valid_ini_file(config_file):
+            form.add_error('config_file', '所输入的配置文件格式有误!')
+            return super().form_invalid(form)
+        installed_dict = get_installed()
+        if config_file in [installed_dict[key]['conf_file'] for key in installed_dict]:
+            form.add_error('config_file', '选中的配置文件在安装记录中已存在，不能重复导入~')
+            return super().form_invalid(form)
+
+        version = form.cleaned_data.get('version')
+        install_dir = form.cleaned_data.get('install_dir')
+        data_dir = form.cleaned_data.get('data_dir')
+        port = form.cleaned_data.get('port')
+
+        version_info = get_version(version)
+        if version_info:
+            name = version_info['name']
+        else:
+            name = f"MySQL {version}"
+
+        unique_id = str(uuid.uuid4())
+        with open(installed_file_path, 'r', encoding='utf-8') as f:
+            installed = json.load(f)
+        installed[unique_id] = {
+            'uuid': unique_id,
+            'version': version,
+            'name': name,
+            'title': name,
+            'install_dir': install_dir,
+            'set_root_password': 2,
+            'config_status': 2,
+            "data_dir": data_dir,
+            "conf_file": config_file,
+            "port": port,
+            "set_service": False,
+            "service_name": '',
+            "service_auto": "",
+        }
+        installed = get_sorted(installed, 'version')
+
+        with open(installed_file_path, 'w', encoding='utf-8') as f:
+            json.dump(installed, f, ensure_ascii=False, indent=4)
+
+        return super().form_valid(form)
+        # if os.path.isdir(config_file):
+        #     form.add_error('config_file', '所输入的配置文件不能是目录!')
+        #     return super().form_invalid(form)
+        # if not os.path.exists(config_file):
+        #     form.add_error('config_file', '所输入的配置文件不存在!')
+        #     return super().form_invalid(form)
+        # if os.path.splitext(config_file)[1] != '.ini':
+        #     form.add_error('config_file', '所输入的配置文件格式有误!')
+        #     return super().form_invalid(form)
+        # from panelcore.helper import is_valid_ini_file
+        # if not is_valid_ini_file(config_file):
+        #     form.add_error('config_file', '所输入的配置文件格式有误!')
+        #     return super().form_invalid(form)
+        # 
+        # config = configparser.ConfigParser()
+        # config.read(config_file, encoding='utf-8')
+        # basedir = config.get('mysqld', 'basedir')
+        # 
+        # if not os.path.exists(basedir):
+        #     form.add_error('config_file', '所输入的配置文件所对应的安装目录不存在!')
+        #     return super().form_invalid(form)
+        # 
+        # mysql_exe = f"{basedir}/bin/mysql.exe"
+        # version = ''
+        # try:
+        #     result = run_command([mysql_exe, '--version'])
+        #     if result.returncode == 0: version = parse_mysql_version(result.stdout)
+        # except:
+        #     form.add_error('config_file', '无法获取MySQL版本!')
+        #     return super().form_invalid(form)
+        # 
+        # installed_dict = get_installed()
+        # if config_file in [installed_dict[key]['conf_file'] for key in installed_dict]:
+        #     form.add_error('config_file', '选中的配置文件在安装记录中已存在，不能重复生成~')
+        #     return super().form_invalid(form)
+        # 
+        # data_dir = config.get('mysqld', 'datadir')
+        # port = config.get('mysqld', 'port')
+        # 
+        # new_form = self.get_form()
+        # new_form.initial = {
+        #     'config_file': config_file,
+        #     'version': version,
+        #     'install_dir': basedir,
+        #     'data_dir': data_dir,
+        #     'port': port,
+        # }
+        # context = self.get_context_data(form=new_form)
+        # context['submitted'] = True
+        # context['btn_read_txt'] = '重新读取'
+        # # context['version'] = version
+        # # context['basedir'] = basedir
+        # # context['datadir'] = data_dir
+        # # context['port'] = port
+        # # context['set_service'] = set_service
+        # # context['have_service_info'] = have_service_info
+        # 
+        # return self.render_to_response(context)
+
+
+class AnalyzeConfigView(JsonView):
+    csrf_exempt = True
+
+    def post(self, request, *args, **kwargs):
+        config_file = self.request.POST.get('config_file')
+
+        if os.path.isdir(config_file):
+            return self.render_to_json_error('所输入的配置文件不能是目录!')
+        if not os.path.exists(config_file):
+            return self.render_to_json_error('所输入的配置文件不存在!')
+        from panelcore.helper import is_valid_ini_file
+        if not is_valid_ini_file(config_file):
+            return self.render_to_json_error('所输入的配置文件格式有误!')
+        if os.path.splitext(config_file)[1] != '.ini':
+            return self.render_to_json_error('所输入的配置文件格式有误!')
+        installed_dict = get_installed()
+        if config_file in [installed_dict[key]['conf_file'] for key in installed_dict]:
+            return self.render_to_json_error('选中的配置文件在安装记录中已存在，不能重复导入~')
+
+        config = configparser.ConfigParser()
+        config.read(config_file, encoding='utf-8')
+        basedir = config.get('mysqld', 'basedir')
+        mysql_exe = f"{basedir}/bin/mysql.exe"
+        if not os.path.exists(mysql_exe):
+            return self.render_to_json_error('所选择的MySQL安装目录里没有运行文件!请检查安装目录是否完整~')
+        version = ''
+        try:
+            result = run_command([mysql_exe, '--version'])
+            if result.returncode == 0:
+                version = parse_mysql_version(result.stdout)
+        except Exception:
+            pass
+        if not version:
+            return self.render_to_json_error('无法获取MySQL版本!')
+
+        return_dict = {
+            'version': version,
+            'install_dir': basedir,
+            'datadir': config.get('mysqld', 'datadir'),
+            'port': config.get('mysqld', 'port'),
+        }
+        #
+        # import psutil
+        # exists_service_list_html = '<div class="radio-item">'
+        # for service in psutil.win_service_iter():
+        #     try:
+        #         service_info = service.as_dict()
+        #         binpath = service_info.get('binpath', '')
+        #         if config_file in binpath :
+        #             return_dict['have_servie'] = True
+        #             return_dict['service_info'][service_info.get('name')] = {
+        #                 'name': service_info.get('name'),
+        #                 'display_name': service_info.get('display_name'),
+        #                 'start_type': service_info.get('start_type'),
+        #                 'status': service_info.get('status'),
+        #                 'description': service_info.get('description'),
+        #                 'binpath': service_info.get('binpath'),
+        #             }
+        #             exists_service_list_html += f'<input type="radio" id="id_service_name" name="service_name" value="{service_info.get("name")}" />{service_info.get("display_name")}'
+        #             break
+        #     except Exception as e:
+        #         continue
+        # return_dict['exists_service_list_html'] = exists_service_list_html + '</div>'
+        return self.render_to_json_success(return_dict)
+
+
 class DownloadView(JsonView):
 
     def get(self, request, *args, **kwargs):
@@ -216,7 +452,7 @@ class UnzipView(JsonView):
                 return self.render_to_json_error('安装目录已存在~不能重复安装~')
             extract_from_zip(cache_file_path, extract_to=install_folder)
             print('解压完成，写入json数据...')
-            import uuid
+
             unique_id = str(uuid.uuid4())
             with open(installed_file_path, 'r', encoding='utf-8') as f:
                 installed = json.load(f)
@@ -226,7 +462,7 @@ class UnzipView(JsonView):
                 'name': version_info['name'],
                 'title': version_info['name'],
                 'install_dir': install_dir,
-                'set_root_password': False,
+                'set_root_password': 0,
                 'config_status': 0,
                 "data_dir": install_dir + '-data/data/',
                 "conf_file": install_dir + '-data/my.ini',
@@ -276,7 +512,6 @@ class CheckPortView(JsonView):
             'message': message,
             'port': new_port,
         })
-
 
 class CheckServernameView(JsonView):
     def get(self, request, *args, **kwargs):
@@ -583,7 +818,7 @@ class InitRootPasswordView(MysqlMixin, FormView):
             cwd=install_info['install_dir']
         )
         if result.returncode == 0:
-            install_info['set_root_password'] = True
+            install_info['set_root_password'] = 1
             installed_list[id] = install_info
             with open(installed_file_path, 'w', encoding='utf-8') as f:
                 json.dump(installed_list, f, ensure_ascii=False, indent=4)
@@ -598,10 +833,10 @@ class LoginMysqlView(JsonView):
     csrf_exempt = True
 
     def post(self, request, *args, **kwargs):
-        id = self.request.POST.get('id')
+        get_id = self.request.POST.get('id')
         password = self.request.POST.get('password')
         installed_list = get_installed()
-        install_info = installed_list.get(id)
+        install_info = installed_list.get(get_id)
         if not install_info:
             return self.render_to_json_error('安装信息不存在')
 
@@ -686,6 +921,11 @@ class EditConfigView(MysqlMixin, FormView):
                 'active': False
             },
             {
+                'title': 'MySQL服务详情',
+                'href': reverse_lazy(f'{app_name}:detail', kwargs={'id': self.kwargs.get('id')}),
+                'active': False
+            },
+            {
                 'title': '编辑配置文件my.ini',
                 'href': '',
                 'active': True
@@ -702,4 +942,99 @@ class EditConfigView(MysqlMixin, FormView):
 
         write_file(ini_file, content)
         messages.success(self.request, '配置文件保存成功！')
+        return super().form_valid(form)
+
+class ImportServiceView(MysqlMixin, FormView):
+    template_name = f'{app_name}/import_service.html'
+    form_class = ImportServiceForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = 'MySQL导入配置服务'
+        context['breadcrumb'] = [
+            {
+                'title': 'MySQL环境管理',
+                'href': reverse_lazy(f'{app_name}:index'),
+                'active': False
+            },
+            {
+                'title': 'MySQL服务详情',
+                'href': reverse_lazy(f'{app_name}:detail', kwargs={'id': self.kwargs.get('id')}),
+                'active': False
+            },
+            {
+                'title': 'MySQL导入配置服务',
+                'href': '',
+                'active': True
+            }
+        ]
+        context['id'] = self.kwargs.get('id')
+        install_info = get_installed(self.kwargs.get('id'))
+        context['install_info'] = install_info
+        context['have_service'] = False
+        context['system_service'] = []
+        context['default_service_name'] = f'MySQL{install_info["version"].replace('.', '')}'
+        i = 1
+        is_select = False
+        for service in psutil.win_service_iter():
+            try:
+                service_info = service.as_dict()
+                binpath = service_info.get('binpath')
+                if install_info['conf_file'] in binpath:
+                    context['have_service'] = True
+                    if i == 1: is_select  = True
+                    context['system_service'].append({
+                        'name': service_info.get('name'),
+                        'display_name': service_info.get('display_name'),
+                        'start_type': service_info.get('start_type'),
+                        'status': service_info.get('status'),
+                        'description': service_info.get('description'),
+                        'binpath': service_info.get('binpath'),
+                        'is_select': is_select
+                    })
+                    i = i + 1
+            except Exception as e:
+                continue
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy(f'{app_name}:detail', kwargs={'id': self.kwargs.get('id')})
+
+    def form_valid(self, form):
+        id = self.kwargs.get('id')
+        select_service_type = form.cleaned_data.get('select_service_type')
+        system_service_name = form.cleaned_data.get('system_service_name')
+        service_name = form.cleaned_data.get('service_name')
+        service_auto = form.cleaned_data.get('service_auto')
+
+        set_service = False
+        config_status = 2
+
+        if select_service_type == 'system':
+            set_service = True
+            config_status = 1
+            service_name = system_service_name
+            service_auto = True
+        if select_service_type == 'new':
+            set_service = True
+            config_status = 1
+            service_name = service_name
+            service_auto = service_auto
+        if select_service_type == 'no':
+            set_service = False
+            config_status = 1
+            service_name = ''
+            service_auto = False
+
+        with open(installed_file_path, 'r+', encoding='utf-8') as f:
+            installed_data = json.load(f)
+
+        installed_data[id]['set_service'] = set_service
+        installed_data[id]['service_name'] = service_name
+        installed_data[id]['service_auto'] = service_auto
+        installed_data[id]['config_status'] = config_status
+
+        with open(installed_file_path, 'w', encoding='utf-8') as f:
+            json.dump(installed_data, f, ensure_ascii=False, indent=4)
+
         return super().form_valid(form)

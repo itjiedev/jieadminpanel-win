@@ -49,7 +49,7 @@ class PythonListView(PythonRuntimeMixin, TemplateView):
     def get_context_data(self, **kwargs):
         from .helper import get_installed_sorted
         context = super().get_context_data(**kwargs)
-        context['page_title'] = 'Runtime安装管理'
+        context['page_title'] = '压缩包安装管理'
         context['python_list'] = get_installed_sorted()
         context['default_env_python'] = get_default_env_python()
         return context
@@ -66,7 +66,7 @@ class InstallConfigView(PythonRuntimeMixin, FormView):
         context['page_title'] = '安装配置'
         context['breadcrumb'] = [
             {
-                'title': 'Runtime环境管理',
+                'title': '压缩包安装管理',
                 'href': reverse_lazy(f'{app_name}:config_check'),
                 'active': False
             },
@@ -118,7 +118,7 @@ class VersionsListView(PythonRuntimeMixin, TemplateView):
         context['default_env_python'] = get_default_env_python()
         context['breadcrumb'] = [
             {
-                'title': 'Runtime环境管理',
+                'title': '压缩包安装管理',
                 'href': reverse_lazy(f'{app_name}:config_check'),
                 'active': False
             },
@@ -128,6 +128,7 @@ class VersionsListView(PythonRuntimeMixin, TemplateView):
                 'active': True
             }
         ]
+        context['download_url_prefix'] = get_user_config()['install_source']['url-prefix']
         return context
 
 
@@ -221,7 +222,7 @@ class PythonInstallView(PythonRuntimeMixin, FormView):
         context['default_env_python'] = get_default_env_python()
         context['breadcrumb'] = [
             {
-                'title': 'Runtime环境管理',
+                'title': '压缩包安装管理',
                 'href': reverse_lazy(f'{app_name}:config_check'),
                 'active': False
             },
@@ -340,7 +341,7 @@ class NameEditView(PythonRuntimeMixin, FormView):
         context['page_title'] = '修改环境信息'
         context['breadcrumb'] = [
             {
-                'title': 'Runtime环境管理',
+                'title': '压缩包安装管理',
                 'href': reverse_lazy(f'{app_name}:config_check'),
                 'active': False
             },
@@ -511,7 +512,7 @@ class PackageListView(PythonRuntimeMixin, PackageListMixin):
         context['page_title'] = 'Python包管理'
         context['breadcrumb'] = [
             {
-                'title': 'Runtime 环境管理',
+                'title': '压缩包安装管理',
                 'href': reverse_lazy(f'{app_name}:python_list'),
                 'active': False
             },
@@ -540,7 +541,7 @@ class PackageInstallView(PythonRuntimeMixin, PackageInstallMixin):
         context['page_title'] = 'Python包安装'
         context['breadcrumb'] = [
             {
-                'title': 'Runtime 环境管理',
+                'title': '压缩包安装管理',
                 'href': reverse_lazy(f'{app_name}:python_list'),
                 'active': False
             },

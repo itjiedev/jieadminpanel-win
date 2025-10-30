@@ -5,6 +5,7 @@ from . import views
 app_name = 'db_mysql'
 
 urlpatterns = [
+    path('software/', views.SoftwareView.as_view(), name='software'),
     path('checkconfig/', views.CheckConfigView.as_view(), name='checkconfig'),
     path('config/', views.ConfigView.as_view(), name='config'),
     path('index/', views.IndexView.as_view(), name='index'),
@@ -22,4 +23,7 @@ urlpatterns = [
     path('mysql/login/<str:id>/', views.LoginMysqlView.as_view(), name='login_mysql'),
     path('clean-cache/', views.CleanCacheView.as_view(), name='clean_cache'),
     path('config/edit/<str:id>/', views.EditConfigView.as_view(), name='edit_config'),
+    path('import/', views.ImportView.as_view(), name='import'),
+    path('import/analyze/', views.AnalyzeConfigView.as_view(), name='analyze_config'),
+    path('import/service/<str:id>/', views.ImportServiceView.as_view(), name='import_service'),
 ]

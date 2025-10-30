@@ -1,7 +1,7 @@
 import os, json
 from pathlib import Path
 
-print('安装 共享工具 组件...')
+print('初始化 共享工具 组件...')
 
 project_root = Path(__file__).resolve().parent.parent.parent.parent
 current_dir = os.path.dirname(__file__)

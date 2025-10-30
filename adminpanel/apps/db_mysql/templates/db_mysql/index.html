@@ -36,7 +36,6 @@ function getCookie(name) {
             var url = $(this).attr('data-url');
             var id = $(this).attr('data-id');
             layer.prompt({title: '请输入root帐号登录密码', formType: 1}, function(value, index, elem){
-                if(value === '') return elem.focus();
                 var get_value = util.escape(value);
                 const csrftoken = getCookie('csrftoken');
                 $.ajax({
@@ -72,10 +71,10 @@ function getCookie(name) {
 {% endblock %}
 
 {% block page_content %}
-
  <div class="card-header border-0">
         <div class="card-title">
     <a href="{% url 'db_mysql:version_list' %}" class="btn btn-success"><i class="fa fa-plus"></i> 安装MySQL</a>
+<a href="{% url 'db_mysql:import' %}" class="btn bg-success"><i class="fas fa-file-import"></i> 导入</a>
         </div>
     <div class="card-tools">
           <a href="{% url 'db_mysql:clean_cache' %}" class="btn btn-outline-info">
@@ -84,25 +83,32 @@ function getCookie(name) {
         <a data-href="{% url 'sharedkit:open_system_services' %}" class="btn btn-outline-info" lay-on="OpenSystemServices">
             <i class="fa-solid fa-gears"></i> 系统服务
         </a>
+        <a href="{% url 'db_mysql:software' %}" class="btn btn-outline-info">
+            <i class="fa-solid fa-wrench"></i> MySQL管理工具
+        </a>
     </div>
 </div>
 {% include 'include_messages.html' %}
 {% if not installed_list %}
     <div class="alert alert-warning text-lg"  role="alert">
-        没有找到安装信息,请先安装MySQL~
+        没有找到安装信息,请先 安装/导入 MySQL~
     </div>
 {% else %}
 <div class="row">
 {% for id, item in installed_list.items %}
 <div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch flex-column">
-  <div class="card bg-light d-flex flex-fill">
+  <div class="card bg-light d-flex flex-fill shadow">
     <div class="card-body p-2 pl-4">
         <h2 class="lead"><b>{{ item.title }}</b></h2>
           <div class="text-muted text-sm mb-1"><b>版本: </b> {{ item.name }} </div>
           <ul class="ml-4 mb-0 fa-ul text-muted">
             <li>
                 <span class="fa-li"><i class="fas fa-lg fa-user"></i></span>
-                root{% if item.set_root_password  %}(已设置密码){% else %}(密码为空){% endif %}
+                root(
+            {% if item.set_root_password == 0 %}(密码为空){% endif %}
+            {% if item.set_root_password == 1 %}已设置 {% endif %}
+            {% if item.set_root_password == 2 %}(未知){% endif %}
+                )
             </li>
             <li>
                 <span class="fa-li"><i class="fa-solid fa-network-wired"></i></span>
@@ -111,7 +117,7 @@ function getCookie(name) {
           </ul>
     </div>
     <div class="card-footer">
-      {% if item.config_status == 1 %}
+      {% if item.config_status == 1 or item.config_status == 2 %}
           {% if item.set_root_password %}
         <button type="button" class="btn btn-sm btn-info" data-url="{% url "db_mysql:login_mysql" id %}" data-id="{{ id }}" lay-on="input_pass">测试root登录</button>
           {% else %}

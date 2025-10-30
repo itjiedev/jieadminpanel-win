@@ -87,3 +87,18 @@ class PackageInstallForm(FormBase):
             choices=(('latest', '自动适配版本'),)
         ),
     )
+
+class ConfigForm(FormBase):
+    """
+    Python安装配置表单
+    """
+    install_folder = forms.CharField(
+        label="统一目录",
+        help_text="统一安装目录，默认为当前用户目录",
+        widget=forms.TextInput(attrs={'class': 'form-control', 'lay-verify': 'required', 'lay-reqtext':'请选择目录~'})
+    )
+    download_source = forms.ChoiceField(
+        label="下载源",
+        choices=choice_download_source(),
+        widget=forms.Select(attrs={'class': 'form-control', 'lay-verify': 'required', 'lay-reqtext':'请选择下载源~'})
+    )

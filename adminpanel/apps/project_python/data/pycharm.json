@@ -1,0 +1,53 @@
+{
+    "2025.2.4": {
+        "version": 2025,
+        "unified":{
+            "installer": "https://download.jetbrains.com/python/pycharm-2025.2.4.exe",
+            "zip": "https://download.jetbrains.com/python/pycharm-2025.2.4.win.zip"
+        }
+    },
+    "2025.2.2": {
+        "version": 2025,
+        "professional":{
+            "installer": "https://download.jetbrains.com/python/pycharm-2025.2.2.exe",
+            "zip": "https://download.jetbrains.com/python/pycharm-2025.2.2.win.zip"
+        },
+        "community":{
+            "installer": "https://download.jetbrains.com/python/pycharm-community-2025.2.2.exe",
+            "zip": "https://download.jetbrains.com/python/pycharm-community-2025.2.2.win.zip" 
+        }
+    },
+    "2025.1.5": {
+        "version": 2025,
+        "professional":{
+            "installer": "https://download.jetbrains.com/python/pycharm-2025.1.5.exe",
+            "zip": "https://download.jetbrains.com/python/pycharm-professional-2025.1.5.win.zip"
+        },
+        "community":{
+            "installer": "https://download.jetbrains.com/python/pycharm-community-2025.1.5.exe",
+            "zip": "https://download.jetbrains.com/python/pycharm-community-2025.1.5.win.zip" 
+        }
+    },
+    "2024.3.6": {
+        "version": 2024,
+        "professional":{
+            "installer": "https://download.jetbrains.com/python/pycharm-professional-2024.3.6.exe",
+            "zip": "https://download.jetbrains.com/python/pycharm-professional-2024.3.6.win.zip"
+        },
+        "community":{
+            "installer": "https://download.jetbrains.com/python/pycharm-community-2024.3.6.exe",
+            "zip": "https://download.jetbrains.com/python/pycharm-community-2024.3.6.win.zip" 
+        }
+    },
+    "2024.2.6": {
+        "version": 2024,
+        "professional":{
+            "installer": "https://download.jetbrains.com/python/pycharm-professional-2024.2.6.exe",
+            "zip": "https://download.jetbrains.com/python/pycharm-professional-2024.2.6.win.zip"
+        },
+        "community":{
+            "installer": "https://download.jetbrains.com/python/pycharm-community-2024.2.6.exe",
+            "zip": "https://download.jetbrains.com/python/pycharm-community-2024.2.6.win.zip" 
+        }
+    }
+}

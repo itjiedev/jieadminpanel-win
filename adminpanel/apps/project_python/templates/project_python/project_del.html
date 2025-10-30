@@ -1,0 +1,30 @@
+{% extends 'project_python/layout_python.html' %}
+
+
+{% block python_content %}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title text-bold text-danger">删除项目：{{ project.project_name}}</h3>
+    </div>
+    <form method="post">{% csrf_token %}
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-2">项目名</dt>
+                <dd class="col-sm-10">{{ project.project_name}}</dd>
+                <dt class="col-sm-2">项目名</dt>
+                <dd class="col-sm-10">{{ project.project_name}}</dd>
+                <dt class="col-sm-2">项目名</dt>
+                <dd class="col-sm-10">{{ project.project_name}}</dd>
+
+
+            </dl>
+           
+        </div>
+        <div class="card-footer">
+
+        </div>
+    </form>
+</div>
+
+
+{% endblock %}

@@ -10,8 +10,36 @@
             "query": {},
             "fragment": ""
         },
-        "children": {},
-        "rules": []
+        "rules": [],
+        "children": {}
+    },
+    "project": {
+      "id": "project",
+      "title": "项目开发",
+      "icon": "fa-solid fa-diagram-project",
+      "url": {
+        "route_name": "",
+        "args": [],
+        "kwargs": {},
+        "query": {},
+        "fragment": ""
+      },
+      "rules": [],
+      "children": {
+            "project_python": {
+              "id": "project_python",
+              "title": "Python 项目",
+              "url": {
+                "route_name": "project_python:index",
+                "args": [],
+                "kwargs": {},
+                "query": {},
+                "fragment": ""
+              },
+              "rules": [],
+              "children": {}
+            }
+      }
     },
     "runtime_envs": {
         "id": "runtime_envs",
@@ -41,7 +69,7 @@
                     "category": {
                         "envs_python_runtime": {
                             "id": "envs_python_runtime",
-                            "title": "Runtime环境管理",
+                            "title": "压缩包安装管理",
                             "url": {
                                 "route_name": "envs_python_runtime:config_check",
                                 "args": [],
@@ -53,9 +81,9 @@
                         },
                         "envs_python_installer": {
                             "id": "envs_python_installer",
-                            "title": "安装包环境管理",
+                            "title": "安装程序安装管理",
                             "url": {
-                                "route_name": "envs_python_installer:python_list",
+                                "route_name": "envs_python_installer:check_config",
                                 "args": [],
                                 "kwargs": {},
                                 "query": {},

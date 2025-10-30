@@ -23,7 +23,7 @@ class InstallConfigForm(FormBase):
         )
     )
     install_source = forms.CharField(
-        label="安装源",
+        label="下载源",
         help_text="如果一直无法通过文件验证，请更换官方地址",
         widget=forms.Select(attrs={'class': 'form-control'})
     )

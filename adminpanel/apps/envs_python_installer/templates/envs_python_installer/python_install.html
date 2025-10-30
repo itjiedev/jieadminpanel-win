@@ -69,9 +69,6 @@ function getCookie(name) {
     'set_user_folder': function(){
         $('#id_folder').val("{{ get_user_folder }}");
     },
-    'set_system_folder': function(){
-        $('#id_folder').val("{{ get_system_folder }}");
-    },
     'startinstall': function (){
         var loadIndex = layer.msg('下载Python安装包...', {
             icon: 16,
@@ -132,11 +129,7 @@ function getCookie(name) {
 {% endblock %}
 
 {% block page_content %}
-    {{ block.super }}
-<div class="callout callout-warning">
-<p class="text-lg">安装完成后请手动重新刷新环境列表！</p>
-</div>
-
+{{ block.super }}
 <div class="card">
  <form method="post" class="form-horizontal">{% csrf_token %}
     <div class="card-body">
@@ -155,7 +148,6 @@ function getCookie(name) {
               <div class="input-group-append">
 <span class="input-group-text hand-cursor" lay-on="iframe_select_folder"><i class="fas fa-folder-open"></i></span>
 <span class="input-group-text hand-cursor" lay-on="set_user_folder">用户目录</span>
-<span class="input-group-text hand-cursor" lay-on="set_system_folder">系统目录</span>
               </div>
             </div>
         </div>

@@ -5,7 +5,9 @@ from . import views
 app_name = 'envs_python_installer'
 
 urlpatterns = [
+    path("check/config/", views.CheckConfigView.as_view(), name='check_config'),
     path('list/', views.PythonListView.as_view(), name='python_list'),
+    path('config/', views.ConfigView.as_view(), name='config'),
     path('set/pydefault/<str:version>/', views.SetPyDefaultView.as_view(), name='set_py_default_python'),
     path('set/envdefault/<str:version>/', views.SetEnvironDefaultView.as_view(), name='set_env_default_python'),
     path('set/default/', views.ResetDefaultView.as_view(), name='reset_default_python'),

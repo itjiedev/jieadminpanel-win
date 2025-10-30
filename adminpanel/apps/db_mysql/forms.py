@@ -81,3 +81,37 @@ class ConfigEditForm(FormBase):
             }
         )
     )
+
+class ImportForm(FormBase):
+    config_file = forms.CharField(
+        label='配置文件', required=True,
+        help_text='请选择导入 MySQL 的 my.ini 配置文件！不需要选择安装目录，会自动从配置文件中读取',
+        widget=forms.TextInput(
+            attrs={'class': 'form-control', 'lay-verify': 'required', 'lay-reqtext': '请选择导入MySQL的my.ini配置文件~'}
+        )
+    )
+    version = forms.CharField(required=False,widget=forms.HiddenInput())
+    install_dir = forms.CharField(required=False,widget=forms.HiddenInput())
+    data_dir = forms.CharField(required=False,widget=forms.HiddenInput())
+    port = forms.CharField(required=False,widget=forms.HiddenInput())
+
+
+class ImportServiceForm(FormBase):
+    select_service_type = forms.CharField(required=True,)
+    system_service_name = forms.CharField(required=False)
+    service_name = forms.CharField(required=False)
+    service_auto = forms.BooleanField(required=False)
+
+    # set_service = forms.BooleanField(
+    #     label='安装为windows服务', required=False,
+    #     widget=forms.CheckboxInput(
+    #         attrs={'lay-skin': "switch", 'title': "安装|不安装", 'lay-filter': "set_service"}
+    #     )
+    # )
+
+    # new_service = forms.CharField(
+    #     label='服务名', required=False,
+    #     widget=forms.TextInput(
+    #         attrs={'class': 'form-control'}
+    #     )
+    # )

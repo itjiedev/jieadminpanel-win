@@ -12,7 +12,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic.base import TemplateView, RedirectView
 
 from jiefoundation.utils import (
-    run_command, get_file_md5, windows_api, ensure_path_end_separator
+    run_command, get_file_md5, windows_api, windows_api_blocking, ensure_path_end_separator
 )
 from panelcore.helper import set_reg_user_env, get_reg_user_env
 from jiefoundation.jiebase import JsonView
@@ -21,11 +21,11 @@ from apps.envs_python.views import EnvsPythonMixin
 
 from .config import (
     installed_file_path, python_download_path,
-    python_cache_dir,py_ini_path
+    python_cache_dir,py_ini_path, config_file_path
 )
 from .helper import get_installed as get_installed_python
-from .helper import get_python_versions, python_list_paths
-from .forms import PythonInstallForm, PythonUninstallForm
+from .helper import get_python_versions, python_list_paths, get_config
+from .forms import PythonInstallForm, PythonUninstallForm, ConfigForm
 
 app_name = 'envs_python_installer'
 
@@ -33,9 +33,44 @@ app_name = 'envs_python_installer'
 class PythonInstallerMixin(EnvsPythonMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['page_title'] = "安装包环境"
+        context['page_title'] = "安装程序安装管理"
         context['current_category'] = app_name
         return context
+
+
+class CheckConfigView(RedirectView):
+    def get(self, request, *args, **kwargs):
+        config = get_config()
+        if not any(config.values()):
+            self.url = reverse_lazy(f'{app_name}:config')
+        else:
+            self.url = reverse_lazy(f'{app_name}:python_list')
+        return super().get(request, *args, **kwargs)
+
+
+class ConfigView(PythonInstallerMixin, FormView):
+    template_name = f'{app_name}/config.html'
+    form_class = ConfigForm
+    success_url = reverse_lazy(f'{app_name}:python_list')
+
+    def get_initial(self):
+        inital = super().get_initial()
+        config = get_config()
+        inital['install_folder'] = config['install_folder'] if config['install_folder'] else os.environ.get('LOCALAPPDATA').replace('\\', '/') + '/Programs/Python/'
+        inital['download_source'] = config['download_source']
+        return inital.copy()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = '安装程序安装配置'
+        return context
+
+    def form_valid(self, form):
+        install_folder = form.cleaned_data.get('install_folder')
+        download_source = form.cleaned_data.get('download_source')
+        with open(config_file_path, 'w', encoding='utf-8') as f:
+            json.dump({'install_folder': install_folder, 'download_source': download_source}, f, ensure_ascii=False, indent=4)
+        return super().form_valid(form)
 
 
 class PythonListView(PythonInstallerMixin, TemplateView):
@@ -116,7 +151,7 @@ class PythonUninstallView(PythonInstallerMixin, FormView):
         context['page_title'] += ' - 卸载'
         context['version'] = self.kwargs.get('version')
         context['breadcrumb'] = [
-            {'title': 'Python列表', 'href': reverse_lazy(f'{app_name}:python_list'), 'active': False},
+            {'title': '安装程序安装管理', 'href': reverse_lazy(f'{app_name}:python_list'), 'active': False},
             {
                 'title': 'Python卸载',
                 'href': reverse_lazy(f'{app_name}:uninstall', kwargs={'version': self.kwargs.get('version')}),
@@ -172,16 +207,22 @@ class PythonUninstallView(PythonInstallerMixin, FormView):
 
 class PythonInstallView(PythonInstallerMixin, FormView):
     template_name = f'{app_name}/python_install.html'
-    initial = {"folder": os.path.join(os.environ.get('LOCALAPPDATA'), 'Programs', 'Python')}
     form_class = PythonInstallForm
     success_url = reverse_lazy(f'{app_name}:python_list')
+
+    def get_initial(self):
+        initial = super().get_initial()
+        config = get_config()
+        initial['folder'] = config.get('install_folder')
+        initial['download_source'] = config.get('download_source')
+        return initial.copy()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['page_title'] += " - 安装"
         context['breadcrumb'] = [
             {
-                'title': 'Python环境管理',
+                'title': '安装程序安装管理',
                 'href': reverse_lazy(f'{app_name}:python_list'),
                 'active': False
             },
@@ -191,9 +232,7 @@ class PythonInstallView(PythonInstallerMixin, FormView):
                 'active': True
             }
         ]
-        context['get_user_folder'] = os.path.join(os.environ.get('LOCALAPPDATA'), 'Programs', 'Python').replace('\\',
-                                                                                                               '\\\\')
-        context['get_system_folder'] = os.path.join(os.environ.get('ProgramFiles'), 'Python').replace('\\', '\\\\')
+        context['get_user_folder'] = os.path.join(os.environ.get('LOCALAPPDATA'), 'Programs', 'Python').replace('\\', '\\/')
         return context
 
 
@@ -253,7 +292,7 @@ class RunPythonInstallView(JsonView):
         python_cache_file = python_cache_dir / version_info['installer-file-name']
 
         try:
-            windows_api(
+            windows_api_blocking(
                 executable=str(python_cache_file),
                 parameters=f'/passive InstallAllUsers=1 TargetDir="{install_folder}"',
                 operation="runas",
@@ -308,7 +347,7 @@ class PackageListView(PythonInstallerMixin, PackageListMixin):
         context['page_title'] = 'Python包管理'
         context['breadcrumb'] = [
             {
-                'title': 'Python环境管理',
+                'title': '安装程序安装管理',
                 'href': reverse_lazy(f'{app_name}:python_list'),
                 'active': False
             },
@@ -337,7 +376,7 @@ class PackageInstallView(PythonInstallerMixin, PackageInstallMixin):
         context['page_title'] = 'Python包安装'
         context['breadcrumb'] = [
             {
-                'title': 'Python环境管理',
+                'title': '安装版安装管理',
                 'href': reverse_lazy(f'{app_name}:python_list'),
                 'active': False
             },

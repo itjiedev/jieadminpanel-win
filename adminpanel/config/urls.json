@@ -23,5 +23,10 @@
         "path": "database/mysql/",
         "include": "apps.db_mysql.urls",
         "namespace": "db_mysql"
+    },
+    "apps.project_python": {
+        "path": "project/python/",
+        "include": "apps.project_python.urls",
+        "namespace": "project_python"
     }
 }

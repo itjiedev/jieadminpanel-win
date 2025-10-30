@@ -1,0 +1,329 @@
+{% extends 'layout_panel.html' %}
+
+{% block html_css_code %}
+<style>
+  .layui-form-checkbox>.lay-skin-checkcard,
+  .layui-form-radio>.lay-skin-checkcard {
+    display: table;
+    display: flex;
+    padding: 12px;
+    white-space: normal;
+    border-radius: 10px;
+    border: 1px solid #e5e5e5;
+    color: #000;
+    background-color: #fff;
+  }
+  .layui-form-checkbox>.lay-skin-checkcard>*,
+  .layui-form-radio>.lay-skin-checkcard>* {
+    /* display: table-cell; */  /* IE */
+    vertical-align: top;
+  }
+  /* 悬停 */
+  .layui-form-checkbox:hover>.lay-skin-checkcard,
+  .layui-form-radio:hover>.lay-skin-checkcard {
+    border-color: #16b777;
+  }
+  /* 选中 */
+  .layui-form-checked>.lay-skin-checkcard,
+  .layui-form-radioed[lay-skin="none"]>.lay-skin-checkcard {
+    color: #000;
+    border-color: #16b777;
+    background-color: rgb(22 183 119 / 10%) !important;
+    /* box-shadow: 0 0 0 3px rgba(22, 183, 119, 0.08); */
+  }
+  /* 禁用 */
+  .layui-checkbox-disabled>.lay-skin-checkcard,
+  .layui-radio-disabled>.lay-skin-checkcard {
+    box-shadow: none;
+    border-color: #e5e5e5 !important;
+    background-color: #eee !important;
+  }
+  /* card 布局 */
+  .lay-skin-checkcard-avatar {
+    padding-right: 8px;
+  }
+  .lay-skin-checkcard-detail {
+    overflow: hidden;
+    width: 100%;
+  }
+  .lay-skin-checkcard-header {
+    font-weight: 500;
+    font-size: 16px;
+    white-space: nowrap;
+    margin-bottom: 4px;
+  }
+  .lay-skin-checkcard-description {
+    font-size: 13px;
+    color: #5f5f5f;
+  }
+  .layui-disabled  .lay-skin-checkcard-description{
+    color: #c2c2c2! important;
+  }
+  /* 选中 dot */
+  .layui-form-checked>.lay-check-dot:after,
+  .layui-form-radioed>.lay-check-dot:after {
+    position: absolute;
+    content: "";
+    top: 2px;
+    right: 2px;
+    width: 0;
+    height: 0;
+    display: inline-block;
+    vertical-align: middle;
+    border-width: 10px;
+    border-style: dashed;
+    border-color: transparent;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 0px;
+    border-bottom-left-radius: 6px;
+    border-top-color: #16b777;
+    border-top-style: solid;
+    border-right-color: #16b777;
+    border-right-style: solid;
+    overflow: hidden;
+  }
+  .layui-checkbox-disabled>.lay-check-dot:after,
+  .layui-radio-disabled>.lay-check-dot:after {
+    border-top-color: #d2d2d2;
+    border-right-color: #d2d2d2;
+  }
+  /* 选中 dot-2 */
+  .layui-form-checked>.lay-check-dot-2:before,
+  .layui-form-radioed>.lay-check-dot-2:before {
+    position: absolute;
+    font-family: "layui-icon";
+    content: "\e605";
+    color: #fff;
+    bottom: 4px;
+    right: 3px;
+    font-size: 9px;
+    z-index: 12;
+  }
+  .layui-form-checked>.lay-check-dot-2:after,
+  .layui-form-radioed>.lay-check-dot-2:after {
+    position: absolute;
+    content: "";
+    bottom: 2px;
+    right: 2px;
+    width: 0;
+    height: 0;
+    display: inline-block;
+    vertical-align: middle;
+    border-width: 10px;
+    border-style: dashed;
+    border-color: transparent;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 6px;
+    border-bottom-left-radius: 0px;
+    border-right-color: #16b777;
+    border-right-style: solid;
+    border-bottom-color: #16b777;
+    border-bottom-style: solid;
+    overflow: hidden;
+  }
+  .layui-checkbox-disabled>.lay-check-dot-2:before,
+  .layui-radio-disabled>.lay-check-dot-2:before {
+    color: #eee !important;
+  }
+  .layui-checkbox-disabled>.lay-check-dot-2:after,
+  .layui-radio-disabled>.lay-check-dot-2:after {
+    border-bottom-color: #d2d2d2;
+    border-right-color: #d2d2d2;
+  }
+  .lay-ellipsis-multi-line {
+    overflow: hidden;
+    word-break: break-all;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+</style>
+<!-- 标签风格 -->
+<style>
+  .layui-form-radio>.lay-skin-tag,
+  .layui-form-checkbox>.lay-skin-tag {
+    font-size: 13px;
+    border-radius: 100px;
+  }
+  .layui-form-checked>.lay-skin-tag,
+  .layui-form-radioed>.lay-skin-tag {
+    color: #fff !important;
+    background-color: #16b777 !important;
+  }
+</style>
+{% endblock %}
+
+{% block html_js_code %}
+<script>
+layui.use(['form', 'layer'], function () {
+  var form = layui.form;
+  var layer = layui.layer;
+  var $ = layui.jquery;
+ var util = layui.util;
+
+  {#$('#system_service').hide();#}
+  $('#create_service').hide();
+  $('#no_service').hide();
+
+  form.on('radio(select_service_type)', function(data){
+    var elem = data.elem; // 获得 radio 原始 DOM 对象
+    var checked = elem.checked; // 获得 radio 选中状态
+    var value = elem.value; // 获得 radio 值
+    var othis = data.othis; // 获得 radio 元素被替换后的 jQuery 对象
+    var util = layui.util;
+
+    if (value === 'user_system_service'){
+        $('#system_service').show();
+        $('#create_service').hide();
+        $('#no_service').hide();
+    }
+    if (value === 'user_create_service'){
+        $('#system_service').hide();
+        $('#create_service').show();
+        $('#no_service').hide();
+    }
+    if (value === 'user_no_service'){
+        $('#system_service').hide();
+        $('#create_service').hide();
+        $('#no_service').show();
+    }
+
+  });
+    util.event('lay-on', {
+        checkService: function() {
+            var service_name = $('#id_service_name').val();
+            if (service_name === '') {
+                layer.msg('请输入服务名！', {icon: 5});
+            }else{
+                var loadIndex = layer.msg('检测服务名冲突...', {icon: 16,shade: 0.6});
+                $.ajax({
+                    url: "{% url 'db_mysql:check_service' %}?service=" + service_name,
+                    type: 'get',
+                    dataType: 'json',
+                    success: function(data) {
+                        layer.close(loadIndex);
+                        layer.alert(data.message);
+                    },
+                    error: function(xhr, status, message) {
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMsg = xhr.responseJSON.message;
+                        } else {
+                            errorMsg = error;
+                        }
+                        layer.alert(errorMsg, {title:null})
+                    }
+                })
+            }
+        }
+    })
+
+});
+</script>
+{% endblock %}
+
+{% block page_content %}
+    {{ form.errors }}
+<form method="post" class="layui-form">{% csrf_token %}
+<div class="card">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-2 mb-0">版本</dt>
+            <dd class="col-sm-10 mb-0">{{ install_info.name }}</dd>
+            <dt class="col-sm-2 mb-0">主机</dt>
+            <dd class="col-sm-10 mb-0">local</dd>
+            <dt class="col-sm-2 mb-0">端口</dt>
+            <dd class="col-sm-10 mb-0">{{ install_info.port }}</dd>
+            <dt class="col-sm-2 mb-0">安装路径</dt>
+            <dd class="col-sm-10 mb-0">{{ install_info.install_dir }}</dd>
+            <dt class="col-sm-2 mb-0">配置文件路径</dt>
+            <dd class="col-sm-10 mb-0">{{ install_info.conf_file }} </dd>
+            <dt class="col-sm-2 mb-0">数据文件夹路径</dt>
+            <dd class="col-sm-10 mb-0">{{ install_info.data_dir }}</dd>
+        </dl>
+
+{% if have_service %}
+<div class="card" \>
+    <div class="card-header">
+        <input type="radio" id="select_service_type" name="select_service_type" title="匹配已存在服务"
+               value="system" lay-filter="select_service_type" {% if have_service %}checked{% endif %}/>
+    </div>
+    <div class="card-body" id="system_service">
+<div class="layui-row layui-col-space8">
+{% for service in system_service %}
+    <div class="layui-col-xs12 layui-col-sm12 layui-col-md12">
+      <input type="radio" name="system_service_name" name="id_system_service_name" value="{{ service.name }}" lay-skin="none" {% if service.is_select %}checked{% endif %}>
+      <div lay-radio class="lay-skin-checkcard lay-check-dot-2">
+        <div class="lay-skin-checkcard-detail">
+          <div class="lay-skin-checkcard-header">{{ service.name }}</div>
+          <div class="lay-skin-checkcard-description lay-ellipsis-multi-line">
+<div class="row ml-2 text-muted">
+    <dl class="row mb-0">
+        <dd class="col-sm-2 mb-0">服务名称</dd>
+        <dd class="col-sm-10 mb-0">{{ service.name }}</dd>
+        <dd class="col-sm-2 mb-0">服务描述</dd>
+        <dd class="col-sm-10 mb-0">{{ service.description }}</dd>
+        <dd class="col-sm-2 mb-0">服务启动类型</dd>
+        <dd class="col-sm-10 mb-0">{{ service.start_type }}</dd>
+        <dd class="col-sm-2 mb-0">服务状态</dd>
+        <dd class="col-sm-10 mb-0">{{ service.status }}</dd>
+        <dd class="col-sm-2 mb-0">执行文件路径</dd>
+        <dd class="col-sm-10 mb-0">{{ service.binpath }}</dd>
+        <dd class="col-sm-2 mb-0">描述</dd>
+        <dd class="col-sm-10 mb-0">{{ service.description }}</dd>
+    </dl>
+</div>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endfor %}
+  </div>
+    </div>
+</div>
+{% endif %}
+<div class="card">
+    <div class="card-header">
+        <input type="radio" id="select_service_type" name="select_service_type" title="创建新服务"
+               value="new" lay-filter="select_service_type" {% if not have_service %}checked{% endif %}/>
+    </div>
+    <div class="card-body" id="create_service">
+<div id="service-group">
+    <div class="form-group row">
+      <label class="col-sm-1 col-form-label">新服务名</label>
+      <div class="col-sm-4">
+          <div class="input-group">
+              <input type="text" class="form-control" id="id_service_name" name="service_name" placeholder="请输入服务名" value="{{ default_service_name }}" />
+              <button type="button" class="btn btn-warning border-0 ml-2" lay-on="checkService">
+                  检测服务名冲突
+              </button>
+          </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-2 col-form-label">{{ form.service_auto.label }}</label>
+      <div class="col-sm-3">
+          <div class="input-group">{{ form.service_auto }}</div>
+      </div>
+    </div>
+</div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <input type="radio" id="select_service_type" name="select_service_type" title="不设置服务"
+               value="no" lay-filter="select_service_type"/>
+    </div>
+    <div class="card-body" id="no_service">
+        不为当前的导入做任何服务操作，保持现状
+    </div>
+</div>
+</div>
+    <div class="card-footer">
+        <button type="submit" class="btn btn-primary">确认配置导入</button>
+    </div>
+</div>
+</form>
+{% endblock %}

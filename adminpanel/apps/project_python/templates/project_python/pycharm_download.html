@@ -1,0 +1,62 @@
+{% extends 'layout_panel.html' %}
+
+{% block html_js_code %}
+<script>
+    layui.use(function(){
+        var layer = layui.layer;
+        var util = layui.util;
+        
+        util.on('lay-on',  {
+        })
+
+    })
+</script>
+{% endblock %}
+
+{% block page_content %}
+{% include 'include_messages.html' %}
+<p class="row text-danger text-lg ml-2">
+需要您自行下载安装包，下载后可自行安装（建议），也可使用自动安装。
+</p>
+<div class="row">
+{% for version, info in downloads.items %}
+    <div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch flex-column">
+        <div class="card bg-light d-flex flex-fill shadow">
+            <div class="card-body">
+                <h2 class="lead text-bold">版本：{{version}}</h2>
+                {% if info.unified %}
+                <div class="layui-font-14">
+                    Pycharm
+                    <a href="{{ info.unified.installer}}" target="_blank" class="btn btn-link btn-xs" lay-on="install">Windows(exe)</a>
+                    <!-- <a href="{{ info.unified.zip}}" class="btn btn-link btn-xs" lay-on="install">windows(zip)</a> -->
+                </div>
+                {% endif %}
+
+                {% if info.professional %}
+                <div class="layui-font-14">
+                    Pycharm professional
+                    <a href="{{ info.professional.installer}}" target="_blank" class="btn btn-link btn-xs" lay-on="install">Windows(exe)</a>
+                    <!-- <a href="{{ info.professional.zip}}" class="btn btn-link btn-xs" lay-on="install">windows(zip)</a> -->
+                </div>
+
+                {% endif %}
+                {%if info.community %}
+                <div class="layui-font-14">
+                    PyCharm Community
+                    <a href="{{ info.community.installer}}" class="btn btn-link btn-xs" lay-on="install">Windows(exe)</a>
+                    <!-- <a href="{{ info.community.zip}}" class="btn btn-link btn-xs" lay-on="install">windows(zip)</a> -->
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+{% endfor %}
+</div>
+<div class="card">
+    <div class="card-footer">
+        <a href="{% url 'project_python:pycharm_install' %}" class="btn btn-success">我已下载，帮我安装</a>
+        <a href="{% url 'project_python:index' %}" class="btn btn-outline-primary">我已经自己安装完成了</a>
+    </div>
+</div>
+{% endblock %}

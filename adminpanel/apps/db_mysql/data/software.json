@@ -1,0 +1,17 @@
+[
+  {
+    "name": "MariaDB",
+    "icon": "MariaDB.png",
+    "website": "https://mariadb.org/download"
+  },
+  {
+    "name":"MySQL Workbench",
+    "icon":"mysqlWorkbench.png",
+    "website":"https://dev.mysql.com/downloads/workbench/"
+  },
+  {
+    "name":"HeidiSQL",
+    "icon":"heidiSQL.png",
+    "website":"https://www.heidisql.com/download.php"
+  }
+]

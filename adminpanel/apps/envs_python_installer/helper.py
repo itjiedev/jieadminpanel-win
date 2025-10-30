@@ -1,5 +1,6 @@
 import json
-
+import os
+from pathlib import Path
 from jiefoundation.utils import run_command
 
 from .config import (
@@ -74,3 +75,23 @@ def python_list_paths():
         return versions
     else:
         return {}
+
+def get_config(config_name=None):
+    from .config import config_file_path
+
+    dir_path = Path(config_file_path.parent)
+    if not dir_path.exists():
+        dir_path.mkdir(parents=True, exist_ok=True)
+
+    if not Path(config_file_path).exists():
+        with open(config_file_path, 'w', encoding='utf-8') as f:
+            json.dump({'install_folder': '', 'download_source':''}, f, ensure_ascii=False, indent=4)
+        return {}
+    with open(config_file_path, 'r', encoding='utf-8') as f:
+        config = json.load(f)
+        if 'install_folder' not in config: config['install_folder'] = ''
+        if 'download_source' not in config: config['download_source'] = ''
+        if config_name: return config[config_name]
+        return config
+    return {}
+

@@ -1,3 +1,20 @@
+ function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+
+
 function copyToClipboard(text) {
     if (navigator.clipboard && window.isSecureContext) {
         // 使用现代Clipboard API
@@ -38,10 +55,10 @@ function fallbackCopyTextToClipboard(text) {
 
 
 function openTerminal(path) {
-    path = path.replace('/', '\\')
+    // path = path.replace('/', '\\')
     layer.msg('尝试打开终端!请检查屏幕或者任务栏~');
     fetch(path, {
-        method: 'GET'
+        method: 'GET',
     })
     .then(response => response.json())
     .then(data => {
@@ -62,7 +79,7 @@ function openTerminal(path) {
 function openFolder(path) {
     layer.msg('尝试打开资源管理器!请检查屏幕或者任务栏~');
     fetch(path, {
-        method: 'GET'
+        method: 'GET',
     })
     .then(response => response.json())
     .then(data => {

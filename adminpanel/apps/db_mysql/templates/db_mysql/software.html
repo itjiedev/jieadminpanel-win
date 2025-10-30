@@ -1,0 +1,31 @@
+{% extends 'layout_panel.html' %}
+{% load static %}
+
+{% block page_content %}
+<div class="row">
+    {% for item in software_list %}
+<div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch flex-column">
+  <div class="card bg-light d-flex flex-fill shadow">
+    <div class="card-body p-2">
+      <div class="row">
+        <div class="col-3 text-center">
+          <img src="{% static 'db_mysql/'|add:item.icon %}" width="60" height="60" class="img-circle img-fluid">
+        </div>
+        <div class="col-9 d-flex">
+          <h2 class="lead"><b>{{ item.name }}</b></h2>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <div class="text-right">
+        <a href="{{ item.website }}" target="_blank" class="btn btn-sm bg-teal">
+          <i class="fa-solid fa-globe"></i> 官方下载网站
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+</div>
+
+{% endblock %}

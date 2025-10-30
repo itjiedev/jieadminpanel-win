@@ -1,0 +1,97 @@
+{% extends 'layout_panel.html' %}
+{% block html_js_code %}
+<script>
+layui.use(function(){
+    var $ = layui.$;
+    var layer = layui.layer;
+    var util = layui.util;
+
+    util.on("lay-on", {         
+        runPycharm: function(){       
+            layer.msg('启动Pycharm,注意屏幕...', {icon: 16,shade: 0.6, title:null});    
+            $.ajax({
+                url: $(this).data('href'),
+                type: "get",
+                success:function(response){
+                    
+                },
+                error: function(xhr, status, message){
+                    let errorMsg = '操作失败: ';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMsg += xhr.responseJSON.message;
+                    } else {
+                        errorMsg += message;
+                    }
+                    layer.alert(errorMsg, {icon: 2, title:null});
+                }
+            })
+        }
+    })
+
+})
+</script>
+{% endblock %}
+
+{% block page_content %}
+
+{% include 'include_messages.html' %}
+{% if not pycharm %}
+<div class="text-danger text-bold">
+    没有找到Pycharm信息。
+    请先 <a href="{% url 'project_python:pycharm_download' %}">下载安装</a>
+</div>
+{% elif not check_options %}
+    <div class="alert alert-danger text-lg">没有找到项目默认配置文件~请至少启动一次 Pycharm 以初始化配置。</div>
+    <button type="button" class="btn btn-success" data-href="{% url 'project_python:pycharm_run' 'normal' %}" lay-on="runPycharm">
+        <li class="fas fa-play"></li> 运行PyCharm
+    </button>
+{% else %}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title text-lg">
+            <button type="button" class="btn btn-success" data-href="{% url 'project_python:pycharm_run' 'normal' %}"
+                    lay-on="runPycharm"><li class="fas fa-play"></li> 运行PyCharm</button>
+            <button type="button" class="btn btn-success" data-href="{% url 'project_python:pycharm_run' 'list' %}"
+                    lay-on="runPycharm"> 强制启动显示项目列表</button>
+        </h3>
+        <div class="card-tools">
+
+        </div>
+    </div>
+    <div class="card-body p-2">
+<div class="row">
+    <div class="col-12 col-md-12 col-lg-8 order-2 order-md-1">
+<ul class="nav nav-pills ml-auto p-2">
+  <li class="nav-item">
+    <a  href="{% url 'project_python:pycharm_project' %}"  class="nav-link{% if category == 'project' %} active{% endif %}">Pycharm项目</a>
+  </li>
+  <li class="nav-item">
+    <a href="{% url 'project_python:pycharm_sdk' %}" class="nav-link{% if category == 'sdk' %} active{% endif %}">解释器环境</a>
+  </li>
+</ul>
+{% block pycharm_content %}{% endblock %}
+    </div>
+    <div class="col-12 col-md-12 col-lg-4 order-1 order-md-2">
+        <h3 class="text-primary">{{ pycharm.DisplayName }}</h3>
+        <div class="text-muted">
+            <p class="text-sm">安装模式
+              <b class="d-block">{{ pycharm.installType }}</b>
+            </p>
+            <p class="text-sm">内部版本
+              <b class="d-block">{{ pycharm.DisplayVersion }}</b>
+            </p>
+            <p class="text-sm">安装目录
+              <b class="d-block">{{ pycharm.InstallLocation }}</b>
+            </p>
+        </div>
+    <div class="text-left">
+        <a href="{% url 'project_python:pycharm_uninstall' %}" class="btn btn-outline-danger btn-xs">
+            <i class="fa-solid fa-trash"></i> 卸载Pycharm
+        </a>
+        {% block pycharm_right_btn %}{% endblock %}
+    </div>
+    </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,145 @@
+{% extends 'layout_panel.html' %}
+{% load static %}
+
+{% block panel_css_files %}
+<link rel="stylesheet" href="{% static 'plugins/bootstrap-switch/css/bootstrap3/bootstrap-switch.css' %}">
+{% endblock %}
+
+{% block panel_js_files %}
+<script src="{% static 'plugins/bootstrap-switch/js/bootstrap-switch.min.js' %}"></script>
+{% endblock %}
+
+{% block html_js_code %}
+<script>
+layui.use(function(){
+  var $ = layui.$;
+  var layer = layui.layer;
+  var util = layui.util;
+  var form = layui.form;
+
+  $('#result').hide();
+  $('#btn_submit').hide();
+
+  util.on('lay-on', {
+    'iframe_select_folder': function(){
+      layer.open({
+        title:"选择文件/文件夹",
+        type: 2,
+        area: ['800px', '600px'],
+        content: '{% url 'sharedkit:picker_file_dir' 'file' %}?path={{ startpath }}',
+        fixed: false, // 不固定
+        maxmin: true,
+        shade: 0.5,
+        shadeClose: false,
+        btn: ['选中', '取消'],
+        btnAlign: 'c',
+        yes: function(index, layero){
+          var iframeWin =  window[layero.find('iframe')[0]['name']];
+          var elemMark = iframeWin.$('#picker_path'); // 获得 iframe 中某个输入框元素
+          var value = elemMark.val();
+          if($.trim(value) === '') return elemMark.focus();
+          $('#id_config_file').val(value);
+          layer.closeAll();
+        }
+      });
+    },
+    'analyze_config': function(){
+        var config_file = $('#id_config_file').val();
+        if (config_file === ''){
+            layer.msg('请选择MySQL配置文件', {icon: 5});
+        }else{
+            var loadIndex = layer.msg('分析MySQL配置文件...', {icon: 16,shade: 0.6});
+            $.ajax({
+                url: '{% url 'db_mysql:analyze_config' %}',
+                type: 'POST',
+                data: {
+                    'config_file': $('#id_config_file').val(),
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                dataType: 'json',
+                success: function(data){
+                    var version = data.message.version;
+                    var port = data.message.port;
+                    var install_dir = data.message.install_dir;
+                    var datadir = data.message.datadir;
+
+                    $('#result').show();
+                    $('#version').text(version);
+                    $('#id_version').val(version);
+                    $('#port').text(port);
+                    $('#id_port').val(port);
+                    $('#install_dir').text(install_dir);
+                    $('#id_install_dir').val(install_dir);
+                    $('#data_dir').text(datadir);
+                    $('#id_data_dir').val(datadir);
+
+                    $('#read_config').text('重新读取')
+                    $('#btn_submit').show();
+                    layer.close(loadIndex);
+                },
+                error: function(xhr, status, error){
+                    layer.msg(xhr.responseJSON.message, {icon: 5,shade: 0.6});
+                    layer.close(loadIndex);
+                }
+            })
+        }
+    }
+  })
+});
+</script>
+{% endblock %}
+
+{% block page_content %}
+{% include 'include_messages.html' %}
+<div class="card">
+<form method="post" class="layui-form">
+    {% csrf_token %}
+    <div class="card-body">
+        <div class="form-group row mb-0">
+            <label class="col-sm-2 col-form-label">{{ form.config_file.label }}</label>
+            <div class="col-sm-10">
+                <div class="input-group">
+                  {{ form.config_file }}
+                  <div class="input-group-append">
+<span class="input-group-text hand-cursor" lay-on="iframe_select_folder"><i class="fas fa-folder-open"></i></span>
+                  </div>
+                </div>
+            <span class="text-info">{{ form.config_file.help_text }}</span>
+            {% if form.config_file.errors %}{{ form.config_file.errors }}{% endif %}
+            </div>
+        </div>
+<div id="result">
+    <hr/>
+  <dl class="row mb-0">
+        <dt class="col-sm-2">版本</dt>
+        <dd class="col-sm-10" id="version"></dd>{{ form.version }}
+{#            <input type="hidden" name="version" id="id_version" value="{{ form.version.initial }}">#}
+        <dt class="col-sm-2">主机</dt>
+        <dd class="col-sm-10">local</dd>
+        <dt class="col-sm-2">端口</dt>
+        <dd class="col-sm-10" id="port"></dd>{{ form.port }}
+{#            <input type="hidden" name="port" id="id_port" value="{{ form.port.initial }}">#}
+        <dt class="col-sm-2">安装路径</dt>
+        <dd class="col-sm-10" id="install_dir"></dd>{{ form.install_dir }}
+{#            <input type="hidden" name="install_dir" id="id_install_dir" value="{{ form.install_dir.initial }}">#}
+        <dt class="col-sm-2">数据文件夹路径</dt>
+        <dd class="col-sm-10" id="data_dir"></dd>{{ form.data_dir }}
+{#            <input type="hidden" name="data_dir" id="id_data_dir" value="{{ form.data_dir.initial }}">#}
+  </dl>
+    <div class="alert alert-info">
+        <strong>注意：</strong>
+        <ul>
+            <li>不能直接确定是否已经修改 root 密码！</li>
+            <li>不能直接确定服务是否存在，可在导入后请继续配置服务~</li>
+        </ul>
+    </div>
+</div>
+    </div>
+    <div class="card-footer">
+        <button type="button" class="btn btn-warning" lay-on="analyze_config" id="read_config">{{ btn_read_txt }}</button>
+        <button type="submit" lay-submit class="btn btn-primary" id="btn_submit">确定导入</button>
+        <a href="{% url 'db_mysql:index' %}" class="btn btn-default float-right">取消</a>
+    </div>
+</form>
+</div>
+{% endblock %}

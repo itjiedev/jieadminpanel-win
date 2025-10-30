@@ -1,0 +1,50 @@
+{% extends 'layout_panel.html' %}
+
+{% block html_js_code %}
+{% if not check_options %}
+<script>
+layui.use(function(){
+    var $ = layui.$;
+    var layer = layui.layer;
+    var util = layui.util;
+
+    util.on("lay-on", {         
+        runPycharm: function(){       
+            layer.msg('启动Pycharm,注意屏幕...', {icon: 16,shade: 0.6, title:null});    
+            $.ajax({
+                url: $(this).data('href'),
+                type: "get",
+                success:function(response){},
+                error: function(xhr, status, message){
+                    let errorMsg = '操作失败: ';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMsg += xhr.responseJSON.message;
+                    } else {
+                        errorMsg += message;
+                    }
+                    layer.alert(errorMsg, {icon: 2, title:null});
+                }
+            })
+        }
+    })
+
+})
+</script>
+{%endif%}
+{% endblock %}
+
+{% block page_content %}
+{% if not pycharm %}
+<div class="text-danger text-bold text-lg">
+    没有找到Pycharm信息, 请先 <a href="{% url 'project_python:pycharm_download' %}">下载安装</a>
+</div>
+{% elif not check_options %}
+<div class="alert alert-danger text-lg">没有找到项目默认配置文件~请至少启动一次 Pycharm 以初化配置。</div>
+<button type="button" class="btn btn-success" data-href="{% url 'project_python:pycharm_run' 'normal' %}" lay-on="runPycharm">
+    <li class="fas fa-play"></li> 运行PyCharm
+</button>
+<a href="{% url 'project_python:pycharm_detail' %}" class="btn btn-outline-primary">Pycharm安装信息/卸载</a>
+{% else %}
+{% block python_content %}{% endblock %}
+{% endif %}
+{% endblock %}

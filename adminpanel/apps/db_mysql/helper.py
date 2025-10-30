@@ -30,3 +30,32 @@ def get_version(version=None):
     if version:
         return versions.get(version)
     return versions
+
+
+def parse_mysql_version(version_string):
+    """解析MySQL版本号，支持5.7和8.0格式"""
+    import re
+    # MySQL 8.0: mysql  Ver 8.0.33 for Win64 on x86_64
+    # MySQL 5.7: mysql.exe  Ver 14.14 Distrib 5.7.44, for Win64 (x86_64)
+    # 优先匹配包含"Distrib"的5.7格式
+    distrib_pattern = r'Distrib\s+([\d\.]+)'
+    match = re.search(distrib_pattern, version_string)
+    if match:
+        return match.group(1)
+
+    # 匹配8.0格式的版本号 (第二个Ver)
+    ver_patterns = list(re.finditer(r'Ver\s+([\d\.]+)', version_string))
+    if ver_patterns:
+        # 如果有多个Ver匹配，取最后一个（通常是实际版本号）
+        if len(ver_patterns) > 1:
+            return ver_patterns[-1].group(1)
+        else:
+            return ver_patterns[0].group(1)
+
+    # 通用格式匹配
+    general_pattern = r'(\d+\.\d+\.\d+)'
+    match = re.search(general_pattern, version_string)
+    if match:
+        return match.group(1)
+
+    return None

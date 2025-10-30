@@ -63,6 +63,9 @@ layui.use(function() {
 {% if install_info.config_status == 0 %}
 <div class="alert alert-danger">此版本没有完成运行配置！</div>
  {% endif %}
+{% if install_info.config_status == 2 %}
+<div class="alert alert-danger">此版本是导入生成，如果有未配置的内容，请先配置！</div>
+{% endif %}
     <dl class="row">
         <dt class="col-sm-2">版本</dt>
         <dd class="col-sm-10">{{ install_info.name }}</dd>
@@ -72,7 +75,7 @@ layui.use(function() {
         <dd class="col-sm-10">{{ install_info.port|default:"未设置" }}</dd>
         <dt class="col-sm-2">安装路径</dt>
         <dd class="col-sm-10">{{ install_info.install_dir }}</dd>
-{% if install_info.config_status == 1 %}
+{% if install_info.config_status == 1 or install_info.config_status == 2%}
         <dt class="col-sm-2">配置文件路径</dt>
         <dd class="col-sm-10">
             {{ install_info.conf_file }}
@@ -82,10 +85,24 @@ layui.use(function() {
         </dd>
         <dt class="col-sm-2">数据文件夹路径</dt>
         <dd class="col-sm-10">{{ install_info.data_dir }}</dd>
-    <hr/>
+        <dt class="col-sm-2">root密码状态</dt>
+        <dd class="col-sm-10">
+            {% if install_info.set_root_password == 0  %}
+                <span class="text-danger">未设置密码</span>
+                <a href="{% url 'db_mysql:init_root_password' install_info.uuid %}" class="btn btn-primary btn-xs ml-2">
+                    设置密码
+                </a>
+            {% endif %}
+            {% if install_info.set_root_password == 1  %}已设置密码 {% endif %}
+            {% if install_info.set_root_password == 2  %}未知 {% endif %}
+        </dd>
         <dt class="col-sm-2">Windows服务</dt>
-
-            {% if not install_info.set_service %}<dd class="col-sm-10">不创建</dd>
+            {% if install_info.config_status == 1 and install_info.set_service == 0 %}
+                <dd class="col-sm-10">不创建</dd>
+            {% elif install_info.config_status == 2 and not install_info.set_service %}
+                <dd class="col-sm-10">未知
+                   <a href="{% url 'db_mysql:import_service' install_info.uuid %}" class="btn btn-outline-info btn-xs">配置服务</a>
+                </dd>
             {% else %}<dd class="col-sm-10">
 <span class="text-{{ server_status.color }} text-bold">
     <i class="fa-solid fa-lightbulb"></i>{{ server_status.status_text }}
@@ -104,16 +121,7 @@ layui.use(function() {
             {% endif %}
 
     <hr/>
-    <dt class="col-sm-2">root密码</dt>
-    <dd class="col-sm-10">
-        {% if install_info.set_root_password  %}已设置密码
-        {% else %}
-            <span class="text-danger">未设置密码</span>
-            <a href="{% url 'db_mysql:init_root_password' install_info.uuid %}" class="btn btn-primary btn-xs ml-2">
-                设置密码
-            </a>
-        {% endif %}
-    </dd>
+
 {% endif %}
     </dl>
 </div>

@@ -80,8 +80,6 @@ def windows_api_blocking(executable, parameters="", operation="open", directory=
     return 0
 
 
-
-
 def windows_api(executable, parameters= "", operation="open", directory=None, show_cmd=1):
         """
         使用 ShellExecuteW 调用 Windows 程序或执行命令
@@ -138,6 +136,7 @@ def run_command(args,timeout=None, shell=False,cwd=None, env=None, encoding='utf
     # 首先尝试使用指定的编码
 
     system_encoding = locale.getpreferredencoding()
+    
     return subprocess.run(
         args,
         shell=shell,
@@ -146,7 +145,7 @@ def run_command(args,timeout=None, shell=False,cwd=None, env=None, encoding='utf
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
-        encoding=system_encoding,
+        encoding=encoding,
         timeout=timeout
     )
 
@@ -448,3 +447,19 @@ def make_dir(dir_path):
     except:
         return False
     
+
+def make_random_suffix(number=3):
+    import string
+    import random
+    chars = string.ascii_lowercase + string.digits
+    return ''.join(random.choices(chars, k=number))
+
+
+def remove_blank_lines(content: str) -> str:
+    """移除文本内容中的空白行（包括空行和仅含空白字符的行）"""
+    cleaned_lines = [
+        line.rstrip()
+        for line in content.splitlines()
+        if line.strip() != ''
+    ]
+    return '\n'.join(cleaned_lines)

@@ -29,6 +29,14 @@ if check_dependency:
     input('安装中止...')
     exit()
 
+(project_data_dir / app_name).mkdir(exist_ok=True)
+
+user_config_json = project_data_dir / app_name / 'config.json'
+if not user_config_json.exists():
+    with open(user_config_json, 'w', encoding='utf-8') as f:
+        json.dump({'install_folder': ''}, f, ensure_ascii=False, indent=4)
+
+
 # (Path(__file__).resolve().parent.parent / 'cache').mkdir(exist_ok=True)
 #
 # with open(app_list_path, 'r', encoding='utf-8') as f:

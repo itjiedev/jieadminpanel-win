@@ -73,6 +73,7 @@ layui.use(function(){
         <div class="card-tools pr-2">
 <a href="JavaScript:location.reload();" class="btn btn-outline-info"><i class="fas fa-sync"></i> 刷新列表</a>
 <a href="{% url 'envs_python_installer:reset_default_python' %}" class="btn btn-outline-info"><i class="far fa-window-restore"></i> 重置默认</a>
+<a href="{% url 'envs_python_installer:config' %}" class="btn btn-outline-info"><i class="fas fa-cog"></i>  配置安装</a>
 <a href="{% url 'envs_python_installer:clear_cache' %}" class="btn btn-outline-info"><i class="fas fa-trash"></i> 清理下载缓存</a>
         </div>
     </div>
