@@ -182,7 +182,7 @@ class DownloadView(JsonView):
         sha256 = version_info['sha256']
         if not install_file_path.exists():
             download = download_file_with_retry(download_url, install_file_path)
-            if not download: return self.render_to_json_error('下载失败~请刷新页面重新尝试！')
+            if not download: return self.render_to_json_error('下载失败~请刷新重试、更换下载源或者选择较低的的版本安装！')
         if user_config['check_file']:
             if sha256:
                 if not check_sha256(install_file_path, sha256):
@@ -292,11 +292,20 @@ class InstallView(JsonView):
             get_pip_file = app_data_dir / 'get-pip' / 'get-pip.py'
             if version_minor == 3 and version_major <= 8:
                 get_pip_file = app_data_dir / 'get-pip' / f'get-pip-{version_major}.{version_minor}.py'
-
+            print('开始安装pip')
             python_interpreter = Path(folder) / 'python.exe'
             result = run_command(
-                [python_interpreter, get_pip_file, '--no-warn-script-location'], cwd=folder
+                [python_interpreter, get_pip_file, '--no-warn-script-location'],
+                cwd=folder
             )
+            if result.returncode != 0:
+                print('选中源安装pip失败，尝试使用官方源安装pip')
+                result = run_command(
+                    [python_interpreter, get_pip_file, '--no-warn-script-location', '-i', 'https://pypi.org/simple'],
+                    cwd=folder
+                )
+                if result.returncode != 0:
+                    messages.warning(self.request, f'安装 pip 失败！请在包管理里尝试重新安装或者升级！错误信息：{result.stderr}~')
             installed_python = {}
             with open(user_installed_json, 'r', encoding='utf-8') as f:
                 installed_python = json.load(f)
@@ -380,8 +389,9 @@ class SetDefaultView(RedirectView):
             if os.path.exists(os.path.join(item, 'python.exe')) or os.path.exists(os.path.join(item, 'pip.exe')):
                 get_user_env.remove(item)
 
-        get_user_env.insert(0, str(os.path.join(installed_info['folder'].replace('/', '\\'), 'Scripts')))
+        get_user_env.insert(0, str(os.path.join(installed_info['folder'].replace('/', '\\'), 'Scripts')) + '\\')
         get_user_env.insert(0, installed_info['folder'].replace('/', '\\'))
+
         set_reg_user_env('PATH', ';'.join(get_user_env))
 
         return super().get(request, *args, **kwargs)
@@ -414,8 +424,9 @@ class UninstallView(PythonRuntimeMixin, FormView):
             )
         # 删除环境变量
         get_user_env = get_reg_user_env('PATH').split(';')
+        installed_folder = installed_info['folder'].replace('/', '\\')
         for item in get_user_env[:]:
-            if item.startswith(installed_info['folder']) or item.startswith(os.path.join(installed_info['folder'], 'Scripts')):
+            if item.startswith(installed_folder) or item.startswith(os.path.join(installed_folder, 'Scripts') + '\\'):
                 get_user_env.remove(item)
         set_reg_user_env('PATH', ';'.join(get_user_env))
         # 删除安装信息

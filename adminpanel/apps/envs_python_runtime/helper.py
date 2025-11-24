@@ -17,11 +17,13 @@ def get_user_config(config_name=None):
     if config_name and config_name in configs: return configs[config_name]
     return configs
 
+
 def get_downloadsite(site_name=None):
     with open(download_site_file, 'r', encoding='utf-8') as f:
         downloadsites = json.load(f)
     if site_name and site_name in downloadsites: return downloadsites[site_name]
     return downloadsites
+
 
 def update_version_info():
     """

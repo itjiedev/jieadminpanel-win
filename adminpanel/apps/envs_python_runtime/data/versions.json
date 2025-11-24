@@ -7,6 +7,14 @@
         "file_name": "python-3.14.0-amd64.zip",
         "sha256": "80387540694fe8e598afd5c6a18975081b0ccc6b57f752ed22216498f4205ce0"
     },
+    "Python-3.13.9": {
+        "sort_version": "3.13.9",
+        "tag": "3.13-64",
+        "display_name": "Python-3.13.9",
+        "url": "https://www.python.org/ftp/python/3.13.9/python-3.13.9-amd64.zip",
+        "file_name": "python-3.13.9-amd64.zip",
+        "sha256": "b87eb2b5d7a31220b56f3ab19b1817065af3dd57997aff752132bc13e7832915"
+    },
     "Python-3.13.8": {
         "sort_version": "3.13.8",
         "tag": "3.13-64",

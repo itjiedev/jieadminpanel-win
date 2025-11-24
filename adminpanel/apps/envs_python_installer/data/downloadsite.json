@@ -1,5 +1,10 @@
 [
     {
+        "id": "njuedu",
+        "site-name": "南京大学镜像",
+        "url-prefix": "https://mirror.nju.edu.cn/python/"
+    },
+    {
         "id": "huaweicloud",
         "site-name": "华为云镜像",
         "url-prefix": "https://mirrors.huaweicloud.com/python"

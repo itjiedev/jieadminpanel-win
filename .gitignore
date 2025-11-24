@@ -137,3 +137,5 @@ cython_debug/
 .svn/
 .idea/
 pyproject.toml
+Python
+data

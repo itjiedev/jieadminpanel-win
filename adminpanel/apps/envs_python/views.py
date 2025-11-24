@@ -100,15 +100,27 @@ class PackageInstallMixin(PythonRunMixin, FormView):
         package_version = form.cleaned_data.get('package_version')
         python_path = self.get_python_path()
 
+        from .helper import get_pypi_list
+
+        pypi_url = get_pypi_list('pypi')['url']
+
         cmd = [python_path, "-m", 'pip', 'install']
         if package_version == 'latest':
             cmd.append(package_name)
         else:
             cmd.append(f"{package_name}=={package_version}")
+        print('开始安装指定包。')
         result = run_command(cmd)
+        if result != 0:
+            print('设置的源安装不成功。尝试使用官方安装源。。。')
+            cmd.append('-i')
+            cmd.append(pypi_url)
+            result = run_command(cmd)
         if result.returncode == 0:
+            print('官方安装源安装成功~')
             return super().form_valid(form)
         else:
+            print('官方安装源安装失败~')
             err_msg  = result.stderr
             if '[notice] A new release of pip is available' in err_msg:
                 err_msg = err_msg.split('[notice] A new release of pip is available')[0].replace('\n', '</br>')

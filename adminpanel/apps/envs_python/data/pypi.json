@@ -3,9 +3,13 @@
     "title": "清华大学PyPi镜像",
     "url": "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
   },
+  "nju": {
+    "title": "南京大学PyPi镜像",
+    "url": "https://mirror.nju.edu.cn/pypi/web/simple"
+  },
   "aliyun": {
     "title": "阿里云PyPi镜像",
-    "url": "https://mirrors.aliyun.com/pypi/simple/"
+    "url": "https://mirrors.aliyun.com/pypi/simple"
   },
   "huaweicloud": {
     "title": "华为云PyPi镜像",

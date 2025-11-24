@@ -140,14 +140,11 @@ class PycharmInstallRunView(JsonView):
             return self.render_to_json_error('所选择的安装文件夹路径不存在！')
         if not os.path.isdir(install_dir):
             return self.render_to_json_error('所选择的安装目录不是文件路径~')
-
         file_name = file_path.split('\\')[-1:][0]
         filename_path, extension = os.path.splitext(file_path)        
         if extension != '.zip' and extension != '.exe':
             return self.render_to_json_error('不是所支持的安装包文件扩展名(.exe或者.zip)~')
-        
         localtion_install_dir = f'{install_dir}\\{file_name.replace(extension, '').replace(' ', '_')}'
-
         from .config import app_data_dir
         slient_conifg_file = f'{str(app_data_dir)}\\silent.config'
         print('开始安装...')
@@ -193,6 +190,18 @@ class PycharmResetView(ProjectPythonMixin, FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['page_title'] = '重置Pycharm'
+        context['breadcrumb'] = [
+            {
+                'title': 'Pycharm项目',
+                'href': reverse_lazy(f'{app_name}:index'),
+                'active': False
+            },
+            {
+                'title': '重置Pycharm',
+                'href': '',
+                'active': True
+            }
+        ]
         return context
 
     def form_valid(self, form):
@@ -241,6 +250,7 @@ class PycharmUninstallRunView(JsonView):
                 return self.render_to_json_success('卸载完成~')
         except Exception as e:
             return self.render_to_json_error(e)
+
 
 class  PycharmProjectOpenView(JsonView):
     def post(self, request, *args, **kwargs):
@@ -308,8 +318,6 @@ class ProjectCreateView(ProjectPythonMixin, FormView):
 """
             with open(modules_file, 'w', encoding='utf-8') as f:
                 f.write(modules_file_content)
-        
-        # pycharm = get_pycharm_install()
         # ----------------添加项目到 pycharm 中---------------------------------------
         pycharm_project_file = get_pycharm_option('project')
         with open(pycharm_project_file, 'r', encoding='utf-8') as f:
@@ -336,10 +344,8 @@ class ProjectCreateView(ProjectPythonMixin, FormView):
             pass
             # form.add_error('project_dir', '导入Pycharm异常~未找到 </map> 或 <option name=\"lastOpenedProject\" 标签')
             # return super().form_invalid(form)
-            
         with open(pycharm_project_file, 'w', encoding='utf-8') as f:
             f.write(recent_project_content)
-
         return super().form_valid(form)
 
 

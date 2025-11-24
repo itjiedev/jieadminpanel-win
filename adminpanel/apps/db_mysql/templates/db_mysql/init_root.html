@@ -4,7 +4,11 @@
 {% block page_content %}
 {% if install_info.set_root_password %}
 <div class="alert alert-success">
-    <div class="text-lg">Root用户密码已初始化完成！</div>
+    <div class="text-lg">
+    {% for message in messages %}
+    <div{% if message.tags %} class="message-text-{{ message.tags }} text-bold"{% endif %}>{{ message }}</div>
+    {% endfor %}
+    </div>
 </div>
     {% else %}
 {% include 'include_messages.html' %}

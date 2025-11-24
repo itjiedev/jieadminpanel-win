@@ -39,10 +39,16 @@ layui.use(function(){
         <a href="{% url 'envs_python:pypi_list' %}" class="btn btn-outline-info btn-sm">
             <i class="fas fa-cog"></i> 全局PyPi源
         </a>
+
 <button type="button" class="btn btn-outline-info btn-sm"
         data-url="{% url 'sharedkit:open_system_var' %}" lay-on="OpenSystemProperties">
     <i class="fa-solid fa-circle-exclamation"></i>环境变量
 </button>
+
+    <a href="https://www.python.org/downloads/" target="_blank" class="btn btn-outline-info btn-sm">
+        <i class="fas fa-globe"></i> Python官网下载
+    </a>
+
     </div>
 </div>
 {% endblock %}
