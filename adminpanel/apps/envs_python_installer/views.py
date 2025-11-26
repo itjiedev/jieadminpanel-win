@@ -132,9 +132,9 @@ class SetEnvironDefaultView(PythonInstallerMixin, RedirectView):
             with open(installed_file_path, 'r', encoding='utf-8') as f:
                 installed_path = json.load(f)
 
-            installed_dir = installed_path[version]['folder'].rstrip('\\python.exe')
+            installed_dir = installed_path[version]['folder'].rstrip('/').replace('/', '\\')
             user_path_list.insert(0, installed_dir)
-            user_path_list.insert(0, os.path.join(installed_dir, 'Scripts'))
+            user_path_list.insert(0, os.path.join(installed_dir, 'Scripts').replace('/', '\\'))
 
             set_reg_user_env("PATH", ";".join(user_path_list))
 
@@ -173,7 +173,13 @@ class PythonUninstallView(PythonInstallerMixin, FormView):
                 # version_info = get_python_versions(version)
                 install_file_name = f'python-{version}-amd64.exe'
                 cache_file_path = python_cache_dir / install_file_name
-                installed_dir = installed_info['folder'].replace('python.exe', '')
+                installed_folder = installed_info['folder'].rstrip('/').replace('/', '\\')
+
+                get_user_env = get_reg_user_env('PATH').split(';')
+                for item in get_user_env[:]:
+                    if item.startswith(installed_folder) or item.startswith(os.path.join(installed_folder, 'Scripts')):
+                        get_user_env.remove(item)
+                set_reg_user_env('PATH', ';'.join(get_user_env))
 
                 if not cache_file_path.exists():
                     version_list = version.split('.')
@@ -190,7 +196,7 @@ class PythonUninstallView(PythonInstallerMixin, FormView):
                     if result.returncode == 0:
                         # 删除安装目录
                         if rm_folder:
-                            if os.path.exists(installed_dir): shutil.rmtree(installed_dir)
+                            if os.path.exists(installed_folder): shutil.rmtree(installed_folder)
                         # 删除安装信息
                         with open(installed_file_path, 'r', encoding='utf-8') as f:
                             installed_path = json.load(f)
