@@ -164,6 +164,7 @@ class OpenInExplorerView(JsonView):
         except PermissionError:
             return self.render_to_json_error('权限不足，无法打开目录')
 
+
 class  OpenTerminal(JsonView):
     """
     根据传入的path路径打开终端窗口

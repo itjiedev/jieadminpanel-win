@@ -1,13 +1,13 @@
 {
+    "tsinghua": {
+        "id": "tsinghua",
+        "site-name": "清华大学镜像",
+        "url-prefix": "https://mirrors-i.tuna.tsinghua.edu.cn/python/"
+    },
     "njuedu": {
         "id": "njuedu",
         "site-name": "南京大学镜像",
         "url-prefix": "https://mirror.nju.edu.cn/python/"
-    },
-    "huaweicloud": {
-        "id": "huaweicloud",
-        "site-name": "华为云镜像",
-        "url-prefix": "https://mirrors.huaweicloud.com/python/"
     },
     "python": {
         "id": "python",

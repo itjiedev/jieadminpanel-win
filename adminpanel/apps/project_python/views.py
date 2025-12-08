@@ -8,7 +8,7 @@ from django.views.generic.edit import FormView
 from django.contrib import messages
 
 from jiefoundation.jiebase import JsonView
-from jiefoundation.utils import windows_api_blocking, remove_blank_lines
+from jiefoundation.utils import windows_api_blocking, remove_blank_lines, run_command
 from panelcore.mixin import ProjectMixin
 
 from .forms import PycharmInstallForm, ProjectCreateForm, ProjectSetSdkForm, PycharmResetForm
@@ -361,6 +361,14 @@ class ProjectCheckPathView(JsonView):
         return self.render_to_json_success('')
 
 
+class CheckEnvsFolderExists(JsonView):
+    def post(self, request, *args, **kwargs):
+        project_path = self.request.POST.get('project_path')
+        if os.path.exists(project_path):
+            return self.render_to_json_error('注意：文件已存在~提交将会覆盖!')
+        return self.render_to_json_success('虚拟环境将保存到上述文件夹中。')
+
+
 class ProjectDelView(RedirectView):
     url = reverse_lazy(f'{app_name}:index')
 
@@ -385,7 +393,6 @@ class ProjectDelView(RedirectView):
                 f.write(new_content)
             messages.success(self.request, f'项目 {project['project_name']} 已经从Pycharm列表中删除。项目地址为{project_path}')
         return super().post(*args, **kwargs)
-    
 
 
 class ProjectSetSdkView(ProjectPythonMixin, FormView):
@@ -396,6 +403,9 @@ class ProjectSetSdkView(ProjectPythonMixin, FormView):
     def get_initial(self):
         initial = super().get_initial()
         initial['project_path'] = self.request.GET.get('path')
+        initial['create_venv'] = True
+        project = get_pycharm_project(self.request.GET.get('path'))
+        initial['venv_path'] = project['project_path'] + '/' + '.venv'
         return initial.copy()
 
     def get_context_data(self, **kwargs):
@@ -418,6 +428,9 @@ class ProjectSetSdkView(ProjectPythonMixin, FormView):
 
     def form_valid(self, form):
         project_path = form.cleaned_data.get('project_path')
+        old_sdk_path = get_pycharm_project(project_path)['sdk_path']
+        print(old_sdk_path)
+
         if not os.path.exists:
             form.add_error('project_path', f'当前项目位置{project_path}文件夹不存在！')
             return super().form_invalid(form)       
@@ -467,7 +480,6 @@ class ProjectSetSdkView(ProjectPythonMixin, FormView):
         #---------------------------------使用pycharm已经存在的环境----------------------------------------------
         if sdk_type == "pycharm":
             pycharm_sdk = form.cleaned_data.get('pycharm_sdk')
-            
             # 处理.iml配置文件          
             with open(iml_file, 'r', encoding='utf-8') as f:
                 iml_content = f.read()
@@ -533,15 +545,34 @@ class ProjectSetSdkView(ProjectPythonMixin, FormView):
         if sdk_type == "new":
             import uuid
             from .config import sdk_new_str
-            # 接受参数
+
             python_sdk = form.cleaned_data.get('python_sdk').split(', ')
             sdk_path = python_sdk[0]
             sdk_version = f'Python {python_sdk[1]}'
             project_name = get_pycharm_project(project_path)['project_name']
-            sdk_name = f'{sdk_version}({project_name})'
             sdk_uuid   = str(uuid.uuid4())
-            sdk_new_str = sdk_new_str.replace('{sdk_name}', sdk_name).replace('{sdk_version}', sdk_version).replace(
-                '{sdk_path}', sdk_path).replace('{sdk_uuid}', sdk_uuid)            
+            sdk_name = f'{sdk_version}({project_name})'
+
+            create_venv = form.cleaned_data.get('create_venv')
+            venv_path = form.cleaned_data.get('venv_path')
+            delete_old_venv = form.cleaned_data.get('delete_old_venv')
+            if create_venv:                
+                if delete_old_venv:
+                    if os.path.exists(old_sdk_path):
+                        old_sdk_dir = os.path.dirname(os.path.dirname(old_sdk_path))
+                        if 'Scripts' in old_sdk_path and os.path.exists(os.path.join(old_sdk_dir, 'pyvenv.cfg')):
+                            shutil.rmtree(old_sdk_dir)
+
+                sdk_name = f'{sdk_version}({project_name})-venv'
+                result = run_command(f'{sdk_path}python.exe -m venv {venv_path}', shell=True)
+                if result.returncode == 0:
+                    sdk_path = venv_path + '/' + 'Scripts' + '/'
+                    sdk_new_str = sdk_new_str.replace('{sdk_name}', sdk_name).replace('{sdk_version}', sdk_version).replace(
+                        '{sdk_path}', sdk_path).replace('{sdk_uuid}', sdk_uuid)
+            else:
+                sdk_new_str = sdk_new_str.replace('{sdk_name}', sdk_name).replace('{sdk_version}', sdk_version).replace(
+                    '{sdk_path}', sdk_path).replace('{sdk_uuid}', sdk_uuid)
+
             # -----创建 Pycharm 解释器环境配置 ----------------------------------
             pycharm_sdk_table_file = get_pycharm_option('sdk')
             sdk_table_content = ''

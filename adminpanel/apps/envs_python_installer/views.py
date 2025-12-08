@@ -23,9 +23,9 @@ from .config import (
     installed_file_path, python_download_path,
     python_cache_dir,py_ini_path, config_file_path
 )
-from .helper import get_installed as get_installed_python
+from .helper import get_installed as get_installed_python, get_download_site
 from .helper import get_python_versions, python_list_paths, get_config
-from .forms import PythonInstallForm, PythonUninstallForm, ConfigForm
+from .forms import PythonUninstallForm, ConfigForm
 
 app_name = 'envs_python_installer'
 
@@ -211,17 +211,17 @@ class PythonUninstallView(PythonInstallerMixin, FormView):
         return super().form_valid(form)
 
 
-class PythonInstallView(PythonInstallerMixin, FormView):
-    template_name = f'{app_name}/python_install.html'
-    form_class = PythonInstallForm
-    success_url = reverse_lazy(f'{app_name}:python_list')
-
-    def get_initial(self):
-        initial = super().get_initial()
-        config = get_config()
-        initial['folder'] = config.get('install_folder')
-        initial['download_source'] = config.get('download_source')
-        return initial.copy()
+class PythonInstallView(PythonInstallerMixin, TemplateView):
+    template_name = f'{app_name}/version_list.html'
+    # form_class = PythonInstallForm
+    # success_url = reverse_lazy(f'{app_name}:python_list')
+    #
+    # def get_initial(self):
+    #     initial = super().get_initial()
+    #     config = get_config()
+    #     initial['folder'] = config.get('install_folder')
+    #     initial['download_source'] = config.get('download_source')
+    #     return initial.copy()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -238,30 +238,23 @@ class PythonInstallView(PythonInstallerMixin, FormView):
                 'active': True
             }
         ]
-        context['get_user_folder'] = os.path.join(os.environ.get('LOCALAPPDATA'), 'Programs', 'Python').replace('\\', '\\/')
+        context['versions'] = get_python_versions()
+        context['url_prefix'] = get_download_site(get_config('download_source'))['url_prefix']
+        context['installed_pythons'] = [version for version in python_list_paths()]
+        # context['get_user_folder'] = os.path.join(os.environ.get('LOCALAPPDATA'), 'Programs', 'Python').replace('\\', '\\/')
         return context
 
 
 class PythonDownloadView(JsonView):
 
     def post(self, request, *args, **kwargs):
-        download_id = request.POST.get('download_source')
         version = request.POST.get('version')
-
         get_versions = get_python_versions(version)
-        download_source = "https://www.python.org/ftp/python/"
-
-        with open(python_download_path, 'r', encoding='utf-8') as f:
-            download_sources_list = json.load(f)
-            for source in download_sources_list:
-                if source['id'] == download_id:
-                    download_source = source['url-prefix']
-
-        download_url = f'{download_source}/{version}/{get_versions["installer-file-name"]}'
-        if download_id == 'aliyun':
-            download_url = f'{download_source}/{get_versions["installer-file-name"]}'
-
-        python_cache_file = python_cache_dir / get_versions['installer-file-name']
+        download_source = get_download_site(get_config('download_source'))['url_prefix']
+        download_url = f'{download_source}{version}/{get_versions["installer_file_name"]}'
+        python_cache_file = python_cache_dir / get_versions['installer_file_name']
+        print(f'下载地址：{download_url}')
+        print('开始下载。。')
         if not python_cache_file.exists():
             try:
                 with requests.get(download_url, stream=True) as r:
@@ -282,27 +275,30 @@ class PythonDownloadView(JsonView):
             check_file_md5 = get_file_md5(python_cache_file)
             if check_file_md5 != get_versions['md5sum']:
                 return self.render_to_json_error('文件校验失败！请手动下载后放置在_cache目录中安装！')
+        print('下载完成。。')
         return self.render_to_json_response({'message': '下载完成~'})
 
 
 class RunPythonInstallView(JsonView):
 
     def post(self, request, *args, **kwargs):
-        folder = request.POST.get('folder').replace('/', '\\')
         version = request.POST.get('version')
         version_info = get_python_versions(version)
+        folder = get_config('install_folder').replace('/', '\\')
         install_folder = os.path.join(
             folder,
             f'Python{version_info["version_major"]}{version_info["version_minor"]}'
         )
-        python_cache_file = python_cache_dir / version_info['installer-file-name']
-
+        print('开始安装。。。')
+        python_cache_file = python_cache_dir / version_info['installer_file_name']
         try:
             windows_api_blocking(
                 executable=str(python_cache_file),
-                parameters=f'/passive InstallAllUsers=1 TargetDir="{install_folder}"',
+                parameters=f'/passive InstallAllUsers=1 Include_launcher=0 TargetDir="{install_folder}"',
                 operation="runas",
             )
+            print('安装完成。。。')
+
             return self.render_to_json_response({'status':'success', 'message': '安装成功~'})
         except Exception as e:
             return self.render_to_json_error(str(e))

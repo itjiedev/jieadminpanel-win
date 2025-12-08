@@ -112,7 +112,7 @@ function parseXHRError(xhr) {
                     <td>
     <a href="{% url 'envs_python_runtime:python_install' name %}" data="{{ name }}" class="btn btn-primary btn-xs">安装</a>
 {% if version.file_name|slice:"-4:" == ".zip" %}
-    <a href="{% replace_str version.url 'https://www.python.org/ftp/python/' download_url_prefix %}" class="btn btn-outline-info btn-xs">另存下载</a>
+    <a href="{% replace_str version.url 'https://www.python.org/ftp/python/' download_url_prefix %}" class="btn btn-outline-info btn-xs">下载压缩包</a>
  {% endif %}
                     </td>
                 </tr>

@@ -7,12 +7,14 @@ from .config import (
     installed_file_path, python_version_file_path, py_installed, py_path,python_download_path,
 )
 
+
 def get_python_versions(version_name=None):
     with open(python_version_file_path, 'r', encoding='utf-8') as f:
         versions = json.load(f)
     if version_name:
         return versions[version_name]
     return versions
+
 
 def get_installed(version_name=None):
     versions = {}
@@ -95,3 +97,10 @@ def get_config(config_name=None):
         return config
     return {}
 
+
+def get_download_site(site__name=None):
+    with open(python_download_path, 'r', encoding='utf-8') as f:
+        python_sources = json.load(f)
+        if site__name:
+            return python_sources[site__name]
+        return python_sources

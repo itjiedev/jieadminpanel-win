@@ -1,0 +1,115 @@
+{% extends 'envs_python/layout_envs_python.html' %}
+{% load static %}
+{% load foundation_tags %}
+
+{% block panel_js_files %}
+<script src="{% static 'js/sharedkit.js' %}"></script>
+{% endblock %}
+
+{% block html_js_code %}
+{{ block.super }}
+<script>
+layui.use(function(){
+  var $ = layui.$;
+  var layer = layui.layer;
+  var util = layui.util;
+  util.on('lay-on', {
+      startinstall: function(e){
+       var loadIndex = layer.msg('下载Python安装包...', {
+            icon: 16,
+            shade: 0.01,
+            time: 0,
+            shade: 0.6,
+        });
+        version = $(this).attr('data');
+        $.ajax({
+            url: '{% url  'envs_python_installer:python_download' %}',
+            type: 'POST',
+            data: {
+                version:version,
+            },
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+            },
+            success: function (response) {
+                layer.close(loadIndex);
+                layer.msg('下载成功~开始安装....', {icon: 1, shade: 0.6});
+                $.ajax({
+                    url: '{% url  'envs_python_installer:python_run_install' %}',
+                    type: 'POST',
+                    data: {
+                        version:version,
+                        {#folder: $('#id_folder').val(),#}
+                        {#download_source: $('#id_download_source').val(),#}
+                    },
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                    },
+                    success: function (response) {
+                        if (response.status == 'success') {
+                            location.href = '{% url 'envs_python_installer:python_list' %}'
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        let errorMsg = '安装失败: ';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMsg += xhr.responseJSON.message;
+                        } else {
+                            errorMsg += message;
+                        }
+                        layer.msg(errorMsg + message, {icon:2});
+                    }
+                })
+
+            },
+            error: function(xhr, status, message) {
+                let errorMsg = '下载失败：';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMsg += xhr.responseJSON.message;
+                } else {
+                    errorMsg += message;
+                }
+                layer.msg(errorMsg + message, {icon:2});
+            }
+        });
+      }
+  });
+  }
+)
+</script>
+{% endblock %}
+
+{% block page_content %}
+{{ block.super }}
+{% include 'include_messages.html' %}
+<div class="card">
+<div class="text-danger text-bold p-1">
+    安装时建议不要选择最新的版本，最新版本可能会下载缓慢或者下载失败。
+    同一个系列版本会自动进行升级。
+</div>
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>名称</th>
+                    <th>版本</th>
+                    <th>标签</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+{% for name, version in versions.items %}
+                <tr{% if name in installed_pythons %} class="table-success" {% endif %}>
+                    <td>{{ version.display_name }}-amd64</td>
+                    <td>{{ name }}</td>
+                    <td>{{ version.tag }}</td>
+                    <td>
+    <button type="button" data="{{ name }}" class="btn btn-primary btn-xs" lay-on="startinstall">安装</button>
+    <a href="{{ url_prefix }}{{ name }}/{{ version.installer_file_name }}" target="_blank" class="btn btn-outline-info btn-xs">下载安装包</a>
+                    </td>
+                </tr>
+{% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

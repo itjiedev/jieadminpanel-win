@@ -9,7 +9,6 @@ layui.use(function(){
   var layer = layui.layer;
   var util = layui.util;
 
-  // 事件绑定
   util.on('lay-on', {
     'layer_uninstall': function(obj){
       var loadIndex = layer.msg('卸载中...', {
@@ -72,7 +71,7 @@ layui.use(function(){
         </div>
         <div class="card-tools pr-2">
 <a href="JavaScript:location.reload();" class="btn btn-outline-info"><i class="fas fa-sync"></i> 刷新列表</a>
-<a href="{% url 'envs_python_installer:reset_default_python' %}" class="btn btn-outline-info"><i class="far fa-window-restore"></i> 重置默认</a>
+<a href="{% url 'envs_python_installer:reset_default_python' %}" class="btn btn-outline-info"><i class="far fa-window-restore"></i> 清除环境变量</a>
 <a href="{% url 'envs_python_installer:config' %}" class="btn btn-outline-info"><i class="fas fa-cog"></i>  配置安装</a>
 <a href="{% url 'envs_python_installer:clear_cache' %}" class="btn btn-outline-info"><i class="fas fa-trash"></i> 清理下载缓存</a>
         </div>
@@ -111,12 +110,31 @@ layui.use(function(){
         </td>
         <td>
 {% if python.version_major == 3 and python.version_minor >= 5 %}
- <a href="{% url 'envs_python_installer:set_py_default_python' version %}"
-    class="btn btn-outline-info btn-xs{% if python.is_py_default %} disabled{% endif %}">py默认</a>
-<a href="{% url 'envs_python_installer:set_env_default_python' version %}"
-   class="btn btn-outline-info btn-xs{% if python.folder == default_python.path %} disabled{% endif %}">环境变量默认</a>
-<a href="{% url 'envs_python_installer:package_list' version %}" class="btn btn-outline-info btn-xs">包管理</a>
-<a href="{% url 'envs_python_installer:python_uninstall' version %}" class="btn btn-outline-info btn-xs">卸载</a>
+<div class="input-group-prepend">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+      操作
+    </button>
+    <div class="dropdown-menu" style="">
+
+      <a class="dropdown-item{% if python.is_py_default %} disabled{% endif %}"
+         href="{% url 'envs_python_installer:set_py_default_python' version %}">设置为py默认</a>
+      <a class="dropdown-item{% if python.folder == default_python.path %} disabled{% endif %}"
+         href="{% url 'envs_python_installer:set_env_default_python' version %}">加入环境变量</a>
+      <a class="dropdown-item" href="{% url 'envs_python_installer:package_list' version %}" >包管理</a>
+      <div class="dropdown-divider"></div>
+      <a class="dropdown-item" href="{% url 'envs_python_installer:python_uninstall' version %}">启动卸载程序</a>
+
+    </div>
+</div>
+
+
+{# <a href="{% url 'envs_python_installer:set_py_default_python' version %}"#}
+{#    class="btn btn-outline-info btn-xs{% if python.is_py_default %} disabled{% endif %}">py默认</a>#}
+{#<a href="{% url 'envs_python_installer:set_env_default_python' version %}"#}
+{#   class="btn btn-outline-info btn-xs{% if python.folder == default_python.path %} disabled{% endif %}">环境变量默认</a>#}
+{#<a href="{% url 'envs_python_installer:package_list' version %}" class="btn btn-outline-info btn-xs">包管理</a>#}
+{#<a href="{% url 'envs_python_installer:python_uninstall' version %}" class="btn btn-outline-info btn-xs">卸载</a>#}
+
     {% else %}
     不支持
 {% endif %}

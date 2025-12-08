@@ -27,11 +27,16 @@ $(document).ready(function() {
     {{ block.super }}
 <div class="card">
     <div class="card-header">
-        <h5 class="card-title">确定卸载 <span class="text-danger">Python {{ version }} </span>吗？</h5>
+        <h5 class="card-title">确定卸载 <span class="text-danger"> {{ installed_info.name }} </span>吗？</h5>
     </div>
 <form method="post">{% csrf_token %}
     <div class="card-body">
         <p class="mb-4">卸载后，Python {{ version }} 将无法使用，同时删除安装目录，包括所有已安装包都将被删除。</p>
+        <dl class="row">
+            <dt class="col-sm-1">名称</dt><dd class="col-sm-11">{{ installed_info.name }}</dd>
+            <dt class="col-sm-1">Python版本</dt><dd class="col-sm-11">{{ installed_info.version }}</dd>
+            <dt class="col-sm-1">安装目录</dt><dd class="col-sm-11">{{ installed_info.folder }}</dd>
+        </dl>
         {% for field in form %}
         <div class="form-group">
             <div class="icheck-danger d-inline">{{ field }}<label for="{{ field.id_for_label  }}">{{ field.label  }}</label>

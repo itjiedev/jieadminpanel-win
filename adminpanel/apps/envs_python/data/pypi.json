@@ -27,6 +27,10 @@
     "title": "中国科学技术大学PyPi镜像",
     "url": "https://mirrors.ustc.edu.cn/pypi/simple/"
   },
+  "neusoft": {
+    "title": "大连东软信息学院PyPi镜像",
+    "url": "https://mirrors.neusoft.edu.cn/pypi/web/simple"
+  },
   "pypi": {
     "title": "默认官方",
     "url": "https://pypi.org/simple"

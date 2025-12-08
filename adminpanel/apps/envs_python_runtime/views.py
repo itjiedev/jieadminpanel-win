@@ -385,15 +385,13 @@ class SetDefaultView(RedirectView):
         installed_info = get_installed(version)
         get_user_env = get_reg_user_env('PATH').split(';')
         for item in get_user_env[:]:
-            item = item.replace("/", "\\")
             if os.path.exists(os.path.join(item, 'python.exe')) or os.path.exists(os.path.join(item, 'pip.exe')):
                 get_user_env.remove(item)
+        install_folder = installed_info['folder'].rstrip('/').replace('/', '\\')
 
-        get_user_env.insert(0, str(os.path.join(installed_info['folder'].replace('/', '\\'), 'Scripts')) + '\\')
-        get_user_env.insert(0, installed_info['folder'].replace('/', '\\'))
-
+        get_user_env.insert(0, str(os.path.join(install_folder, 'Scripts')))
+        get_user_env.insert(0, install_folder)
         set_reg_user_env('PATH', ';'.join(get_user_env))
-
         return super().get(request, *args, **kwargs)
 
 
@@ -405,6 +403,19 @@ class UninstallView(PythonRuntimeMixin, FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['page_title'] = '卸载Python'
+        context['breadcrumb'] = [
+            {
+                'title': '压缩包安装管理',
+                'href': reverse_lazy(f'{app_name}:config_check'),
+                'active': False
+            },
+            {
+                'title': '卸载Python',
+                'href': '',
+                'active': True
+            }
+        ]
+        context['installed_info'] = get_installed(self.kwargs.get('version'))
         return  context
     
     def form_valid(self, form):
@@ -426,7 +437,7 @@ class UninstallView(PythonRuntimeMixin, FormView):
         get_user_env = get_reg_user_env('PATH').split(';')
         installed_folder = installed_info['folder'].replace('/', '\\')
         for item in get_user_env[:]:
-            if item.startswith(installed_folder) or item.startswith(os.path.join(installed_folder, 'Scripts') + '\\'):
+            if item.startswith(installed_folder):
                 get_user_env.remove(item)
         set_reg_user_env('PATH', ';'.join(get_user_env))
         # 删除安装信息
@@ -611,3 +622,18 @@ class PythonDeleteView(RedirectView):
         else:
             messages.error(request, '删除失败~没有找到要删除的记录~')
         return super().get(request, *args, **kwargs)
+
+
+class  RunPythonComponentView(JsonView):
+    def get(self, request, *args, **kwargs):
+        component = self.kwargs.get('component')
+        uuid = self.kwargs.get('uuid')
+        installed_dict = get_installed(uuid)
+        if component == 'idle':
+            print(f'启动 {installed_dict["folder"]}中的 IDEL 编辑器')
+            runcmd = f'"{installed_dict["folder"]}python.exe" "{installed_dict["folder"]}/Lib/idlelib/idle.pyw"'
+        if component == 'python':
+            print(f'启动 {installed_dict["folder"]}中的 Python 交互式环境')
+            runcmd = f'start cmd /c "{installed_dict["folder"]}python.exe"'
+        result = run_command(runcmd, shell=True)
+        return self.render_to_json_success('打开完成')

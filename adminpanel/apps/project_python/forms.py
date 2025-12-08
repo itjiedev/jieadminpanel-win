@@ -46,6 +46,21 @@ class ProjectSetSdkForm(FormBase):
     sdk_type = forms.CharField(label='配置解释器方式')
     pycharm_sdk = forms.CharField(label='Pycharm已有配置', required=False, widget=forms.Select())
     python_sdk = forms.CharField(label='"运行环境"中的环境', required=False, widget=forms.Select())
+    create_venv = forms.BooleanField(
+        required=False, widget=forms.CheckboxInput(
+            attrs={'value': '1', 'title': '创建并使用venv虚拟环境', 'lay-filter': 'create_venv'}
+        )
+    )
+    venv_path = forms.CharField(
+        label='虚拟环境保存路径', required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control','lay-verify': 'required', 'lay-reqtext': '请选择虚拟环境保存位置~'})
+    )
+    delete_old_venv = forms.BooleanField(
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={'value': '1', 'title': '删除项目原虚拟环境文件夹(如果存在)'}
+        )
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

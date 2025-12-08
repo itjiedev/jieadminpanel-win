@@ -17,11 +17,10 @@ python_cache_dir = app_base_path / 'cache'
 
 py_ini_path = os.path.join(os.environ.get('LOCALAPPDATA'), 'py.ini')
 
-py_win_path = 'c:\\windows\\py.exe'
+py_path = 'c:\\windows\\py.exe'
 py_installed = False
 
-if os.path.exists(py_win_path):
-    py_path = py_win_path
+if os.path.exists(py_path):
     py_installed = True
 else:
     py_path = app_base_path / 'tools' /'py.exe'

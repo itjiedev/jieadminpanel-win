@@ -10,10 +10,38 @@
 layui.use(function(){
     var $ = layui.$;
     var layer = layui.layer;
+    var util = layui.util;
     var form = layui.form;
 
     $('#show_python_sdk').show();
     $('#show_pycharm_sdk').hide();
+    $('#show_create_venv').show();
+    $('#show_env_config').show();
+
+      util.on('lay-on', {
+        'iframe_select_folder': function(){
+          layer.open({
+            title:"选择文件/文件夹",
+            type: 2,
+            area: ['800px', '600px'],
+            content: '{% url 'sharedkit:picker_file_dir' 'dir' %}?path={{ startpath }}',
+            fixed: false,
+            maxmin: true,
+            shade: 0.5,
+            shadeClose: false,
+            btn: ['选中', '取消'],
+            btnAlign: 'c',
+            yes: function(index, layero){
+              var iframeWin =  window[layero.find('iframe')[0]['name']];
+              var elemMark = iframeWin.$('#picker_path');
+              var value = elemMark.val();
+              if($.trim(value) === '') return elemMark.focus();
+              $('#id_venv_path').val(value + '/' + '{{ project.project_name }}' + '-venv');
+              layer.closeAll();
+            }
+          });
+        },
+      })
 
     form.on('radio(select_sdk_type)', function(data){
         var elem = data.elem;
@@ -23,17 +51,41 @@ layui.use(function(){
 
         if (value=="new"){
             $('#show_python_sdk').show();
-            $('#show_pycharm_sdk').hide(); 
+            $('#show_pycharm_sdk').hide();
+            $('#show_create_venv').show();
+            if ($('#id_create_venv').is(':checked')) {
+                $('#show_env_config').show();
+            } else {
+                $('#show_env_config').hide();
+            }
         }
         if (value=="pycharm"){
             $('#show_python_sdk').hide();
-            $('#show_pycharm_sdk').show(); 
+            $('#show_pycharm_sdk').show();
+            $('#show_create_venv').hide();
+            $('#show_env_config').hide();
         }
         if (value=="del"){
             $('#show_python_sdk').hide();
             $('#show_pycharm_sdk').hide();
+            $('#show_create_venv').hide();
+            $('#show_env_config').hide();
         }
     });
+
+  form.on('checkbox(create_venv)', function(data){
+    var elem = data.elem;
+    var checked = elem.checked;
+    var value = elem.value;
+    var othis = data.othis; // 获得 checkbox 元素被替换后的 jQuery 对象
+
+    if (elem.checked == true){
+        $('#show_env_config').show();
+    }
+    if (elem.checked == false){
+        $('#show_env_config').hide();
+    }
+  });
 
 })
 </script>
@@ -67,7 +119,6 @@ layui.use(function(){
   <input type="radio" name="sdk_type" id="id_sdk_type" value="new" title="配置新的解释器环境" checked lay-filter="select_sdk_type">  
   <input type="radio" name="sdk_type" id="id_sdk_type" value="pycharm" title="共用Pycharm已有配置" lay-filter="select_sdk_type">
   <input type="radio" name="sdk_type" id="id_sdk_type" value="del" title="清除解释器配置" lay-filter="select_sdk_type">
-
         </div>
     </div>
 
@@ -80,10 +131,34 @@ layui.use(function(){
         <label class="col-sm-2 col-form-label">{{ form.pycharm_sdk.label }}</label>
         <div class="col-sm-10">{{ form.pycharm_sdk }}</div>
     </div>
-
+    <div id="show_create_venv">
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label"> </label>
+            <div class="col-sm-10">{{ form.create_venv }}</div>
+        </div>
+        <div id="show_env_config">
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label" for="{{ form.venv_path.id_for_label }}">{{ form.venv_path.label }}</label>
+                <div class="col-sm-10">
+                    <div class="input-group">{{ form.venv_path }}
+                      <div class="input-group-append">
+                    <span class="input-group-text hand-cursor" lay-on="iframe_select_folder"><i class="fas fa-folder-open"></i></span>
+                      </div>
+                    </div>
+                <span class="text-info">{{ form.project_dir.help_text }}</span>
+                {% if form.project_dir.errors %}{{ form.project_dir.errors }}{% endif %}
+                <div id="show_error" class="text-danger text-bold layui-font-16"></div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-10">{{ form.delete_old_venv }}</div>
+            </div>
+        </div>
+    </div>
 </div>
 <div class="card-footer">
-<button type="submit" class="btn btn-success" lay-submit>提交</button>
+<button type="submit" class="btn btn-success" onclick="return confirm('提交前请确认相关设置！确定要提交吗？')" lay-submit>提交</button>
 <a href="{% url 'project_python:index' %}" class="btn btn-outline-secondary float-right">取消</a>
 </div>
     </form>

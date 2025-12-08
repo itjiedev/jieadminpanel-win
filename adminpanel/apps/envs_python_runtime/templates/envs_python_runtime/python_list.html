@@ -25,11 +25,37 @@ layui.use(function(){
         openTerminal(url);
         return false;
     },
-      "copy-full-path-btn": function(obj){
+    "copy-full-path-btn": function(obj){
           var fullPath = obj.data('path');
           copyToClipboard(fullPath);
           return false;
-      }
+    },
+      "start_idle": function(obj){
+        var url = obj.data('url');
+        fetch(url, {
+            method: 'GET',
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+            } else {
+                layer.alert('IDLE打开失败: ' + data.message, {icon: 2, title: null});
+            }
+        })
+      },
+      "start_python": function(obj){
+        var url = obj.data('url');
+        fetch(url, {
+            method: 'GET',
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+            } else {
+                layer.alert('python交互式环境打开失败: ' + data.message, {icon: 2, title: null});
+            }
+        })
+      },
   });
 });
 </script>
@@ -48,7 +74,7 @@ layui.use(function(){
         </div>
         <div class="card-tools pr-2">
 <a href="{% url 'envs_python_runtime:default_reset' %}"
-   class="btn btn-outline-info"><i class="far fa-window-restore"></i> 重置默认</a>
+   class="btn btn-outline-info"><i class="far fa-window-restore"></i> 清除环境变量</a>
 <a href="{% url 'envs_python_runtime:config' %}" class="btn btn-outline-info"><i class="fas fa-cog"></i>  配置安装</a>
 <a href="{% url 'envs_python_runtime:clearcache' %}" class="btn btn-outline-info">
     <i class="fas fa-trash"></i> 清理下载缓存
@@ -72,13 +98,25 @@ layui.use(function(){
                     <td>{{ is_path }}
 {% if not version.is_path %}<i class="fas fa-exclamation text-danger" title="路径异常"></i>{% endif %}
  {% if version.name %}{{ version.name|default_if_none:"-" }}{% else %}{{ version.version }}{% endif %}
+<div>
+<button type="button" class="btn btn-outline-secondary btn-xs" title="启动IDLE"
+        data-url="{% url 'envs_python_runtime:run_component' 'idle' uuid %}" lay-on="start_idle">
+    <img src="{% static 'envs_python_runtime' %}/idle.jpg" style="width: 18px; height: 18px;" />
+</button>
+<button type="button" class="btn btn-outline-secondary btn-xs" title="启动Python交互式环境"
+        data-url="{% url 'envs_python_runtime:run_component' 'python' uuid %}" lay-on="start_python">
+    <img src="{% static 'envs_python_runtime' %}/python.jpg" style="width: 18px; height: 18px;" />
+</button>
+</div>
                     </td>
                     <td>{{ version.version_major }}.{{ version.version_minor }}.{{ version.version_patch }}</td>
                     <td>
 {% if version.folder == default_env_python.path %}默认{% else %}-{% endif %}
                     </td>
                     <td>
-<button class="btn btn-outline-secondary btn-xs"
+                        <div>{% replace_str version.folder '/' '\\' %}python.exe</div>
+<div>
+    <button class="btn btn-outline-secondary btn-xs"
         data-url="{% url 'sharedkit:open_explorer' %}?path={% replace_str version.folder '\\' '/' %}"
         title="打开文件夹" lay-on="open_explorer">
     <i class="far fa-folder-open"></i>
@@ -91,19 +129,35 @@ layui.use(function(){
         class="btn btn-outline-secondary btn-xs" title="打开终端命令行" lay-on="openTerminal">
     <i class="fa fa-terminal fa-xs"></i>
 </button>
-{% replace_str version.folder '/' '\\' %}python.exe
+</div>
                     </td>
                     <td>
+<div class="input-group-prepend">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+      操作
+    </button>
+    <div class="dropdown-menu" style="">
 {% if version.is_path %}
-<a href="{% url 'envs_python_runtime:default_set' uuid %}"
-   class="btn btn-outline-info btn-xs{% if version.folder == default_env_python.path %} disabled{% endif %}">默认</a>
-<a href="{% url 'envs_python_runtime:package_list' uuid %}" class="btn btn-outline-info btn-xs{% if not version.is_path %} disabled{% endif %}">包管理</a>
-<a href="{% url 'envs_python_runtime:name_edit' uuid %}" class="btn btn-outline-info btn-xs">名称</a>
-<a href="{% url 'envs_python_runtime:uninstall' uuid %}" class="btn btn-outline-info btn-xs">卸载</a>
+      <a class="dropdown-item{% if version.folder == default_env_python.path %} disabled{% endif %}"
+         href="{% url 'envs_python_runtime:default_set' uuid %}">加入环境变量</a>
+      <a class="dropdown-item" href="{% url 'envs_python_runtime:package_list' uuid %}" >包管理</a>
+      <a class="dropdown-item" href="{% url 'envs_python_runtime:name_edit' uuid %}">修改名称</a>
+      <div class="dropdown-divider"></div>
 {% endif %}
-<a href="{% url 'envs_python_runtime:delete' %}?uuid={{ uuid }}" class="btn btn-outline-info btn-xs"
-   onclick="return confirm('仅删除配置信息，实际环境您还可以使得导入功能重新导入。\r\n确定要删除吗？');">删除</a>
-
+      <a class="dropdown-item" href="{% url 'envs_python_runtime:uninstall' uuid %}">完全卸载</a>
+      <a class="dropdown-item" href="{% url 'envs_python_runtime:delete' %}?uuid={{ uuid }}"
+         onclick="return confirm('仅删除配置信息，实际环境您还可以使得导入功能重新导入。\r\n确定要删除吗？');">仅删除安装记录</a>
+    </div>
+</div>
+{#{% if version.is_path %}#}
+{#<a href="{% url 'envs_python_runtime:default_set' uuid %}"#}
+{#   class="btn btn-outline-info btn-xs{% if version.folder == default_env_python.path %} disabled{% endif %}">默认</a>#}
+{#<a href="{% url 'envs_python_runtime:package_list' uuid %}" class="btn btn-outline-info btn-xs{% if not version.is_path %} disabled{% endif %}">包管理</a>#}
+{#<a href="{% url 'envs_python_runtime:name_edit' uuid %}" class="btn btn-outline-info btn-xs">名称</a>#}
+{#<a href="{% url 'envs_python_runtime:uninstall' uuid %}" class="btn btn-outline-info btn-xs">卸载</a>#}
+{#{% endif %}#}
+{#<a href="{% url 'envs_python_runtime:delete' %}?uuid={{ uuid }}" class="btn btn-outline-info btn-xs"#}
+{#   onclick="return confirm('仅删除配置信息，实际环境您还可以使得导入功能重新导入。\r\n确定要删除吗？');">删除</a>#}
                      </td>
                 </tr>
 {% endfor %}

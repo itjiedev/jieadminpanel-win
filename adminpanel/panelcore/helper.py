@@ -2,7 +2,26 @@ import winreg
 import os
 import configparser
 import socket
+import ctypes
 
+def refresh_environment():
+    """刷新环境变量，使更改立即生效"""
+    # 发送系统消息通知所有进程环境变量已更改
+    HWND_BROADCAST = 0xFFFF
+    WM_SETTINGCHANGE = 0x1A
+    SMTO_ABORTIFHUNG = 0x0002
+
+    # 通过ctypes调用Windows API
+    result = ctypes.c_long()
+    ctypes.windll.user32.SendMessageTimeoutW(
+        HWND_BROADCAST,
+        WM_SETTINGCHANGE,
+        0,
+        "Environment",
+        SMTO_ABORTIFHUNG,
+        5000,
+        ctypes.byref(result)
+    )
 
 def read_registry_value(hive, key_path, value_name, default=None):
     """
@@ -49,6 +68,7 @@ def set_reg_user_env(env_name, env_value):
     try:
         with winreg.OpenKey(winreg.HKEY_CURRENT_USER, 'Environment', 0, winreg.KEY_SET_VALUE) as key:
             winreg.SetValueEx(key, env_name, 0, winreg.REG_EXPAND_SZ, env_value)
+        refresh_environment()
         return True
     except Exception as e:
         print(f"写入注册表失败: {e}")
@@ -65,6 +85,7 @@ def set_reg_system_env(env_name, env_value):
     try:
         with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, key_path, 0, winreg.KEY_SET_VALUE) as key:
             winreg.SetValueEx(key, env_name, 0, winreg.REG_EXPAND_SZ, env_value)
+        refresh_environment()
         return True
     except PermissionError:
         print("权限不足，请以管理员身份运行程序。")

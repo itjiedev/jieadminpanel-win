@@ -15,7 +15,7 @@ layui.use(function(){
 
   $('#btn_submit').attr('disabled', 'disabled');
 
-    function createProject(){
+  function createProject(){
         $.ajax({
             url: "{% url 'project_python:project_checkpath' %}",
             type: 'post',
@@ -74,6 +74,7 @@ layui.use(function(){
 });
 </script>
 {% endblock %}
+
 {% block python_content %}
 {{ form.errors }}
 <div class="card">

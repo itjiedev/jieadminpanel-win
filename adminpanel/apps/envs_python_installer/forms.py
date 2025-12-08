@@ -3,23 +3,22 @@ from django import forms
 from jiefoundation.forms import FormBase
 
 
-def choice_python_list():
-    from .config import installed_file_path, python_version_file_path
-    installed_python =  []
-    choice_python = []
-    with open(installed_file_path, 'r', encoding='utf-8') as f:
-        installed_file_path = json.load(f)
-        for version, info in installed_file_path.items():
-            installed_python.append(version)
-
-    with open(python_version_file_path, 'r', encoding='utf-8') as f:
-        python_versions = json.load(f)
-        for version, version_info in python_versions.items():
-            if version not in installed_python:
-                choice_python.append(
-                    (version, version_info['display-name'])
-                )
-    return choice_python
+# def choice_python_list():
+#     from .config import installed_file_path, python_version_file_path
+#     installed_python =  []
+#     choice_python = []
+#     with open(installed_file_path, 'r', encoding='utf-8') as f:
+#         installed_file_path = json.load(f)
+#         for version, info in installed_file_path.items():
+#             installed_python.append(version)
+#     with open(python_version_file_path, 'r', encoding='utf-8') as f:
+#         python_versions = json.load(f)
+#         for version, version_info in python_versions.items():
+#             if version not in installed_python:
+#                 choice_python.append(
+#                     (version, version_info['display_name'])
+#                 )
+#     return choice_python
 
 
 def choice_download_source():
@@ -28,32 +27,32 @@ def choice_download_source():
     choice_download = []
     with open(python_download_path, 'r', encoding='utf-8') as f:
         python_sources = json.load(f)
-        for source in python_sources:
-            choice_download.append((source['id'], source['site-name']))
+        for id, source in python_sources.items():
+            choice_download.append((id, source['site_name']))
     return choice_download
 
 
-class PythonInstallForm(FormBase):
-    """
-    Python安装表单
-    """
-    folder = forms.CharField(
-        label="安装目录",
-        widget=forms.TextInput(attrs={'class': 'form-control'})
-    )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['version'] = forms.ChoiceField(
-            label="Python版本",
-            choices=choice_python_list(),
-            widget=forms.Select(attrs={'class': 'form-control'})
-        )
-        self.fields['download_source'] = forms.ChoiceField(
-            label="下载镜像源",
-            choices=choice_download_source(),
-            widget=forms.Select(attrs={'class': 'form-control'})
-        )
+# class PythonInstallForm(FormBase):
+#     """
+#     Python安装表单
+#     """
+#     folder = forms.CharField(
+#         label="安装目录",
+#         widget=forms.TextInput(attrs={'class': 'form-control'})
+#     )
+#
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         self.fields['version'] = forms.ChoiceField(
+#             label="Python版本",
+#             choices=choice_python_list(),
+#             widget=forms.Select(attrs={'class': 'form-control'})
+#         )
+#         self.fields['download_source'] = forms.ChoiceField(
+#             label="下载镜像源",
+#             choices=choice_download_source(),
+#             widget=forms.Select(attrs={'class': 'form-control'})
+#         )
 
 
 class PythonUninstallForm(FormBase):

@@ -1,22 +1,17 @@
-[
-    {
-        "id": "njuedu",
-        "site-name": "南京大学镜像",
-        "url-prefix": "https://mirror.nju.edu.cn/python/"
-    },
-    {
-        "id": "huaweicloud",
-        "site-name": "华为云镜像",
-        "url-prefix": "https://mirrors.huaweicloud.com/python"
-    },
-    {
-        "id": "aliyun",
-        "site-name": "阿里云镜像",
-        "url-prefix": "https://mirrors.aliyun.com/python-release/windows"
-    },
-    {
-        "id": "pypi",
-        "site-name": "Python官方",
-        "url-prefix": "https://www.python.org/ftp/python/"
-    }
-]
+{
+  "njuedu": {
+    "id": "njuedu",
+    "site_name": "南京大学镜像",
+    "url_prefix": "https://mirror.nju.edu.cn/python/"
+  },
+  "tsinghua": {
+    "id": "tsinghua",
+    "site_name": "清华大学镜像",
+    "url_prefix": "https://mirrors-i.tuna.tsinghua.edu.cn/python/"
+  },
+  "python": {
+    "id": "python",
+    "site_name": "Python官方",
+    "url_prefix": "https://www.python.org/ftp/python/"
+  }
+}
