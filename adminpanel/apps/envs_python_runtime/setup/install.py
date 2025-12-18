@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 
-print('安装 Python Runtime环境管理 组件...')
+# print('安装 Python Runtime环境管理 组件...')
 
 app_name = 'envs_python_runtime'
 
@@ -106,4 +106,4 @@ if not installed_json.exists():
     with open(installed_json, 'w', encoding='utf-8') as f:
         json.dump({}, f, ensure_ascii=False, indent=4)
 
-print(' Python Runtime环境管理 组件 安装完成。。。')
+# print(' Python Runtime环境管理 组件 安装完成。。。')

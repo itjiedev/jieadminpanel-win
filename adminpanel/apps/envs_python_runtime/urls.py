@@ -20,10 +20,9 @@ urlpatterns = [
     path('default/set/<str:version>/', views.SetDefaultView.as_view(), name='default_set'),
     path('default/reset/', views.ResetDefaultView.as_view(), name='default_reset'),
     path('python/import/', views.ImportView.as_view(), name='import'),
-    path('package/<str:version>/list/', views.PackageListView.as_view(), name='package_list'),
-    path('package/<str:version>/install/', views.PackageInstallView.as_view(), name='package_install'),
-    # path('package/search/<str:version>/', views.PackageSearchView.as_view(), name='package_search'),
-    path('package/uninstall/<str:version>/', views.PackageUninstallView.as_view(), name='package_uninstall'),
-    path('package/upgrade/<str:version>/<str:package>/', views.PackageUpgradeView.as_view(), name='package_upgrade'),
+    path('package/list/', views.PackageListView.as_view(), name='package_list'),
+    path('package/install/', views.PackageInstallView.as_view(), name='package_install'),
+    path('package/uninstall/<str:package>/', views.PackageUninstallView.as_view(), name='package_uninstall'),
+    path('package/upgrade/<str:package>/', views.PackageUpgradeView.as_view(), name='package_upgrade'),
     path("run/component/<str:component>/<str:uuid>/", views.RunPythonComponentView.as_view(), name='run_component')
 ]

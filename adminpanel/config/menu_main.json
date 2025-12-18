@@ -15,8 +15,8 @@
     },
     "project": {
       "id": "project",
-      "title": "项目开发",
-      "icon": "fa-solid fa-diagram-project",
+      "title": "开发工具",
+      "icon": "fa-solid fa-screwdriver-wrench",
       "url": {
         "route_name": "",
         "args": [],
@@ -28,7 +28,7 @@
       "children": {
             "project_python": {
               "id": "project_python",
-              "title": "Python 项目",
+              "title": "Pycharm项目",
               "url": {
                 "route_name": "project_python:index",
                 "args": [],

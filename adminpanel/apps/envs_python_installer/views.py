@@ -294,7 +294,7 @@ class RunPythonInstallView(JsonView):
         try:
             windows_api_blocking(
                 executable=str(python_cache_file),
-                parameters=f'/passive InstallAllUsers=1 Include_launcher=0 TargetDir="{install_folder}"',
+                parameters=f'/passive InstallAllUsers=1 TargetDir="{install_folder}"',
                 operation="runas",
             )
             print('安装完成。。。')
@@ -336,13 +336,13 @@ class ResetDefaultView(RedirectView):
 from apps.envs_python.views import PackageListMixin
 class PackageListView(PythonInstallerMixin, PackageListMixin):
     app_namespace = app_name
+    template_name = f'{app_name}/package_list.html'
 
     def get_python_path(self):
-        version = self.kwargs.get('version')
-        return ensure_path_end_separator(get_installed_python(version)['folder']) + 'python.exe'
+        return ensure_path_end_separator(get_installed_python(self.request.GET.get('uid'))['folder']) + 'python.exe'
 
     def get_env_info(self):
-        return get_installed_python(self.kwargs.get('version'))
+        return get_installed_python(self.request.GET.get('uid'))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -355,23 +355,24 @@ class PackageListView(PythonInstallerMixin, PackageListMixin):
             },
             {
                 'title': 'Python包列表',
-                'href': reverse_lazy(f'{app_name}:package_list', kwargs={'version': self.kwargs.get('version')}),
+                'href': '',
                 'active': True
             }
         ]
+        context['uid'] = self.request.GET.get('uid')
         return context
 
 
 from apps.envs_python.views import PackageInstallMixin
 class PackageInstallView(PythonInstallerMixin, PackageInstallMixin):
     app_namespace = app_name
+    template_name = f'{app_name}/package_install.html'
 
     def get_python_path(self):
-        version = self.kwargs.get('version')
-        return ensure_path_end_separator(get_installed_python(version)['folder']) + 'python.exe'
+        return ensure_path_end_separator(get_installed_python(self.request.GET.get('uid'))['folder']) + 'python.exe'
 
     def get_env_info(self):
-        return get_installed_python(self.kwargs.get('version'))
+        return get_installed_python(self.request.GET.get('uid'))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -384,16 +385,16 @@ class PackageInstallView(PythonInstallerMixin, PackageInstallMixin):
             },
             {
                 'title': 'Python包列表',
-                'href': reverse_lazy(f'{app_name}:package_list', kwargs={'version': self.kwargs.get('version')}),
+                'href': reverse_lazy(f'{app_name}:package_list', query={'uid': self.request.GET.get('uid')}),
                 'active': False
             },
             {
                 'title': 'Python包安装',
-                'href': reverse_lazy(f'{app_name}:package_install', kwargs={'version': self.kwargs.get('version')}),
+                'href': '',
                 'active': True
             }
         ]
-        context['version'] = self.kwargs.get('version')
+        context['uid'] = self.request.GET.get('uid')
         return context
 
 
@@ -402,8 +403,7 @@ class PackageUninstallView(PackageUninstallMixin):
     app_namespace = app_name
 
     def get_python_path(self):
-        version = self.kwargs.get('version')
-        return ensure_path_end_separator(get_installed_python(version)['folder']) + 'python.exe'
+        return ensure_path_end_separator(get_installed_python(self.request.GET.get('uid'))['folder']) + 'python.exe'
 
 
 from apps.envs_python.views import PackageUpgradeMixin
@@ -411,5 +411,4 @@ class PackageUpgradeView(PackageUpgradeMixin):
     app_namespace = app_name
 
     def get_python_path(self):
-        version = self.kwargs.get('version')
-        return ensure_path_end_separator(get_installed_python(version)['folder']) + 'python.exe'
+        return ensure_path_end_separator(get_installed_python(self.request.GET.get('uid'))['folder']) + 'python.exe'

@@ -86,7 +86,7 @@ class PackageInstallMixin(PythonRunMixin, FormView):
     form_class = PackageInstallForm
 
     def get_success_url(self):
-        return reverse_lazy(f'{self.get_app_namespace()}:package_list', kwargs={'version': self.kwargs.get('version')})
+        return reverse_lazy(f'{self.get_app_namespace()}:package_list', query={'uid': self.request.GET.get('uid')})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -103,7 +103,6 @@ class PackageInstallMixin(PythonRunMixin, FormView):
         from .helper import get_pypi_list
 
         pypi_url = get_pypi_list('pypi')['url']
-
         cmd = [python_path, "-m", 'pip', 'install']
         if package_version == 'latest':
             cmd.append(package_name)
@@ -154,10 +153,10 @@ class PackageSearchView(JsonView):
 
 class PackageUninstallMixin(PythonRunMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
-        return reverse_lazy(f'{self.get_app_namespace()}:package_list', kwargs={'version': self.kwargs.get('version')})
+        return reverse_lazy(f'{self.get_app_namespace()}:package_list', query={'uid': self.request.GET.get('uid')})
 
     def get(self, request, *args, **kwargs):
-        package = request.GET.get('package')
+        package = self.kwargs.get('package')
         if package:
             cmd = [self.get_python_path(), "-m", 'pip', 'uninstall', package, '-y']
             result = run_command(cmd)
@@ -171,10 +170,11 @@ class PackageUninstallMixin(PythonRunMixin, RedirectView):
 from apps.envs_python.helper import package_upgrade
 class PackageUpgradeMixin(PythonRunMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
-        return reverse_lazy(f'{self.get_app_namespace()}:package_list', kwargs={'version': self.kwargs.get('version')})
+        return reverse_lazy(f'{self.get_app_namespace()}:package_list', query={'uid': self.request.GET.get('uid')})
 
     def get(self, request, *args, **kwargs):
-        package_name = kwargs.get('package')
+        package_name = self.kwargs.get('package')
+        print(f'开始包{package_name}升级...')
         if package_name:
             result = package_upgrade(self.get_python_path(), package_name)
             if result.returncode == 0:
@@ -209,9 +209,7 @@ class PackageDetailView(JsonView):
         package_name = self.kwargs.get('package')
         version = self.kwargs.get('version')
         if version == 'latest':
-            # 获取最新的版本号
             pass
-
         detail_url = 'https://pypi.org/pypi/{}/{}/json'.format(package_name, version)
         try:
             import requests

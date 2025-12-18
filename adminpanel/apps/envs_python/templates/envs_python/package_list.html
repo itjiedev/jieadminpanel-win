@@ -1,11 +1,7 @@
-{% extends 'envs_python/layout_envs_python.html' %}
-
-{% block page_content %}
-{{ block.super }}
 <div class="card">
     <div class="card-header">
         <div class="card-title">
-             <a href="{% url app_namespace|add:':package_install' version %}" class="btn btn-success">
+             <a href="{% url app_namespace|add:':package_install' %}?uid={{ uid }}" class="btn btn-success">
                  <i class="fa fa-plus"></i> 包安装
              </a>
         </div>
@@ -15,16 +11,16 @@
     </div>
     <div class="card-body">
 <dl class="row">
-    <dt class="col-sm-1">环境名称</dt><dd class="col-sm-11">{{ env_info.name }}</dd>
-    <dt class="col-sm-1">版本</dt><dd class="col-sm-11">{{ env_info.version }}</dd>
-    <dt class="col-sm-1">路径</dt><dd class="col-sm-11">{{ env_info.folder }}</dd>
+    <dt class="col-sm-1">名称</dt><dd class="col-sm-11">{{ env_info.name }}</dd>
+    <dt class="col-sm-2">解释器版本</dt><dd class="col-sm-10">{{ env_info.version }}</dd>
+    <dt class="col-sm-2">解释器路径</dt><dd class="col-sm-10">{{ env_info.folder }}</dd>
 </dl>
     <hr/>
     {% include 'include_messages.html' %}
         <table class="table table-hover table-striped">
             <thead>
             <tr>
-                <th>名称</th>
+                <th>包名</th>
                 <th>PYPI页</th>
                 <th>当前版本</th>
                 <th>最新版本</th>
@@ -44,14 +40,14 @@
                     <td>
 {% if package.latest_version %}
    {{ package.latest_version }}
-    <a href="{% url app_namespace|add:':package_upgrade' version name %}" title="升级" onclick="return confirm('确定要尝试升级吗？');">
+    <a href="{% url app_namespace|add:':package_upgrade' package.name %}?uid={{ uid }}" title="升级" onclick="return confirm('确定要尝试升级吗？');">
         <i class="fas fa-upload"></i>
     </a>
 {% else %} - {% endif %}
                     </td>
                     <td>
 {% if name == 'pip' or name == 'setuptools' or name == 'wheel' %}-{% else %}
-    <a href="{% url app_namespace|add:':package_uninstall' version %}?package={{ package.name }}" class="btn btn-outline-info btn-xs">卸载</a>
+    <a href="{% url app_namespace|add:':package_uninstall'  package.name %}?uid={{ uid }}" class="btn btn-outline-info btn-xs">卸载</a>
 {% endif %}
                     </td>
                 </tr>
@@ -60,4 +56,3 @@
         </table>
     </div>
 </div>
-{% endblock %}

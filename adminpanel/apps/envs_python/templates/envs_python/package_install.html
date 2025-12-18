@@ -1,98 +1,3 @@
-{% extends 'envs_python/layout_envs_python.html' %}
-
-{% block html_js_code %}
-    {{ block.super }}
-<script>
-layui.use(['jquery', 'layer'], function() {
-    var $ = layui.jquery;
-    var layer = layui.layer;
-
-    function parseXHRError(xhr) {
-    let message = '未知错误';
-
-    try {
-        const response = JSON.parse(xhr.responseText);
-        if (response && response.message) {
-            message = response.message;
-        } else if (xhr.statusText) {
-            message = xhr.statusText;
-        }
-    } catch (e) {
-        if (xhr.statusText) {
-            message = xhr.statusText;
-        }
-        console.error('无法解析错误响应:', xhr.responseText);
-    }
-
-    return message;
-}
-    $('#btn_get_detail').hide();
-    $('#btn_submit').on('click', function() {
-        var packageName = $('#id_package_name').val();
-        if (!packageName) {
-            layer.alert('请输入包名', {title: false, icon: 2, shade: 0.6});
-            return;
-        }
-        $('#form_package').submit();
-    })
-
-    $('#btn_search_package').on('click', function() {
-        var packageName = $('#id_package_name').val();
-
-        if (!packageName) {
-            layer.msg('请输入包名', {icon: 2});
-            return;
-        }
-        var loading = layer.load(1, {shade: 0.6});
-
-        $('#non_field_error').hide();
-        $(this).prop('disabled', true);
-        $(this).find('i').removeClass('fa-search').addClass('fa-spinner fa-spin');
-
-        $.ajax({
-            url: '{% url "envs_python:package_search" version %}',
-            type: 'GET',
-            data: {
-                'package_name': packageName,
-            },
-            dataType: 'json',
-            success: function(response) {
-                if (response.status == 'success') {
-                    $('#id_package_version').html(response.message);
-                    layer.close(loading);
-                    $('#btn_search_package').prop('disabled', false);
-                    $('#btn_search_package').find('i').removeClass('fa-spinner fa-spin').addClass('fa-search');
-                    $('#btn_submit').prop('disabled', false);
-                    $('#btn_get_detail').show();
-                }
-            },
-            error: function(xhr, status, error) {
-                 const message = parseXHRError(xhr);
-                 layer.alert(message, {
-                    title:false,
-                    icon: 2,
-                    shadeClose: false,
-                });
-                layer.close(loading);
-                $('#btn_search_package').prop('disabled', false);
-                $('#btn_search_package').find('i').removeClass('fa-spinner fa-spin').addClass('fa-search');
-            },
-        });
-    });
-    {#$('#btn_get_detail').on('click', function() {#}
-    {#    const version = $('#id_package_version').val();#}
-    {#    if (version == 'latest'){#}
-    {#        layer.alert('请选择版本', {title: false, icon: 2, shade: 0.6});#}
-    {#    }#}
-    {##}
-    {#});#}
-});
-</script>
-{% endblock %}
-
-{% block page_content %}
-    {{ block.super }}
-{% include 'include_messages.html' %}
 {% if not is_path %}
     <h4 class="text-danger">Python解释器路径不存在~</h4>
 {% else %}
@@ -100,9 +5,9 @@ layui.use(['jquery', 'layer'], function() {
 <form id="form_package" method="post" class="form-horizontal">{% csrf_token %}
     <div class="card-body">
 <dl class="row">
-    <dt class="col-sm-1">环境名称</dt><dd class="col-sm-11">{{ env_info.name }}</dd>
-    <dt class="col-sm-1">版本</dt><dd class="col-sm-11">{{ env_info.version }}</dd>
-    <dt class="col-sm-1">路径</dt><dd class="col-sm-11">{{ env_info.folder }}</dd>
+    <dt class="col-sm-1">名称</dt><dd class="col-sm-11">{{ env_info.name }}</dd>
+    <dt class="col-sm-2">解释器版本</dt><dd class="col-sm-10">{{ env_info.version }}</dd>
+    <dt class="col-sm-2">解释器路径</dt><dd class="col-sm-10">{{ env_info.folder }}</dd>
 </dl>
     <hr/>
         <div class="form-group row">
@@ -128,7 +33,7 @@ layui.use(['jquery', 'layer'], function() {
     </div>
     <div class="card-footer">
         <button type="button" id="btn_submit" class="btn btn-primary">安装</button>
-        <a href="{% url 'envs_python_runtime:package_list' version %}" class="btn btn-default float-right">取消</a>
+        <a href="{% url 'envs_python_runtime:package_list' %}?uid={{ uid }}" class="btn btn-default float-right">取消</a>
     </div>
 </form>
 </div>
@@ -147,6 +52,3 @@ layui.use(['jquery', 'layer'], function() {
 </div>
 </div>
 {% endif %}
-
-
-{% endblock %}

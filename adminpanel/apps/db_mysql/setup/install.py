@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-print('安装 数据库MySQL 管理组件')
+# print('安装 数据库MySQL 管理组件')
 
 app_name = 'db_mysql'
 
@@ -44,4 +44,4 @@ if not installed_json.exists():
     with open(installed_json, 'w', encoding='utf-8') as f:
         json.dump({}, f, ensure_ascii=False, indent=4)
 
-print(' 数据库MySQL管理 组件 安装完成。。。')
+# print(' 数据库MySQL管理 组件 安装完成。。。')

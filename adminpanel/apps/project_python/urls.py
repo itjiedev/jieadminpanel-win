@@ -22,6 +22,11 @@ urlpatterns = [
     path('project/sdk/set/', views.ProjectSetSdkView.as_view(), name='project_set_sdk'),
     path('pycharm/sdk/del/', views.PycharmSdkDeleteView.as_view(), name='pycharm_sdk_del'),
 
+    path('package/list/', views.PackageListView.as_view(), name='package_list'),
+    path('package/install/', views.PackageInstallView.as_view(), name='package_install'),
+    path('package/uninstall/<str:package>/', views.PackageUninstallView.as_view(), name='package_uninstall'),
+    path('package/upgrade/<str:package>/', views.PackageUpgradeView.as_view(), name='package_upgrade'),
+
     # path('pycharm/install/get/', views.PycharmGetInstallView.as_view(), name='pycharm_get_install'),
     # path('pycharm/uninstall/', views.PycharmUninstallView.as_view(), name='pycharm_uninstall'),
     # path("pycharm/project/", views.PycharmProjectView.as_view(), name='pycharm_project'),

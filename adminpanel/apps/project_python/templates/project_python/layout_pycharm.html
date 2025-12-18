@@ -33,7 +33,6 @@ layui.use(function(){
 {% endblock %}
 
 {% block page_content %}
-
 {% include 'include_messages.html' %}
 {% if not pycharm %}
 <div class="text-danger text-bold">
@@ -63,10 +62,10 @@ layui.use(function(){
     <div class="col-12 col-md-12 col-lg-8 order-2 order-md-1">
 <ul class="nav nav-pills ml-auto p-2">
   <li class="nav-item">
-    <a  href="{% url 'project_python:pycharm_project' %}"  class="nav-link{% if category == 'project' %} active{% endif %}">Pycharm项目</a>
+    <a  href="{% url 'project_python:index' %}"  class="nav-link{% if category == 'project' %} active{% endif %}">Pycharm项目</a>
   </li>
   <li class="nav-item">
-    <a href="{% url 'project_python:pycharm_sdk' %}" class="nav-link{% if category == 'sdk' %} active{% endif %}">解释器环境</a>
+    <a href="{% url 'project_python:pycharm_sdk_list' %}" class="nav-link{% if category == 'sdk' %} active{% endif %}">解释器环境</a>
   </li>
 </ul>
 {% block pycharm_content %}{% endblock %}
@@ -92,6 +91,7 @@ layui.use(function(){
     </div>
     </div>
     </div>
+</div>
 </div>
 {% endif %}
 {% endblock %}

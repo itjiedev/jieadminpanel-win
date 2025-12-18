@@ -120,7 +120,7 @@ layui.use(function(){
          href="{% url 'envs_python_installer:set_py_default_python' version %}">设置为py默认</a>
       <a class="dropdown-item{% if python.folder == default_python.path %} disabled{% endif %}"
          href="{% url 'envs_python_installer:set_env_default_python' version %}">加入环境变量</a>
-      <a class="dropdown-item" href="{% url 'envs_python_installer:package_list' version %}" >包管理</a>
+      <a class="dropdown-item" href="{% url 'envs_python_installer:package_list' %}?uid={{ version }}" >包管理</a>
       <div class="dropdown-divider"></div>
       <a class="dropdown-item" href="{% url 'envs_python_installer:python_uninstall' version %}">启动卸载程序</a>
 

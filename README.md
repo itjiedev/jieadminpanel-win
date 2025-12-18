@@ -26,5 +26,3 @@ Github主页： https://github.com/itjiedev
 
 #### 授权说明
 仅用于个人学习交流，请勿用于商业用途，因使用造成的损失，不承担任何责任。  
-
-![当前windows系统详情](Screenshot/systeminfo.jpg)![管理Pycharm项目和解释器](Screenshot/project_pycharm_python.jpg)![以Runtime压缩包方式安装python列表](Screenshot/runtime_list.jpg)![以installer安装包方式安装python环境](Screenshot/installer_install.jpg)![以installer安装包方式安装python环境](Screenshot/mysql.jpg)

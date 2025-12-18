@@ -2,7 +2,7 @@ import os
 import re
 import shutil
 
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic.base import TemplateView, RedirectView
 from django.views.generic.edit import FormView
 from django.contrib import messages
@@ -22,7 +22,7 @@ class ProjectPythonMixin(ProjectMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['current_menu'] = app_name
-        context['page_title'] = 'Python项目'
+        context['page_title'] = 'Pycharm项目'
         context['pycharm'] = get_pycharm_install()
         context['check_options'] = False
         if context['pycharm']:
@@ -686,3 +686,60 @@ class PycharmSdkDeleteView(RedirectView):
         except Exception as e:
             messages.warning(self.request, f'操作错误：{e}')
         return super().get(request, *args, **kwargs)
+
+
+from apps.envs_python.views import (
+    PythonRunMixin, PackageListMixin, PackageInstallMixin, PackageUninstallMixin, PackageUpgradeMixin
+)
+
+class ProjectPythonPackageMixin(PythonRunMixin):
+    app_namespace = app_name
+
+    def get_python_path(self):
+        uid = self.request.GET.get('uid')
+        if uid and os.path.exists(uid):
+            return get_pycharm_project(uid)['sdk_path']
+        return None
+
+    def get_python_env(self):
+        uid = self.request.GET.get('uid')
+        if uid and os.path.exists(uid):
+            pycharm_project = get_pycharm_project(uid)
+            return {'name': pycharm_project['project_name'], 'version': pycharm_project['sdk_version'], 'folder': pycharm_project['sdk_path']}
+        return None
+
+class PackageListView(ProjectPythonMixin, ProjectPythonPackageMixin, PackageListMixin):
+    template_name = f'{app_name}/package_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = '包管理'
+        context['breadcrumb'] = [
+            {'title': 'Pycharm 项目', 'href': reverse_lazy(f'{app_name}:index')},
+            {'title': '包管理', 'href':'', 'active': True},
+        ]
+        context['env_info'] = self.get_python_env()
+        context['uid'] = self.request.GET.get('uid')
+        return context
+
+
+class PackageInstallView(ProjectPythonMixin, ProjectPythonPackageMixin, PackageInstallMixin):
+    template_name = f'{app_name}/package_install.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = '包安装'
+        context['breadcrumb'] = [
+            {'title': 'Pycharm 项目', 'href': reverse(f'{app_name}:index')},
+            {'title': '包管理', 'href': reverse(f'{app_name}:package_list', query={'uid': self.request.GET.get('uid')})},
+            {'title': '包安装', 'href':'', 'active': True},
+        ]
+        context['env_info'] = self.get_python_env()
+        context['uid'] = self.request.GET.get('uid')
+        return context
+
+class PackageUninstallView(ProjectPythonPackageMixin, PackageUninstallMixin):
+    pass
+
+class PackageUpgradeView(ProjectPythonPackageMixin, PackageUpgradeMixin):
+    pass

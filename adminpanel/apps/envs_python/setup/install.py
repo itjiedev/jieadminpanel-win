@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-print('安装 python环境管理基础（envs_python） 组件...')
+# print('安装 python环境管理基础（envs_python） 组件...')
 
 app_name = 'envs_python'
 

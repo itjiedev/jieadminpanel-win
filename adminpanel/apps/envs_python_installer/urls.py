@@ -15,10 +15,18 @@ urlpatterns = [
     path('install/form/', views.PythonInstallView.as_view(), name='python_install'),
     path('install/download/', views.PythonDownloadView.as_view(), name='python_download'),
     path('install/run/', views.RunPythonInstallView.as_view(), name='python_run_install'),
-    path('package/list/<str:version>/', views.PackageListView.as_view(), name='package_list'),
-    path('package/install/<str:version>/', views.PackageInstallView.as_view(), name='package_install'),
-    path('package/uninstall/<str:version>/', views.PackageUninstallView.as_view(), name='package_uninstall'),
+
+    path('package/list/', views.PackageListView.as_view(), name='package_list'),
+    path('package/install/', views.PackageInstallView.as_view(), name='package_install'),
+    path('package/uninstall/<str:package>/', views.PackageUninstallView.as_view(), name='package_uninstall'),
+    path('package/upgrade/<str:package>/', views.PackageUpgradeView.as_view(), name='package_upgrade'),
+
+    # path('package/list/<str:version>/', views.PackageListView.as_view(), name='package_list'),
+    # path('package/install/<str:version>/', views.PackageInstallView.as_view(), name='package_install'),
+    # path('package/uninstall/<str:version>/', views.PackageUninstallView.as_view(), name='package_uninstall'),
+    # path('package/upgrade/<str:version>/<str:package>/', views.PackageUpgradeView.as_view(), name='package_upgrade'),
+
     path('clearcache/', views.ClearCacheView.as_view(), name='clear_cache'),
-    path('package/upgrade/<str:version>/<str:package>/', views.PackageUpgradeView.as_view(), name='package_upgrade')
+
 
 ]

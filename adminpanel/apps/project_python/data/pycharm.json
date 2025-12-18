@@ -1,4 +1,11 @@
 {
+    "2025.3": {
+        "version": 2025,
+        "unified":{
+            "installer": "https://download.jetbrains.com/python/pycharm-2025.3.exe",
+            "zip": "https://download.jetbrains.com/python/pycharm-2025.3.win.zip"
+        }
+    },
     "2025.2.5": {
         "version": 2025,
         "unified":{

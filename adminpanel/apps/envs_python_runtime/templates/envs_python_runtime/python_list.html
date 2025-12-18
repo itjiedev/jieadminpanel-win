@@ -140,7 +140,7 @@ layui.use(function(){
 {% if version.is_path %}
       <a class="dropdown-item{% if version.folder == default_env_python.path %} disabled{% endif %}"
          href="{% url 'envs_python_runtime:default_set' uuid %}">加入环境变量</a>
-      <a class="dropdown-item" href="{% url 'envs_python_runtime:package_list' uuid %}" >包管理</a>
+      <a class="dropdown-item" href="{% url 'envs_python_runtime:package_list' %}?uid={{ uuid }}" >包管理</a>
       <a class="dropdown-item" href="{% url 'envs_python_runtime:name_edit' uuid %}">修改名称</a>
       <div class="dropdown-divider"></div>
 {% endif %}

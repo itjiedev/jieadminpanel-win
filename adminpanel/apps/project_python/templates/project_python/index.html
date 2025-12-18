@@ -127,7 +127,7 @@ layui.use(function(){
 </button>
 {% endif %}
 {{ info.project_name }}</div>
-                  <div class="text-muted">
+                <div class="text-muted">
                     项目位置：{{ project_path }}
                     {% if not info.project_path_exists %}<i class="fa-solid fa-circle-exclamation text-danger" title="路径异常"></i>{% endif %}
                 </div>
@@ -145,7 +145,9 @@ layui.use(function(){
     </button>
 
     <a href="{% url 'project_python:project_set_sdk' %}?path={{ project_path }}" class="btn btn-outline-info btn-xs btn-block mt-1">配置解释器</a>
-
+{% if info.sdk_path_exists %}
+    <a href="{% url 'project_python:package_list' %}?uid={{ project_path }}" class="btn btn-outline-info btn-xs btn-block mt-1">包管理</a>
+{% endif %}
     <form action="{% url 'project_python:project_del' %}" method="post">{% csrf_token %}
         <input type="hidden" id="project_path" name="project_path" value="{{ project_path }}" />
     <button type="submit" id="form_btn_submit" name="form_btn_submit" class="btn btn-outline-danger btn-xs btn-block mt-1" 

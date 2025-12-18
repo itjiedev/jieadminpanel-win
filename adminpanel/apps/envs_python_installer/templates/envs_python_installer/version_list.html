@@ -84,8 +84,8 @@ layui.use(function(){
 {% include 'include_messages.html' %}
 <div class="card">
 <div class="text-danger text-bold p-1">
-    安装时建议不要选择最新的版本，最新版本可能会下载缓慢或者下载失败。
     同一个系列版本会自动进行升级。
+    下载缓慢或者下载失败请<a href="{% url 'envs_python_installer:config' %}">更换下载源</a>
 </div>
         <table class="table table-hover table-striped">
             <thead>

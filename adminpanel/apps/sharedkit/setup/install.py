@@ -1,7 +1,7 @@
 import os, json
 from pathlib import Path
 
-print('初始化 共享工具 组件...')
+# print('初始化 共享工具 组件...')
 
 project_root = Path(__file__).resolve().parent.parent.parent.parent
 current_dir = os.path.dirname(__file__)
@@ -46,4 +46,4 @@ if check_dependency:
 # with open(url_path, 'w', encoding='utf-8') as f:
 #     json.dump(urls, f, ensure_ascii=False, indent=4)
 
-print('共享工具 组件 安装完成...')
+# print('共享工具 组件 安装完成...')

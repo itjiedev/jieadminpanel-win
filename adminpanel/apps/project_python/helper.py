@@ -149,25 +149,29 @@ def get_pycharm_project(search_project_path= None):
                 'project_path': project_path, 'project_path_exists': False, 'project_name': project_name, 
                 'old_name': project_name, 'sdk_name':'', 'sdk_path':'', 'sdk_path_exists':False, 'sdk_uuid':''
             }
-            if os.path.exists(project_path): pycharm_projects[project_path]['project_path_exists'] = True
+            old_project_path = project_path
+            if '$USER_HOME$' in project_path:
+                project_path = os.environ.get('USERPROFILE').replace('\\','/') + '/' +project_path.replace('$USER_HOME$/', '')
+
+            if os.path.exists(project_path): pycharm_projects[old_project_path]['project_path_exists'] = True
             # 获取sdk信息
             project_idea_dir = os.path.join(project_path, '.idea')
             if not os.path.exists(project_idea_dir):
-                print('项目里的.idea配置文件夹不存在！可能不是pyhcarm项目。')
+                print('项目里的.idea配置文件夹不存在！')
             else:
                 is_found = False
                 for root, dirs, files in os.walk(project_idea_dir):
                     for file in files:
                         if file.endswith('.iml'):
                             is_found = True
-                            pycharm_projects[project_path]['project_name'] = file.replace('.iml', '')
+                            pycharm_projects[old_project_path]['project_name'] = file.replace('.iml', '')
                             break
                     if is_found:break
 
                 project_rename_file = os.path.join(project_idea_dir, '.name')
                 if os.path.exists(project_rename_file):
                     with open(project_rename_file, 'r', encoding='utf-8') as f:
-                        pycharm_projects[project_path]['project_name'] = f.read()
+                        pycharm_projects[old_project_path]['project_name'] = f.read()
 
                 misc_file = os.path.join(project_idea_dir, 'misc.xml')
                 if os.path.exists(misc_file):
@@ -175,12 +179,12 @@ def get_pycharm_project(search_project_path= None):
                     misc_root = misc_tree.getroot()
                     component = misc_root.find('.//component[@name="ProjectRootManager"]')
                     if component is not None:
-                        pycharm_projects[project_path]['sdk_name'] = component.get('project-jdk-name') if component.get('project-jdk-name') else ''
-                    if pycharm_projects[project_path]['sdk_name'] in sdk_table:
-                        pycharm_projects[project_path]['sdk_version'] =  sdk_table[pycharm_projects[project_path]['sdk_name']]['sdk_version']
-                        pycharm_projects[project_path]['sdk_path'] =  sdk_table[pycharm_projects[project_path]['sdk_name']]['sdk_path']
-                        pycharm_projects[project_path]['sdk_path_exists'] =  sdk_table[pycharm_projects[project_path]['sdk_name']]['sdk_path_exists']
-                        pycharm_projects[project_path]['sdk_uuid'] = sdk_table[pycharm_projects[project_path]['sdk_name']]['sdk_uuid']
+                        pycharm_projects[old_project_path]['sdk_name'] = component.get('project-jdk-name') if component.get('project-jdk-name') else ''
+                    if pycharm_projects[old_project_path]['sdk_name'] in sdk_table:
+                        pycharm_projects[old_project_path]['sdk_version'] =  sdk_table[pycharm_projects[old_project_path]['sdk_name']]['sdk_version']
+                        pycharm_projects[old_project_path]['sdk_path'] =  sdk_table[pycharm_projects[old_project_path]['sdk_name']]['sdk_path']
+                        pycharm_projects[old_project_path]['sdk_path_exists'] =  sdk_table[pycharm_projects[old_project_path]['sdk_name']]['sdk_path_exists']
+                        pycharm_projects[old_project_path]['sdk_uuid'] = sdk_table[pycharm_projects[old_project_path]['sdk_name']]['sdk_uuid']
                     
         if search_project_path:
             if search_project_path in pycharm_projects:

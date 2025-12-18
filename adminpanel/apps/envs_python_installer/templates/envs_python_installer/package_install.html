@@ -1,4 +1,5 @@
-{% extends 'project_python/layout_python.html' %}
+{% extends 'envs_python/layout_envs_python.html' %}
+
 {% block html_js_code %}{{ block.super }}
 {% include 'envs_python/package_install_js.html' %}
 {% endblock %}
@@ -6,4 +7,4 @@
 {% block page_content %}{{ block.super }}
 {% include 'include_messages.html' %}
 {% include 'envs_python/package_install.html' %}
-{% endblock %}lock %}
+{% endblock %}

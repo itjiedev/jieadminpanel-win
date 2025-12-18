@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-print('安装 Python installer环境管理 组件')
+# print('安装 Python installer环境管理 组件')
 
 app_name = 'envs_python_installer'
 start_url = f"{app_name}:python_list"
@@ -101,4 +101,4 @@ if not user_config_json.exists():
 # with open(menu_main_path, 'w', encoding='utf-8') as f:
 #     json.dump(menu_main, f, ensure_ascii=False, indent=4)
 
-print('Python installer环境管理 组件 安装完成。。。')
+# print('Python installer环境管理 组件 安装完成。。。')

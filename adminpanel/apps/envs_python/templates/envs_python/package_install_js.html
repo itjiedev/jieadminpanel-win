@@ -1,0 +1,86 @@
+<script>
+layui.use(['jquery', 'layer'], function() {
+    var $ = layui.jquery;
+    var layer = layui.layer;
+
+    function parseXHRError(xhr) {
+    let message = '未知错误';
+
+    try {
+        const response = JSON.parse(xhr.responseText);
+        if (response && response.message) {
+            message = response.message;
+        } else if (xhr.statusText) {
+            message = xhr.statusText;
+        }
+    } catch (e) {
+        if (xhr.statusText) {
+            message = xhr.statusText;
+        }
+        console.error('无法解析错误响应:', xhr.responseText);
+    }
+
+    return message;
+}
+    $('#btn_get_detail').hide();
+    $('#btn_submit').on('click', function() {
+        var packageName = $('#id_package_name').val();
+        if (!packageName) {
+            layer.alert('请输入包名', {title: false, icon: 2, shade: 0.6});
+            return;
+        }
+        $('#form_package').submit();
+    })
+
+    $('#btn_search_package').on('click', function() {
+        var packageName = $('#id_package_name').val();
+
+        if (!packageName) {
+            layer.msg('请输入包名', {icon: 2});
+            return;
+        }
+        var loading = layer.load(1, {shade: 0.6});
+
+        $('#non_field_error').hide();
+        $(this).prop('disabled', true);
+        $(this).find('i').removeClass('fa-search').addClass('fa-spinner fa-spin');
+
+        $.ajax({
+            url: '{% url "envs_python:package_search" %}',
+            type: 'GET',
+            data: {
+                'package_name': packageName,
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.status == 'success') {
+                    $('#id_package_version').html(response.message);
+                    layer.close(loading);
+                    $('#btn_search_package').prop('disabled', false);
+                    $('#btn_search_package').find('i').removeClass('fa-spinner fa-spin').addClass('fa-search');
+                    $('#btn_submit').prop('disabled', false);
+                    $('#btn_get_detail').show();
+                }
+            },
+            error: function(xhr, status, error) {
+                 const message = parseXHRError(xhr);
+                 layer.alert(message, {
+                    title:false,
+                    icon: 2,
+                    shadeClose: false,
+                });
+                layer.close(loading);
+                $('#btn_search_package').prop('disabled', false);
+                $('#btn_search_package').find('i').removeClass('fa-spinner fa-spin').addClass('fa-search');
+            },
+        });
+    });
+    {#$('#btn_get_detail').on('click', function() {#}
+    {#    const version = $('#id_package_version').val();#}
+    {#    if (version == 'latest'){#}
+    {#        layer.alert('请选择版本', {title: false, icon: 2, shade: 0.6});#}
+    {#    }#}
+    {##}
+    {# }); #}
+});
+</script>

@@ -1,1 +1,12 @@
-{}
+{
+    "3.13.11": {
+        "name": "Python-3.13.11",
+        "folder": "D:/Programs/Python/Python313/",
+        "version": "3.13.11",
+        "is_py_default": true,
+        "version_major": 3,
+        "version_minor": 13,
+        "version_patch": 11,
+        "tag": "3.13"
+    }
+}

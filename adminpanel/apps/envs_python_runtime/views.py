@@ -521,13 +521,14 @@ class ImportView(PythonRuntimeMixin, FormView):
 from apps.envs_python.views import PackageListMixin
 class PackageListView(PythonRuntimeMixin, PackageListMixin):
     app_namespace = app_name
+    template_name = f'{app_name}/package_list.html'
 
     def get_python_path(self):
-        python_version_info = get_installed(self.kwargs.get('version'))
+        python_version_info = get_installed(self.request.GET.get('uid'))
         return f'{ensure_path_end_separator(python_version_info["folder"])}Python.exe'
 
     def get_env_info(self):
-        return get_installed(self.kwargs.get('version'))
+        return get_installed(self.request.GET.get('uid'))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -544,23 +545,26 @@ class PackageListView(PythonRuntimeMixin, PackageListMixin):
                 'active': True
             }
         ]
+        context['uid'] = self.request.GET.get('uid')
         return context
 
 
 from apps.envs_python.views import PackageInstallMixin
 class PackageInstallView(PythonRuntimeMixin, PackageInstallMixin):
     app_namespace = app_name
+    template_name = f'{app_name}/package_install.html'
 
     def get_python_path(self):
-        installed_info = get_installed(self.kwargs.get('version'))
+        installed_info = get_installed(self.request.GET.get('uid'))
         return ensure_path_end_separator(installed_info['folder']) + 'python.exe'
 
     def get_env_info(self):
-        return get_installed(self.kwargs.get('version'))
+        return get_installed(self.request.GET.get('uid'))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['page_title'] = 'Python包安装'
+        context['uid'] = self.request.GET.get('uid')
         context['breadcrumb'] = [
             {
                 'title': '压缩包安装管理',
@@ -569,25 +573,24 @@ class PackageInstallView(PythonRuntimeMixin, PackageInstallMixin):
             },
             {
                 'title': '包列表',
-                'href': reverse_lazy(f'{app_name}:package_list', kwargs={'version': self.kwargs.get('version')}),
+                'href': reverse_lazy(f'{app_name}:package_list', query={'uid':context['uid']}),
                 'active': False
             },
             {
                 'title': 'Python包安装',
-                'href': reverse_lazy(f'{app_name}:package_install', kwargs={'version': self.kwargs.get('version')}),
+                'href': reverse_lazy(f'{app_name}:package_install', query={'uid': context['uid']}),
                 'active': True
             }
         ]
-        context['version'] = self.kwargs.get('version')
         return context
 
 
 from apps.envs_python.views import PackageUninstallMixin
 class PackageUninstallView(PackageUninstallMixin):
     app_namespace = app_name
+
     def get_python_path(self):
-        version = self.kwargs.get('version')
-        installed_info = get_installed(version)
+        installed_info = get_installed(self.request.GET.get('uid'))
         return ensure_path_end_separator(str(installed_info['folder'])) + 'python.exe'
 
 
@@ -596,8 +599,8 @@ class PackageUpgradeView(PackageUpgradeMixin):
     app_namespace = app_name
 
     def get_python_path(self):
-        version = self.kwargs.get('version')
-        return ensure_path_end_separator(get_installed(version)['folder']) + 'python.exe'
+        return ensure_path_end_separator(get_installed(self.request.GET.get('uid'))['folder']) + 'python.exe'
+
 
 class PythonDeleteView(RedirectView):
     """
