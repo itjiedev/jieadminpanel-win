@@ -36,7 +36,7 @@ layui.use(function(){
 {% block page_content %}
 {% if not pycharm %}
 <div class="text-danger text-bold text-lg">
-    没有找到Pycharm信息, 请先 <a href="{% url 'project_python:pycharm_download' %}">下载安装</a>
+    没有找到Pycharm信息, 请先 <a href="{% url 'project_python:pycharm_download' %}?action=install">下载安装</a>
 </div>
 {% elif not check_options %}
 <div class="alert alert-danger text-lg">没有找到项目默认配置文件~请至少启动一次 Pycharm 以初化配置。</div>

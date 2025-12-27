@@ -39,6 +39,8 @@ mkdir "%CURRENT_DIR%\data"
 echo 安装系统依赖项...
 "%PYTHON_RUN%" -m pip install --upgrade pip -i %available_source% --no-warn-script-location
 "%PYTHON_RUN%" -m pip install -i %available_source% -r "%CURRENT_DIR%\requirements.txt" --no-warn-script-location
+"%PYTHON_RUN%" -m pip install --upgrade "Django~=5.2"
+
 @REM "%PYTHON_RUN%" -m pip install -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple -r "%CURRENT_DIR%\adminpanel\apps\envs_python\setup\requirements.txt" --no-warn-script-location
 @REM "%PYTHON_RUN%" -m pip install -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple -r "%CURRENT_DIR%\adminpanel\apps\sharedkit\setup\requirements.txt" --no-warn-script-location
 @REM "%PYTHON_RUN%" -m pip install -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple -r "%CURRENT_DIR%\adminpanel\apps\envs_python_runtime\setup\requirements.txt" --no-warn-script-location

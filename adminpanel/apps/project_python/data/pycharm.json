@@ -1,16 +1,16 @@
 {
-    "2025.3": {
+    "2025.3.1": {
         "version": 2025,
         "unified":{
-            "installer": "https://download.jetbrains.com/python/pycharm-2025.3.exe",
-            "zip": "https://download.jetbrains.com/python/pycharm-2025.3.win.zip"
+            "installer": "https://download.jetbrains.com/python/pycharm-2025.3.1.exe",
+            "zip": "https://download.jetbrains.com/python/pycharm-2025.3.1.win.zip"
         }
     },
-    "2025.2.5": {
+    "2025.2.6": {
         "version": 2025,
         "unified":{
-            "installer": "https://download.jetbrains.com/python/pycharm-2025.2.5.exe",
-            "zip": "https://download.jetbrains.com/python/pycharm-2025.2.5.win.zip"
+            "installer": "https://download.jetbrains.com/python/pycharm-2025.2.6.exe",
+            "zip": "https://download.jetbrains.com/python/pycharm-2025.2.6.win.zip"
         }
     },
     "2025.2.2": {
@@ -24,15 +24,15 @@
             "zip": "https://download.jetbrains.com/python/pycharm-community-2025.2.2.win.zip" 
         }
     },
-    "2025.1.5": {
+    "2025.1.6": {
         "version": 2025,
         "professional":{
-            "installer": "https://download.jetbrains.com/python/pycharm-2025.1.5.exe",
-            "zip": "https://download.jetbrains.com/python/pycharm-professional-2025.1.5.win.zip"
+            "installer": "https://download.jetbrains.com/python/pycharm-2025.1.6.exe",
+            "zip": "https://download.jetbrains.com/python/pycharm-professional-2025.1.6.win.zip"
         },
         "community":{
-            "installer": "https://download.jetbrains.com/python/pycharm-community-2025.1.5.exe",
-            "zip": "https://download.jetbrains.com/python/pycharm-community-2025.1.5.win.zip" 
+            "installer": "https://download.jetbrains.com/python/pycharm-community-2025.1.6.exe",
+            "zip": "https://download.jetbrains.com/python/pycharm-community-2025.1.6.win.zip" 
         }
     },
     "2024.3.6": {

@@ -15,9 +15,11 @@
 
 {% block page_content %}
 {% include 'include_messages.html' %}
+    {% if action == 'install' %}
 <p class="row text-danger text-lg ml-2">
 需要您自行下载安装包，下载后可自行安装（建议），也可使用自动安装。
 </p>
+    {% endif %}
 <div class="row">
 {% for version, info in downloads.items %}
     <div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch flex-column">
@@ -53,10 +55,12 @@
 
 {% endfor %}
 </div>
+{% if action == 'install' %}
 <div class="card">
     <div class="card-footer">
         <a href="{% url 'project_python:pycharm_install' %}" class="btn btn-success">我已下载，帮我安装</a>
         <a href="{% url 'project_python:index' %}" class="btn btn-outline-primary">我已经自己安装完成了</a>
     </div>
 </div>
+{% endif %}
 {% endblock %}

@@ -91,6 +91,7 @@ class PycharmDownloadView(ProjectPythonMixin, TemplateView):
             }
         ]
         context['downloads'] = get_pycharm_download()
+        context['action'] = self.request.GET.get('action')
         return context
 
 class PycharmInstallFormView(ProjectPythonMixin, FormView):
@@ -429,7 +430,6 @@ class ProjectSetSdkView(ProjectPythonMixin, FormView):
     def form_valid(self, form):
         project_path = form.cleaned_data.get('project_path')
         old_sdk_path = get_pycharm_project(project_path)['sdk_path']
-        print(old_sdk_path)
 
         if not os.path.exists:
             form.add_error('project_path', f'当前项目位置{project_path}文件夹不存在！')
@@ -507,7 +507,6 @@ class ProjectSetSdkView(ProjectPythonMixin, FormView):
             iml_content = remove_blank_lines(iml_content)
             with open(iml_file, 'w', encoding='utf-8') as f:
                 f.write(iml_content)
-
             # 处理misc.xml文件
             xml_content = ''
             if not os.path.exists(misc_file):
@@ -540,7 +539,6 @@ class ProjectSetSdkView(ProjectPythonMixin, FormView):
             xml_content = remove_blank_lines(xml_content)
             with open(misc_file, 'w', encoding='utf-8') as f:
                 f.write(xml_content)
-
         # ---------------使用已经有的运行环境进行新的配置------------------------------------------------------
         if sdk_type == "new":
             import uuid
@@ -651,6 +649,112 @@ class ProjectSetSdkView(ProjectPythonMixin, FormView):
                         else:
                             filtered_lines.append(line)
                 xml_content= ''.join(filtered_lines)
+            xml_content = remove_blank_lines(xml_content)
+            with open(misc_file, 'w', encoding='utf-8') as f:
+                f.write(xml_content)
+
+            # ------- 处理自选python.exe解释器的选项-----------------
+        if sdk_type == 'python':
+            python_interpreter = form.cleaned_data.get('python_interpreter')
+            if not python_interpreter:
+                messages.warning(self.request, '请选择Python解释器文件')
+                return super().form_invalid(form)
+            if not python_interpreter.endswith('python.exe'):
+                messages.warning(self.request, '请选择Python解释器文件，确保是python.exe文件。')
+                return super().form_invalid(form)
+
+            import uuid
+            from .config import sdk_new_str
+            sdk_path = python_interpreter.replace('python.exe', '')
+            sdk_version = f'Python {run_command([python_interpreter, '--version']).stdout.replace("Python ", "").strip()}'
+            project_name = get_pycharm_project(project_path)['project_name']
+            sdk_uuid  = str(uuid.uuid4())
+            sdk_name = f'{sdk_version}({project_name})'
+            
+            sdk_new_str = sdk_new_str.replace('{sdk_name}', sdk_name).replace('{sdk_version}', sdk_version).replace(
+                '{sdk_path}', sdk_path).replace('{sdk_uuid}', sdk_uuid)
+            
+
+            pycharm_sdk_table_file = get_pycharm_option('sdk')
+    
+            sdk_table_content = ''
+            with open(pycharm_sdk_table_file, 'r', encoding='utf-8') as f:
+                sdk_table_content = f.read()
+
+            if '<jdk version="2">' not in sdk_table_content:
+                sdk_table_content = sdk_table_content.replace(
+                    '  <component name="ProjectJdkTable">',
+                    '  <component name="ProjectJdkTable">\n' + sdk_new_str,
+                )
+            else:
+                sdk_end_str = """  </component>
+</application>"""
+                sdk_table_content = sdk_table_content.replace(
+                    sdk_end_str,
+                    sdk_new_str + '\n' + sdk_end_str,
+                )
+            sdk_table_content = remove_blank_lines(sdk_table_content)
+            with open(pycharm_sdk_table_file, 'w', encoding='utf-8') as f:
+                f.write(sdk_table_content)
+
+            # ------创建 Pycharm 项目配置 ----------------------------------
+            with open(iml_file, 'r', encoding='utf-8') as f:
+                iml_content = f.read()
+            pattern = r'<orderEntry type="jdk" jdkName="'
+            filtered_lines = []
+            if pattern in iml_content:
+                lines = iml_content.splitlines(keepends=True)
+                for line in lines:
+                    if pattern in line:
+                        filtered_lines.append(
+                            f'    <orderEntry type="jdk" jdkName="{sdk_name}" jdkType="Python SDK" />\n')
+                    else:
+                        filtered_lines.append(line)
+                iml_content = ''.join(filtered_lines)
+            else:
+                new_order_entry = f'    <orderEntry type="jdk" jdkName="{sdk_name}" jdkType="Python SDK" />\n'
+                content_tag = '<content url="file://$MODULE_DIR$" />'
+                index = iml_content.find(content_tag)
+                if index != -1:
+                    insert_index = index + len(content_tag)
+                    iml_content = iml_content[:insert_index] + '\n' + new_order_entry + iml_content[insert_index:]
+                else:
+                    new_entry = f'  <orderEntry type="jdk" jdkName="{sdk_name}" jdkType="Python SDK" />'
+                    pos = iml_content.find('</content>') + len('</content>')
+                    iml_content = iml_content[:pos] + '\n  ' + new_entry + iml_content[pos:]
+            iml_content = remove_blank_lines(iml_content)
+            with open(iml_file, 'w', encoding='utf-8') as f:
+                f.write(iml_content)
+
+            # 处理misc.xml文件
+            xml_content = ''
+            if not os.path.exists(misc_file):
+                from .config import project_misc_content
+                xml_content = project_misc_content.replace(
+                    '<component name="ProjectRootManager" version="2" project-jdk-name=""',
+                    f'<component name="ProjectRootManager" version="2" project-jdk-name="{sdk_name}"',
+                )
+            else:
+                with open(misc_file, 'r', encoding='utf-8') as f:
+                    xml_content = f.read()
+                filtered_lines = []
+                lines = xml_content.splitlines(keepends=True)
+                pattern = '<component name="ProjectRootManager" version="2" project-jdk-name="'
+                new_content = f'  <component name="ProjectRootManager" version="2" project-jdk-name="{sdk_name}" project-jdk-type="Python SDK" />\n'
+                if pattern not in xml_content:
+                    for line in lines:
+                        if '<project version="4">' in line:
+                            filtered_lines.append(line)
+                            filtered_lines.append(new_content)
+                        else:
+                            filtered_lines.append(line)
+                else:
+                    for line in lines:
+                        if pattern in line:
+                            filtered_lines.append(new_content)
+                        else:
+                            filtered_lines.append(line)
+                xml_content = ''.join(filtered_lines)
             xml_content = remove_blank_lines(xml_content)
             with open(misc_file, 'w', encoding='utf-8') as f:
                 f.write(xml_content)
