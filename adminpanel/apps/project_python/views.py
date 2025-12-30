@@ -90,7 +90,22 @@ class PycharmDownloadView(ProjectPythonMixin, TemplateView):
                 'active': True
             }
         ]
-        context['downloads'] = get_pycharm_download()
+        pycharm_versions = get_pycharm_download()
+        context['releases_list'] = list(pycharm_versions.keys())
+        context['current_releases'] = self.request.GET.get('releases', '2025')
+        context['sub_version_list'] = {}
+        for sub_version, sub_version_info in pycharm_versions[context['current_releases']].items():
+            context['sub_version_list'][sub_version] = {
+                'default':sub_version_info['default'],
+                'versions': list(sub_version_info['versions'].keys())
+            }
+        context['current_version'] = self.request.GET.get('version')
+        if context['current_version']:
+            current_sub_version = '.'.join(context['current_version'].split('.')[:2])
+            context['sub_version_list'][current_sub_version]['default'] = {
+                'version':context['current_version'],
+                'type': pycharm_versions[context['current_releases']][current_sub_version]['versions'][context['current_version']]
+            }
         context['action'] = self.request.GET.get('action')
         return context
 

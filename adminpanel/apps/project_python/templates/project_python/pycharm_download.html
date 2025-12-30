@@ -4,9 +4,17 @@
 <script>
     layui.use(function(){
         var layer = layui.layer;
-        var util = layui.util;
-        
-        util.on('lay-on',  {
+        var form = layui.form;
+
+        form.on('select(select-version)', function(data){
+            var elem = data.elem;
+            var value = data.value;
+            var othis = data.othis;
+
+            if (value) {
+                var url = '?releases={{ current_releases }}&version=' + value;
+                window.location.href = url;
+            }
         })
 
     })
@@ -20,41 +28,93 @@
 需要您自行下载安装包，下载后可自行安装（建议），也可使用自动安装。
 </p>
     {% endif %}
-<div class="row">
-{% for version, info in downloads.items %}
-    <div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch flex-column">
-        <div class="card bg-light d-flex flex-fill shadow">
-            <div class="card-body">
-                <h2 class="lead text-bold">版本：{{version}}</h2>
-                {% if info.unified %}
+<div class="card-header border-bottom-0">
+{% for release in releases_list %}
+    <a href="?releases={{ release }}" class="btn ml-1{% if current_releases == release %} btn-success {% else %} btn-default{% endif %} "><h5 class="mb-1">{{ release }}</h5></a>
+{% endfor %}
+</div>
+    <div class="row">
+{% for s_version, s_info in sub_version_list.items %}
+    <div class=" col-md-6 col-12 col-sm-6">
+<div class="card mb-6">
+    <div class="card-header">
+        <div class="row">
+            <h5 class="pt-1 col-md-4">版本 <span class="text-info text-bold">{{ s_version }}</span></h5>
+            <div class="col-md-4 layui-form">
+                <select class="form-control" lay-filter="select-version">
+                {% for version in s_info.versions  %}
+                      <option value="{{ version }}"{% if current_version == version %} selected{% endif %}>{{ version }}</option>
+                {% endfor %}
+                 </select>
+             </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="mb-2">当前版本：<span class="text-danger text-bold">{{ s_info.default.version }}</span></div>
+        <div>
+                {% if s_info.default.type == "unified" %}
                 <div class="layui-font-14">
-                    Pycharm
-                    <a href="{{ info.unified.installer}}" target="_blank" class="btn btn-link btn-xs" lay-on="install">Windows(exe)</a>
+                    统一版
+                    <a href="https://download.jetbrains.com/python/pycharm-{{ s_info.default.version }}.exe" class="btn btn-link btn-xs"><i class="fas fa-download fa-xl"></i> Windows(exe)</a>
                     <!-- <a href="{{ info.unified.zip}}" class="btn btn-link btn-xs" lay-on="install">windows(zip)</a> -->
                 </div>
                 {% endif %}
 
-                {% if info.professional %}
+                {% if s_info.default.type == "separate" %}
                 <div class="layui-font-14">
+                {% with int_current_releases=current_releases|add:0 %}
                     Pycharm professional
-                    <a href="{{ info.professional.installer}}" target="_blank" class="btn btn-link btn-xs" lay-on="install">Windows(exe)</a>
-                    <!-- <a href="{{ info.professional.zip}}" class="btn btn-link btn-xs" lay-on="install">windows(zip)</a> -->
+                    <a href="https://download.jetbrains.com/python/{% if int_current_releases >= 2025 %}pycharm-{{ s_info.default.version }}{% else %}pycharm-professional-{{ s_info.default.version }}{% endif %}.exe"
+                       class="btn btn-link btn-xs"><i class="fas fa-download fa-xl"></i> Windows(exe)</a>
+                    <!-- <a href="" class="btn btn-link btn-xs" lay-on="install">windows(zip)</a> -->
+                    {% endwith %}
                 </div>
 
-                {% endif %}
-                {%if info.community %}
                 <div class="layui-font-14">
                     PyCharm Community
-                    <a href="{{ info.community.installer}}" class="btn btn-link btn-xs" lay-on="install">Windows(exe)</a>
-                    <!-- <a href="{{ info.community.zip}}" class="btn btn-link btn-xs" lay-on="install">windows(zip)</a> -->
+                    <a href="https://download.jetbrains.com/python/pycharm-community-{{ s_info.default.version }}.exe" class="btn btn-link btn-xs"><i class="fas fa-download fa-xl"></i> Windows(exe)</a>
+                    <!-- <a href="" class="btn btn-link btn-xs" lay-on="install">windows(zip)</a> -->
                 </div>
                 {% endif %}
-            </div>
         </div>
     </div>
-
+</div>
+</div>
 {% endfor %}
 </div>
+{#    <div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch flex-column">#}
+{#        <div class="card bg-light d-flex flex-fill shadow">#}
+{#            <div class="card-body">#}
+{#                <h2 class="lead text-bold">版本：{{version}}</h2>#}
+{#                {% if info.unified %}#}
+{#                <div class="layui-font-14">#}
+{#                    Pycharm#}
+{#                    <a href="{{ info.unified.installer}}" target="_blank" class="btn btn-link btn-xs" lay-on="install">Windows(exe)</a>#}
+{#                    <!-- <a href="{{ info.unified.zip}}" class="btn btn-link btn-xs" lay-on="install">windows(zip)</a> -->#}
+{#                </div>#}
+{#                {% endif %}#}
+{##}
+{#                {% if info.professional %}#}
+{#                <div class="layui-font-14">#}
+{#                    Pycharm professional#}
+{#                    <a href="{{ info.professional.installer}}" target="_blank" class="btn btn-link btn-xs" lay-on="install">Windows(exe)</a>#}
+{#                    <!-- <a href="{{ info.professional.zip}}" class="btn btn-link btn-xs" lay-on="install">windows(zip)</a> -->#}
+{#                </div>#}
+{##}
+{#                {% endif %}#}
+{#                {%if info.community %}#}
+{#                <div class="layui-font-14">#}
+{#                    PyCharm Community#}
+{#                    <a href="{{ info.community.installer}}" class="btn btn-link btn-xs" lay-on="install">Windows(exe)</a>#}
+{#                    <!-- <a href="{{ info.community.zip}}" class="btn btn-link btn-xs" lay-on="install">windows(zip)</a> -->#}
+{#                </div>#}
+{#                {% endif %}#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+
+{#{% endfor %}#}
+
 {% if action == 'install' %}
 <div class="card">
     <div class="card-footer">
