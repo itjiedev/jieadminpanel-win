@@ -1,0 +1,32 @@
+<div class="card">
+    <div class="card-body">
+<div class="row mb-1">
+    <div class="col-md-3 col-sm-6 col-12 row">
+        <div class="col-sm-3"><strong>版本</strong></div>
+        <div class="col-sm-9">{{ mysql_info.name }}</div>
+    </div>
+    <div class="col-md-3 col-sm-6 col-12 row">
+          <div class="col-sm-3"><strong>主机</strong></div>
+          <div class="col-sm-9">local</div>
+    </div>
+    <div class="col-md-3 col-sm-6 col-12 row">
+          <div class="col-sm-3"><strong>端口</strong></div>
+          <div class="col-sm-9">{{ mysql_info.port|default:"未设置" }}</div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 col-sm-6 col-12 row  mb-1">
+      <div class="col-sm-2"><strong>安装路径</strong></div>
+      <div class="col-sm-10">{{ mysql_info.install_dir }}</div>
+    </div>
+    <div class="col-md-6 col-sm-6 col-12 row mb-1">
+      <div class="col-sm-3"><strong>配置文件夹</strong></div>
+      <div class="col-sm-9">{{ mysql_info.conf_file }}</div>
+    </div>
+    <div class="col-md-6 col-sm-6 col-12 row mb-1">
+      <div class="col-sm-3"><strong>数据文件夹</strong></div>
+      <div class="col-sm-9">{{ mysql_info.data_dir }}</div>
+    </div>
+</div>
+    </div>
+</div>

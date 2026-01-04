@@ -944,6 +944,7 @@ class EditConfigView(MysqlMixin, FormView):
         messages.success(self.request, '配置文件保存成功！')
         return super().form_valid(form)
 
+
 class ImportServiceView(MysqlMixin, FormView):
     template_name = f'{app_name}/import_service.html'
     form_class = ImportServiceForm
@@ -1018,8 +1019,6 @@ class ImportServiceView(MysqlMixin, FormView):
         if select_service_type == 'new':
             set_service = True
             config_status = 1
-            service_name = service_name
-            service_auto = service_auto
         if select_service_type == 'no':
             set_service = False
             config_status = 1

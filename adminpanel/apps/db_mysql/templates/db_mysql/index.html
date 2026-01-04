@@ -119,7 +119,8 @@ function getCookie(name) {
     <div class="card-footer">
       {% if item.config_status == 1 or item.config_status == 2 %}
           {% if item.set_root_password %}
-        <button type="button" class="btn btn-sm btn-info" data-url="{% url "db_mysql:login_mysql" id %}" data-id="{{ id }}" lay-on="input_pass">测试root登录</button>
+<a href="{% url 'db_mysql:mysql_manage:login' id %}" class="btn btn-info" >登录</a>
+{#        <button type="button" class="btn btn-sm btn-info" data-url="{% url "db_mysql:login_mysql" id %}" data-id="{{ id }}" lay-on="input_pass">测试root登录</button>#}
           {% else %}
         <a href="{% url 'db_mysql:init_root_password' id %}" class="btn btn-sm btn-warning">设置root密码</a>
           {% endif %}

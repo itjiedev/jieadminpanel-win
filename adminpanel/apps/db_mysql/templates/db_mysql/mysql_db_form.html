@@ -1,0 +1,22 @@
+{% extends 'layout_panel.html' %}
+
+{% block page_content %}
+{% include 'db_mysql/mysql_info.html' %}
+    {% include 'include_messages.html' %}
+<div class="card">
+<form class="form-horizontal layui-form" method="post">{% csrf_token  %}
+    <div class="card-body">
+        {% for field in form %}
+          <div class="form-group row">
+            <label for="{{ field.id_for_label }}" class="col-sm-3 col-form-label">{{ field.label }}:</label>
+            <div class="col-sm-9">{{ field }}</div>
+          </div>
+        {% endfor %}
+    </div>
+    <div class="card-footer">
+        <button type="submit" class="btn btn-primary" lay-submit>提交</button>
+        <a href="{% url 'db_mysql:mysql_manage:db_list' mysql_id %}" class="btn btn-default">取消</a>
+    </div>
+</form>
+</div>
+{% endblock %}

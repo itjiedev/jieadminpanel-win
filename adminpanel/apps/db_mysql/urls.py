@@ -26,4 +26,6 @@ urlpatterns = [
     path('import/', views.ImportView.as_view(), name='import'),
     path('import/analyze/', views.AnalyzeConfigView.as_view(), name='analyze_config'),
     path('import/service/<str:id>/', views.ImportServiceView.as_view(), name='import_service'),
+
+    path('manage/<str:id>/', include('apps.db_mysql.urls_mysql',  namespace='mysql_manage')),
 ]

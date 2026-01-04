@@ -29,9 +29,14 @@
 </p>
     {% endif %}
 <div class="card-header border-bottom-0">
-{% for release in releases_list %}
-    <a href="?releases={{ release }}" class="btn ml-1{% if current_releases == release %} btn-success {% else %} btn-default{% endif %} "><h5 class="mb-1">{{ release }}</h5></a>
-{% endfor %}
+    <div class="card-title">
+    {% for release in releases_list %}
+        <a href="?releases={{ release }}" class="btn ml-1{% if current_releases == release %} btn-success {% else %} btn-default{% endif %} "><h5 class="mb-1">{{ release }}</h5></a>
+    {% endfor %}
+    </div>
+    <div class="card-tools">
+        <a href="https://www.jetbrains.com/zh-cn/pycharm/download/other.html" target="_blank">Pycharm官方下载列表</a>
+    </div>
 </div>
     <div class="row">
 {% for s_version, s_info in sub_version_list.items %}

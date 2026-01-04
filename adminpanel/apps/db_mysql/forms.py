@@ -1,6 +1,7 @@
 from django import forms
 
 from jiefoundation.forms import FormBase
+from mimetypes import init
 
 
 class ConfigForm(FormBase):
@@ -102,16 +103,82 @@ class ImportServiceForm(FormBase):
     service_name = forms.CharField(required=False)
     service_auto = forms.BooleanField(required=False)
 
-    # set_service = forms.BooleanField(
-    #     label='安装为windows服务', required=False,
-    #     widget=forms.CheckboxInput(
-    #         attrs={'lay-skin': "switch", 'title': "安装|不安装", 'lay-filter': "set_service"}
-    #     )
-    # )
 
-    # new_service = forms.CharField(
-    #     label='服务名', required=False,
-    #     widget=forms.TextInput(
-    #         attrs={'class': 'form-control'}
+class MysqlLoginForm(FormBase):
+    username = forms.CharField(
+        label='用户名', required=True,
+        help_text='请输入用户名',
+        widget=forms.TextInput(
+            attrs={'class': 'form-control', 'lay-verify': 'required', 'lay-reqtext': '请输入用户名~'}
+        )
+    )
+    password = forms.CharField(
+        label='密码', required=True,
+        help_text='请输入密码',
+        widget=forms.PasswordInput(
+            attrs={'class': 'form-control', 'lay-verify': 'required', 'lay-reqtext': '请输入密码~'}
+        )
+    )
+    port = forms.IntegerField(
+        label='端口', required=True,
+        help_text='请输入端口',
+        widget=forms.NumberInput(
+            attrs={'class': 'form-control', 'lay-verify': 'required|number', 'lay-reqtext': '请输入端口~'}
+        )
+    )
+
+from .mysqlconn import MysqlConnectionManager
+
+def get_character_sets(request, conn):
+    character_sets = conn.get_character_sets()
+    character_list = []
+    for character_set in character_sets:
+        character_list.append([character_set['charset_name'], character_set['charset_name']])
+    return character_list
+
+def get_collations(request, conn,  character_name):
+    collations = conn.get_collations_by_charset(character_name)
+    collation_list = []
+    for collation in collations:
+        collation_list.append([collation['collation_name'], collation['collation_name']])
+    return collation_list
+
+
+class MysqlDatabaseForm(FormBase):
+    database_name = forms.CharField(
+        label='数据库名称', required=True,
+        help_text='请输入数据库名称',
+        widget=forms.TextInput(
+            attrs={'class': 'form-control', 'lay-verify': 'required', 'lay-reqtext': '请输入数据库名称~'}
+        )
+    )
+    # character_set = forms.CharField(
+    #     label='字符集', required=True,
+    #     help_text='请选择字符集',
+    #     widget=forms.Select(
+    #         attrs={'class': 'form-control', 'lay-verify': 'required', 'lay-reqtext': '请选择字符集~', 'disabled': 'disabled'}
     #     )
     # )
+    character_set = forms.CharField(
+        label='字符集', required=True,
+        widget=forms.TextInput(
+            attrs={'class': 'form-control', 'lay-verify': 'required', 'lay-reqtext': '请输入字符集~', 'readonly': 'readonly'}
+        )
+    )
+    collation = forms.CharField(
+        label='排序规则', required=True,
+        help_text='请选择排序规则',
+        widget=forms.Select(
+            attrs={'class': 'form-control', 'lay-verify': 'required', 'lay-reqtext': '请选择排序规则~'}
+        )
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+        mysql = MysqlConnectionManager(self.request)
+        initial = self.initial
+        self.fields['character_set'].widget.choices = get_character_sets(self.request, mysql)
+        self.fields['collation'].widget.choices = get_collations(self.request, mysql, initial['character_set'])
+        if 'database_name' in initial:
+            self.fields['database_name'].widget.attrs['readonly'] = 'readonly'

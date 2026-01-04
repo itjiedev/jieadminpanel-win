@@ -1,0 +1,75 @@
+{% extends 'layout_panel.html' %}
+
+{% block page_content %}
+<div class="card card-info">
+  <div class="card-header">
+    <h3 class="card-title">连接到本机数据库 {{ install_info.name }}</h3>
+  </div>
+
+    <div class="card-body">
+    {% include 'include_messages.html'  %}
+<div class="row">
+ <div class="col-12 col-md-12 col-lg-6 order-2 order-md-1">
+    <div class="card">
+        <form class="form-horizontal layui-form" method="post">{% csrf_token  %}
+            <div class="card-body">
+                {% for field in form %}
+                  <div class="form-group row">
+                    <label for="{{ field.id_for_label }}" class="col-sm-3 col-form-label">{{ field.label }}:</label>
+                    <div class="col-sm-9">{{ field }}</div>
+                  </div>
+                {% endfor %}
+            </div>
+            <div class="card-footer">
+              <button type="submit" class="btn btn-success" lay-submit>登录</button>
+              <a href="{% url 'db_mysql:index' %}" class="btn btn-default float-right">取消</a>
+            </div>
+        </form>
+    </div>
+ </div>
+
+ <div class="col-12 col-md-12 col-lg-6 order-1 order-md-2">
+<dl class="row ml-2">
+        <dt class="col-sm-2">版本</dt>
+        <dd class="col-sm-10">{{ mysql_info.name }}</dd>
+        <dt class="col-sm-2">主机</dt>
+        <dd class="col-sm-10">local</dd>
+        <dt class="col-sm-2">端口</dt>
+        <dd class="col-sm-10">{{ mysql_info.port|default:"未设置" }}</dd>
+        <dt class="col-sm-2">安装路径</dt>
+        <dd class="col-sm-10">{{ mysql_info.install_dir }}</dd>
+{% if mysql_info.config_status == 1 or mysql_info.config_status == 2%}
+        <dt class="col-sm-3">配置文件路径</dt>
+        <dd class="col-sm-9">{{ mysql_info.conf_file }}</dd>
+        <dt class="col-sm-3">数据文件夹路径</dt>
+        <dd class="col-sm-9">{{ mysql_info.data_dir }}</dd>
+        <dt class="col-sm-3">root密码状态</dt>
+        <dd class="col-sm-9">
+            {% if mysql_info.set_root_password == 0  %}
+                <span class="text-danger">未设置密码</span>
+                <a href="{% url 'db_mysql:init_root_password' mysql_info.uuid %}" class="btn btn-primary btn-xs ml-2">
+                    设置密码
+                </a>
+            {% endif %}
+            {% if mysql_info.set_root_password == 1  %}已设置密码 {% endif %}
+            {% if mysql_info.set_root_password == 2  %}未知 {% endif %}
+        </dd>
+        <dt class="col-sm-2">服务名称</dt>
+        <dd class="col-sm-10">{{ mysql_info.service_name }}</dd>
+        <dt class="col-sm-2">自启动</dt>
+        <dd class="col-sm-10">{% if mysql_info.service_auto  %}自启动{% else %}手动{% endif %}</dd>
+    <hr/>
+
+{% endif %}
+    </dl>
+
+ </div>
+</div>
+
+</div>
+
+
+
+
+
+{% endblock %}

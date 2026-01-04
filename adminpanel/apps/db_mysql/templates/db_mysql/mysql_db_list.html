@@ -1,0 +1,74 @@
+{% extends 'layout_panel.html' %}
+
+{% block html_js_code %}
+<script>
+layui.use(function(){
+  var layer = layui.layer;
+  var util = layui.util;
+
+  util.on('lay-on', {
+      "confirm-del": function(){
+          var db_name = $(this).attr('db_name');
+          layer.confirm(
+              '<span style="font-size:18px;">确定要删除数据库 ' + db_name + ' ？</span><br/> 警告：将丢失数据库  ' + db_name + ' 中的所有内容且不可恢复!',
+              {icon: 3, title: '操作确认', shade: 0.5}, function(index){
+                  location.href = "{% url 'db_mysql:mysql_manage:db_delete' mysql_id %}?db_name=" + db_name;
+              });
+      }
+  });
+});
+</script>
+{% endblock %}
+
+{% block page_content %}
+{% include 'db_mysql/mysql_info.html' %}
+    {% include 'include_messages.html' %}
+<div class="card">
+<div class="card-header">
+    <h3 class="card-title">
+<a href="{% url 'db_mysql:mysql_manage:db_create' mysql_id %}" class="btn btn-success">创建数据库</a>
+    </h3>
+</div>
+<div class="card-body p-0">
+    <table class="table table-bordered table-hover">
+        <thead class="thead-light">
+            <tr>
+                <th>数据库名</th>
+                <th>大小(MB)</th>
+                <th>字符集</th>
+                <th>排序规则</th>
+                <th>表数</th>
+                <th>视图</th>
+                <th>函数</th>
+                <th>存储过程</th>
+                <th>触发器</th>
+                <th>事件</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for db in object_list  %}
+            <tr>
+                <td><b>{{ db.db_name }}</b></td>
+                <td>{{ db.size }}</td>
+                <td>{{ db.character_set }}</td>
+                <td>{{ db.collation_name }}</td>
+                <td>{{ db.table_count }}</td>
+                <td>{{ db.view_count }}</td>
+                <td>{{ db.function_count }}</td>
+                <td>{{ db.procedure_count }}</td>
+                <td>{{ db.trigger_count }}</td>
+                <td>{{ db.event_count }}</td>
+                <td>
+                    <a href="{% url 'db_mysql:mysql_manage:db_edit' mysql_id db.db_name %}" class="btn btn-outline-info btn-xs">编辑</a>
+                    <button db_name="{{ db.db_name }}" class="btn btn-outline-danger btn-xs" lay-on="confirm-del">删除</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+</div>
+
+
+{% endblock %}
