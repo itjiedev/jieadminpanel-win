@@ -110,22 +110,25 @@ class PackageInstallMixin(PythonRunMixin, FormView):
             cmd.append(f"{package_name}=={package_version}")
         print('开始安装指定包。')
         result = run_command(cmd)
-        if result != 0:
+        if result.returncode == 0:
+            print('包安装成功~')
+            return super().form_valid(form)
+        else:
             print('设置的源安装不成功。尝试使用官方安装源。。。')
             cmd.append('-i')
             cmd.append(pypi_url)
             result = run_command(cmd)
-        if result.returncode == 0:
-            print('官方安装源安装成功~')
-            return super().form_valid(form)
-        else:
-            print('官方安装源安装失败~')
-            err_msg  = result.stderr
-            if '[notice] A new release of pip is available' in err_msg:
-                err_msg = err_msg.split('[notice] A new release of pip is available')[0].replace('\n', '</br>')
-            error_message = f"{result.stdout}</br>{err_msg}"
-            form.add_error(None, error_message)
-            return self.form_invalid(form)
+            if result.returncode == 0:
+                print('官方源 包安装成功~')
+                return super().form_valid(form)
+            else:
+                print('安装失败~')
+                err_msg  = result.stderr
+                if '[notice] A new release of pip is available' in err_msg:
+                    err_msg = err_msg.split('[notice] A new release of pip is available')[0].replace('\n', '</br>')
+                error_message = f"{result.stdout}</br>{err_msg}"
+                form.add_error(None, error_message)
+                return self.form_invalid(form)
 
 
 class PackageSearchView(JsonView):
