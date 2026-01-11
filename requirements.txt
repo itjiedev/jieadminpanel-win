@@ -1,4 +1,5 @@
-django~=5.2.9
+django==5.2.10
 requests
 pywin32
 psutil
+mysqlclient
