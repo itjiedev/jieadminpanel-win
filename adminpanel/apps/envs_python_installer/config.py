@@ -18,4 +18,4 @@ python_cache_dir = app_base_path / 'cache'
 py_ini_path = os.path.join(os.environ.get('LOCALAPPDATA'), 'py.ini')
 
 py_path = app_base_path / 'tools' /'py.exe'
-py_installed = False
+py_installed = True

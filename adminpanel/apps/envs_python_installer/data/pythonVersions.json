@@ -1,4 +1,15 @@
 {
+  "3.14.3": {
+    "id": "python-3.14-64",
+    "sort-version": "3.14.3",
+    "tag": "3.14-64",
+    "display_name": "Python 3.14.3",
+    "installer_file_name": "python-3.14.3-amd64.exe",
+    "sha256": "b68ad91421afbbd1a628105199c8c5f6179b21ba799067a8d8c0bbac3b7defb0",
+    "version_major": 3,
+    "version_minor": 14,
+    "version_patch": 2
+  },
   "3.14.2": {
     "id": "python-3.14-64",
     "sort-version": "3.14.2",
@@ -31,6 +42,17 @@
     "version_major": 3,
     "version_minor": 14,
     "version_patch": 0
+  },
+  "3.13.12": {
+    "id": "python-3.13-64",
+    "sort-version": "3.13.12",
+    "tag": "3.13-64",
+    "display_name": "Python 3.13.12",
+    "installer_file_name": "python-3.13.12-amd64.exe",
+    "sha256": "96159fcb523ae404b707186a75b4104ee23851e476a5e838e14584cf1e03f981",
+    "version_major": 3,
+    "version_minor": 13,
+    "version_patch": 11
   },
   "3.13.11": {
     "id": "python-3.13-64",

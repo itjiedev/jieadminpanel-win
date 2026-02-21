@@ -12,7 +12,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic.base import TemplateView, RedirectView
 
 from jiefoundation.utils import (
-    run_command, get_file_md5, windows_api, windows_api_blocking, ensure_path_end_separator
+    run_command, get_file_md5, windows_api, windows_api_blocking, ensure_path_end_separator, check_sha256
 )
 from panelcore.helper import set_reg_user_env, get_reg_user_env
 from jiefoundation.jiebase import JsonView
@@ -265,16 +265,22 @@ class PythonDownloadView(JsonView):
             except requests.exceptions.RequestException as e:
                 return self.render_to_json_error("存在下载地址错误或者网络问题~")
 
-        check_file_md5 = get_file_md5(python_cache_file)
-        if check_file_md5 != get_versions['md5sum']:
-            with requests.get(download_url, stream=True) as r:
-                r.raise_for_status()
-                with open(python_cache_file, 'wb') as f:
-                    for chunk in r.iter_content(chunk_size=8192):  # 分块读取文件
-                        if chunk: f.write(chunk)
-            check_file_md5 = get_file_md5(python_cache_file)
-            if check_file_md5 != get_versions['md5sum']:
-                return self.render_to_json_error('文件校验失败！请手动下载后放置在_cache目录中安装！')
+        with requests.get(download_url, stream=True) as r:
+            r.raise_for_status()
+            with open(python_cache_file, 'wb') as f:
+                for chunk in r.iter_content(chunk_size=8192):  # 分块读取文件
+                    if chunk: f.write(chunk)
+
+        check_file = False
+        if 'md5sum' in get_versions:
+            if get_versions['md5sum'] == get_file_md5(python_cache_file):
+                check_file = True
+        if 'sha256' in get_versions:
+            check_file = check_sha256(python_cache_file, get_versions['sha256'])
+
+        if not check_file:
+            return self.render_to_json_error('文件校验失败！请更换下载源重试~')
+
         print('下载完成。。')
         return self.render_to_json_response({'message': '下载完成~'})
 
@@ -298,7 +304,6 @@ class RunPythonInstallView(JsonView):
                 operation="runas",
             )
             print('安装完成。。。')
-
             return self.render_to_json_response({'status':'success', 'message': '安装成功~'})
         except Exception as e:
             return self.render_to_json_error(str(e))

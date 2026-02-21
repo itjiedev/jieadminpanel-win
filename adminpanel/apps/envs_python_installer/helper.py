@@ -4,7 +4,7 @@ from pathlib import Path
 from jiefoundation.utils import run_command
 
 from .config import (
-    installed_file_path, python_version_file_path, py_installed, py_path,python_download_path,
+    installed_file_path, python_version_file_path, py_path,python_download_path,
 )
 
 
@@ -28,14 +28,14 @@ def get_py_default_python():
     """
     判断系统中的py launcher默认设置的是什么版本
     """
-    if py_installed:
-        result = run_command([py_path, '-V'])
-        if result.returncode == 0:
-            if result.stdout.strip():
-                return result.stdout.strip().split(maxsplit=1)[1].strip()
-            else:
-                return result.stderr.strip().split(maxsplit=1)[1].strip()
+    result = run_command([py_path, '-V'])
+    if result.returncode == 0:
+        if result.stdout.strip():
+            return result.stdout.strip().split(maxsplit=1)[1].strip()
+        else:
+            return result.stderr.strip().split(maxsplit=1)[1].strip()
     return ''
+
 
 def python_list_paths():
     """

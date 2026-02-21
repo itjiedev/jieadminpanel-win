@@ -435,11 +435,12 @@ class UninstallView(PythonRuntimeMixin, FormView):
             )
         # 删除环境变量
         get_user_env = get_reg_user_env('PATH').split(';')
-        installed_folder = installed_info['folder'].replace('/', '\\')
+        installed_folder = installed_info['folder'].rstrip('/').replace('/', '\\')
         for item in get_user_env[:]:
             if item.startswith(installed_folder):
                 get_user_env.remove(item)
         set_reg_user_env('PATH', ';'.join(get_user_env))
+
         # 删除安装信息
         with open(user_installed_json, 'r', encoding='utf-8') as f:
             installed_python = json.load(f)

@@ -111,7 +111,7 @@ layui.use(function(){
                     </td>
                     <td>{{ version.version_major }}.{{ version.version_minor }}.{{ version.version_patch }}</td>
                     <td>
-{% if version.folder == default_env_python.path %}默认{% else %}-{% endif %}
+                        {% if version.folder == default_env_python.path %}<span class="text-success text-bold">默认</span>{% else %}-{% endif %}
                     </td>
                     <td>
                         <div>{% replace_str version.folder '/' '\\' %}python.exe</div>
