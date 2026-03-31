@@ -1,8 +1,15 @@
 {
   "2025": {
-    "2025.3": {
-      "default": {"version": "2025.3.3", "type": "unified"},
+    "2026.1": {
+      "default": {"version": "2026.1", "type": "unified"},
       "versions": {
+        "2026.1": "unified"
+      }
+    },
+    "2025.3": {
+      "default": {"version": "2025.3.4", "type": "unified"},
+      "versions": {
+        "2025.3.4": "unified",
         "2025.3.3": "unified",
         "2025.3.2.1": "unified",
         "2025.3.2": "unified",
