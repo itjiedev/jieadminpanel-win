@@ -92,7 +92,7 @@ class PycharmDownloadView(ProjectPythonMixin, TemplateView):
         ]
         pycharm_versions = get_pycharm_download()
         context['releases_list'] = list(pycharm_versions.keys())
-        context['current_releases'] = self.request.GET.get('releases', '2025')
+        context['current_releases'] = self.request.GET.get('releases', '2026')
         context['sub_version_list'] = {}
         for sub_version, sub_version_info in pycharm_versions[context['current_releases']].items():
             context['sub_version_list'][sub_version] = {

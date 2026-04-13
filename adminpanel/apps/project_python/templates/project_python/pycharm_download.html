@@ -12,7 +12,7 @@
             var othis = data.othis;
 
             if (value) {
-                var url = '?releases={{ current_releases }}&version=' + value;
+                var url = '?releases={{ current_releases }}&action={{action}}&version=' + value;
                 window.location.href = url;
             }
         })
@@ -31,7 +31,7 @@
 <div class="card-header border-bottom-0">
     <div class="card-title">
     {% for release in releases_list %}
-        <a href="?releases={{ release }}" class="btn ml-1{% if current_releases == release %} btn-success {% else %} btn-default{% endif %} "><h5 class="mb-1">{{ release }}</h5></a>
+        <a href="?releases={{ release }}&action={{action}}" class="btn ml-1{% if current_releases == release %} btn-success {% else %} btn-default{% endif %} "><h5 class="mb-1">{{ release }}</h5></a>
     {% endfor %}
     </div>
     <div class="card-tools">
