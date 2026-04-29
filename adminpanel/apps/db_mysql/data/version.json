@@ -1,9 +1,23 @@
 {
+    "9.7.0": {
+        "version": "9.7.0",
+        "name": "MySQL 9.7.0 LTS",
+        "is_new": true,
+        "download_url": "https://cdn.mysql.com//Downloads/MySQL-9.7/mysql-9.7.0-winx64.zip",
+        "filename": "mysql-9.7.0-winx64.zip"
+    },
+    "9.6.0": {
+        "version": "9.6.0",
+        "name": "MySQL 9.6.0",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-9.6/mysql-9.6.0-winx64.zip",
+        "filename": "mysql-9.6.0-winx64.zip"
+    },
     "9.5.0": {
         "version": "9.5.0",
-        "name": "MySQL 9.5.0 Innovation",
-        "is_new": true,
-        "download_url": "https://cdn.mysql.com//Downloads/MySQL-9.5/mysql-9.5.0-winx64.zip",
+        "name": "MySQL 9.5.0",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-9.5/mysql-9.5.0-winx64.zip",
         "filename": "mysql-9.5.0-winx64.zip"
     },
     "9.4.0": {
@@ -41,11 +55,25 @@
         "download_url": "https://cdn.mysql.com/archives/mysql-9.0/mysql-9.0.1-winx64.zip",
         "filename": "mysql-9.0.1-winx64.zip"
     },
+    "8.4.9": {
+        "version": "8.4.9",
+        "name": "MySQL 8.4.9 LTS",
+        "is_new": true,
+        "download_url": "https://cdn.mysql.com//Downloads/MySQL-8.4/mysql-8.4.9-winx64.zip",
+        "filename": "mysql-8.4.9-winx64.zip"
+    },
+    "8.4.8": {
+        "version": "8.4.8",
+        "name": "MySQL 8.4.8",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.4/mysql-8.4.8-winx64.zip",
+        "filename": "mysql-8.4.8-winx64.zip"
+    },
     "8.4.7": {
         "version": "8.4.7",
-        "name": "MySQL 8.4.7 LTS",
-        "is_new": true,
-        "download_url": "https://cdn.mysql.com//Downloads/MySQL-8.4/mysql-8.4.7-winx64.zip",
+        "name": "MySQL 8.4.7",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.4/mysql-8.4.7-winx64.zip",
         "filename": "mysql-8.4.7-winx64.zip"
     },
     "8.4.6": {
@@ -111,11 +139,25 @@
         "download_url": "https://cdn.mysql.com/archives/mysql-8.1/mysql-8.1.0-winx64.zip",
         "filename": "mysql-8.1.0-winx64.zip"
     },
+    "8.0.46": {
+        "version": "8.0.46",
+        "name": "MySQL 8.0.46",
+        "is_new": true,
+        "download_url": "https://cdn.mysql.com//Downloads/MySQL-8.0/mysql-8.0.46-winx64.zip",
+        "filename": "mysql-8.0.46-winx64.zip"
+    },
+    "8.0.45": {
+        "version": "8.0.45",
+        "name": "MySQL 8.0.45",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.45-winx64.zip",
+        "filename": "mysql-8.0.45-winx64.zip"
+    },
     "8.0.44": {
         "version": "8.0.44",
         "name": "MySQL 8.0.44",
-        "is_new": true,
-        "download_url": "https://cdn.mysql.com//Downloads/MySQL-8.0/mysql-8.0.44-winx64.zip",
+        "is_new": false,
+        "download_url": "https://cdn.mysql.com/archives/mysql-8.0/mysql-8.0.44-winx64.zip",
         "filename": "mysql-8.0.44-winx64.zip"
     },
     "8.0.43": {
